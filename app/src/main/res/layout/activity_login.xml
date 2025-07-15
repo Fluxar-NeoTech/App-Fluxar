@@ -11,25 +11,77 @@
         android:id="@+id/imageView2"
         android:layout_width="295dp"
         android:layout_height="89dp"
-        android:layout_marginTop="212dp"
+        android:layout_marginTop="204dp"
         android:src="@drawable/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailGestor"
         android:layout_width="322dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="105dp"
+        android:layout_marginTop="64dp"
         app:boxBackgroundMode="outline"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:boxCornerRadiusTopStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:hintEnabled="true"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:boxStrokeColor="@color/laranja_principal_selector">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputEmailGestor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#FFFFFF"
-            android:hint="E-mail" />
+            android:backgroundTint="@android:color/transparent"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
+            android:textColorHint="@android:color/darker_gray"
+            android:textColor="@android:color/black"/>
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/senhaGestor"
+        android:layout_width="322dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:endIconMode="password_toggle"
+        app:boxStrokeColor="@color/laranja_principal_selector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailGestor">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputSenhaGestor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/darker_gray" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btEntrarLogin"
+        android:layout_width="324dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="58dp"
+        android:backgroundTint="@color/roxo_principal"
+        android:text="Entrar"
+        android:textColor="#FFFFFF"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/senhaGestor" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
