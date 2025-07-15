@@ -13,4 +13,18 @@
         <item name="android:statusBarColor">@color/roxo_principal</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.AppFluxar.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/roxo_principal</item>
+        <item name="colorPrimaryVariant">@color/roxo_principal</item>
+        <item name="colorOnPrimary">@color/laranja_principal</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/laranja_principal</item>
+        <item name="colorSecondaryVariant">@color/laranja_secundario</item>
+        <item name="colorOnSecondary">@color/preto</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/roxo_principal</item>
+        <!-- Customize your theme here. -->
+    </style>
+
 </resources>
