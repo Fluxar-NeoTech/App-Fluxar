@@ -107,10 +107,12 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
-        android:layout_width="179dp"
-        android:layout_height="279dp"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:background="@color/laranja_principal"
+        android:fitsSystemWindows="true"
+        android:paddingTop="0dp"
         app:itemTextColor="#FFF5F5"
         app:menu="@menu/menu_drawer" />
 
