@@ -1,7 +1,10 @@
 package com.aula.app_fluxar.ui.activitys
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.view.WindowInsets
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -36,7 +39,17 @@ class MainActivity : AppCompatActivity() {
         val menuIcon = binding.iconMenu
 
         menuIcon.setOnClickListener {
-           drawerLayout.openDrawer(GravityCompat.START)
+            drawerLayout.openDrawer(GravityCompat.END)
+        }
+
+        // Calculando altura da navbar para abrir menu lateral
+        binding.root.post {
+            val toolbarHeight = binding.materialToolbar.height
+            val navigationView = binding.navigationView
+            val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
+
+            layoutParams.topMargin = toolbarHeight + 50
+            navigationView.layoutParams = layoutParams
         }
     }
 }
