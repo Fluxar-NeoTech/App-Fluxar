@@ -1,12 +1,12 @@
-package com.aula.app_fluxar.ui
+package com.aula.app_fluxar.ui.activitys
 
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 
@@ -27,10 +27,16 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home
+                R.id.nav_home,R.id.nav_relatorio,R.id.nav_unidades,R.id.nav_perfil
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+
+        // Configurando o menu lateral
+        val drawerLayout = binding.drawerLayout
+        val menuIcon = binding.iconMenu
+
+        menuIcon.setOnClickListener {
+           drawerLayout.openDrawer(GravityCompat.START)
+        }
     }
 }

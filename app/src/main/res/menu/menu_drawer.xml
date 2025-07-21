@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_fabricas"
+        android:icon="@drawable/fabrica"
+        android:title="Fábricas" />
+    <item
+        android:id="@+id/nav_calendario"
+        android:title="Calendário" />
+    <item
+        android:id="@+id/nav_tema"
+        android:icon="@drawable/tema"
+        android:title="Tema" />
+    <item
+        android:id="@+id/nav_info"
+        android:icon="@drawable/info"
+        android:title="Info" />
+    <item />
+    <item
+        android:id="@+id/nav_sair"
+        android:title="Sair da conta" />
+</menu>
