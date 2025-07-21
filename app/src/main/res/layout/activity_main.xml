@@ -31,11 +31,9 @@
             android:layout_height="47dp"
             android:layout_marginTop="2dp"
             app:layout_constraintBottom_toBottomOf="@id/materialToolbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.075"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/logo" />
 
         <View
@@ -48,6 +46,18 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
+            android:id="@+id/iconNotificacoes"
+            android:layout_width="33dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="9dp"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+            app:layout_constraintStart_toEndOf="@id/iconCalendario"
+            app:layout_constraintTop_toTopOf="@id/materialToolbar"
+            app:layout_constraintVertical_bias="0.176"
+            app:srcCompat="@drawable/notificacao" />
+
+        <ImageView
             android:id="@+id/iconCalendario"
             android:layout_width="33dp"
             android:layout_height="31dp"
@@ -56,19 +66,8 @@
             app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.428"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/calendario" />
-
-        <ImageView
-            android:id="@+id/iconNotificacoes"
-            android:layout_width="33dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="9dp"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
-            app:layout_constraintStart_toEndOf="@id/iconCalendario"
-            app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:srcCompat="@drawable/notificacao" />
 
         <ImageView
             android:id="@+id/iconMenu"
@@ -77,8 +76,11 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="9dp"
             app:layout_constraintBottom_toBottomOf="@id/materialToolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.461"
             app:layout_constraintStart_toEndOf="@id/iconNotificacoes"
             app:layout_constraintTop_toTopOf="@id/materialToolbar"
+            app:layout_constraintVertical_bias="0.187"
             app:srcCompat="@drawable/menu" />
 
         <fragment
