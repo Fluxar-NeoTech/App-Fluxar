@@ -1,4 +1,4 @@
-package com.aula.app_fluxar.ui.fragments
+package com.aula.app_fluxar.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

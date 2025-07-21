@@ -6,18 +6,18 @@
     app:startDestination="@id/nav_home">
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.aula.app_fluxar.ui.fragments.navigation_home"
+        android:name="com.aula.app_fluxar.fragments.navigation_home"
         tools:layout="@layout/fragment_nav_home" />
     <fragment
         android:id="@+id/nav_relatorio"
-        android:name="com.aula.app_fluxar.ui.fragments.navigation_relatorio"
+        android:name="com.aula.app_fluxar.fragments.navigation_relatorio"
         tools:layout="@layout/fragment_nav_relatorio" />
     <fragment
         android:id="@+id/nav_unidades"
-        android:name="com.aula.app_fluxar.ui.fragments.navigation_unidades"
+        android:name="com.aula.app_fluxar.fragments.navigation_unidades"
         tools:layout="@layout/fragment_nav_unidades" />
     <fragment
         android:id="@+id/nav_perfil"
-        android:name="com.aula.app_fluxar.ui.fragments.navigation_perfil"
+        android:name="com.aula.app_fluxar.fragments.navigation_perfil"
         tools:layout="@layout/fragment_nav_perfil" />
 </navigation>

@@ -1,10 +1,7 @@
-package com.aula.app_fluxar.ui.activitys
+package com.aula.app_fluxar.ui
 
-import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
