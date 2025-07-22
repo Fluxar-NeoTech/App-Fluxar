@@ -14,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [Navigation_unidades.newInstance] factory method to
+ * Use the [NavigationPerfil.newInstance] factory method to
  * create an instance of this fragment.
  */
-class Navigation_unidades : Fragment() {
+class NavigationPerfil : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -34,8 +34,12 @@ class Navigation_unidades : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nav_unidades, container, false)
+        val view = inflater.inflate(R.layout.fragment_nav_perfil, container, false)
+        // Quadrado do perfil
+        val profileSquare = view.findViewById<View>(R.id.quadradoPerfil)
+        // Definindo a opacidade do quadrado do perfil
+        profileSquare.alpha = 0.18f
+        return view
     }
 
     companion object {
@@ -45,12 +49,12 @@ class Navigation_unidades : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment navigation_unidades.
+         * @return A new instance of fragment navigation_perfil.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            Navigation_unidades().apply {
+            NavigationPerfil().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

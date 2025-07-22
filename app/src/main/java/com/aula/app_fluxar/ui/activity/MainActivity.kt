@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 
@@ -30,9 +31,35 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home,R.id.nav_relatorio,R.id.nav_unidades,R.id.nav_perfil
+                R.id.nav_home,
+                R.id.nav_relatorio,
+                R.id.nav_unidades,
+                R.id.nav_perfil
             )
         )
+        navView.setupWithNavController(navController)
+
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    navController.navigate(R.id.nav_home)
+                    true
+                }
+                R.id.nav_relatorio -> {
+                    navController.navigate(R.id.nav_relatorio)
+                    true
+                }
+                R.id.nav_unidades -> {
+                    navController.navigate(R.id.nav_unidades)
+                    true
+                }
+                R.id.nav_perfil -> {
+                    navController.navigate(R.id.nav_perfil)
+                    true
+                }
+                else -> false
+            }
+        }
 
         // Configuração dos ícones da navbar secundária
         val backButton = binding.iconVoltar
