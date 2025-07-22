@@ -1,6 +1,10 @@
 package com.aula.app_fluxar.ui
 
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,13 +36,9 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        // Configurando o menu lateral
-        val drawerLayout = binding.drawerLayout
-        val menuIcon = binding.iconMenu
-
-        menuIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.END)
-        }
+        // Configuração dos ícones da navbar secundária
+        val backButton = binding.iconVoltar
+        val logoNavSecundaria = binding.logoNavSecundaria
 
         // Calculando altura da navbar para abrir menu lateral
         binding.root.post {
@@ -47,6 +48,55 @@ class MainActivity : AppCompatActivity() {
 
             layoutParams.topMargin = toolbarHeight + 50
             navigationView.layoutParams = layoutParams
+        }
+
+        // Configurando o menu lateral
+        val drawerLayout = binding.drawerLayout
+        val menuIcon = binding.iconMenu
+
+        menuIcon.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.END)
+        }
+
+        // Configuração do icone de notificações
+        val notificationIcon = binding.iconNotificacoes
+        notificationIcon.setOnClickListener {
+            navController.navigate(R.id.nav_notificacoes)
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.nav_notificacoes -> {
+                    backButton.visibility = View.VISIBLE
+                    logoNavSecundaria.visibility = View.VISIBLE
+                    backButton.setOnClickListener {
+                        navController.popBackStack()
+                    }
+
+                    // Esconder bottom navigation
+                    binding.navView.visibility = View.GONE
+
+                    // Esconder todos os elementos da antiga navbar
+                    binding.logo.visibility = View.GONE
+                    binding.iconCalendario.visibility = View.GONE
+                    binding.iconNotificacoes.visibility = View.GONE
+                    binding.iconMenu.visibility = View.GONE
+                }
+                else -> {
+                    // Remover icones da navbar secundária
+                    backButton.visibility = View.GONE
+                    logoNavSecundaria.visibility = View.GONE
+
+                    // Mostrar bottom navigation
+                    binding.navView.visibility = View.VISIBLE
+
+                    // Mostrar todos os elementos da navbar
+                    binding.logo.visibility = View.VISIBLE
+                    binding.iconCalendario.visibility = View.VISIBLE
+                    binding.iconNotificacoes.visibility = View.VISIBLE
+                    binding.iconMenu.visibility = View.VISIBLE
+                }
+            }
         }
     }
 }

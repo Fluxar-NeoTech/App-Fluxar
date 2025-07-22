@@ -25,6 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!--   Ícones da navbar principal     -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="153dp"
@@ -109,6 +110,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!--   Ícones da navbar secundária     -->
+        <ImageView
+            android:id="@+id/iconVoltar"
+            android:layout_width="80dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/materialToolbar"
+            android:visibility="gone"
+            app:srcCompat="@drawable/voltar_bt" />
+
+        <ImageView
+            android:id="@+id/logoNavSecundaria"
+            android:layout_width="153dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="2dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.913"
+            app:layout_constraintStart_toEndOf="@id/iconVoltar"
+            app:layout_constraintTop_toTopOf="@id/materialToolbar"
+            app:layout_constraintVertical_bias="0.416"
+            android:visibility="gone"
+            app:srcCompat="@drawable/logo" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -117,8 +145,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:background="@color/laranja_principal"
-        android:fitsSystemWindows="true"
         android:paddingTop="0dp"
+        android:paddingBottom="0dp"
         app:itemTextColor="#FFF5F5"
         app:menu="@menu/menu_drawer" />
 
