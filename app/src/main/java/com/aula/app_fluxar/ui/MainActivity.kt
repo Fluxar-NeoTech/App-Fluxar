@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             val navigationView = binding.navigationView
             val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
 
-            layoutParams.topMargin = toolbarHeight + 50
+            layoutParams.topMargin = toolbarHeight
             navigationView.layoutParams = layoutParams
         }
 
