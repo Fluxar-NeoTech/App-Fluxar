@@ -1,8 +1,6 @@
-package com.aula.app_fluxar.ui
+package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
