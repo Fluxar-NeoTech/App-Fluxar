@@ -1,6 +1,7 @@
 package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -96,6 +97,11 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_info -> {
                     navController.navigate(R.id.nav_infos)
+                }
+
+                R.id.nav_sair -> {
+                    val intent = Intent(this, SplashScreen::class.java)
+                    startActivity(intent)
                 }
             }
 
