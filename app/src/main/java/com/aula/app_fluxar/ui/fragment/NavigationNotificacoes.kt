@@ -1,10 +1,10 @@
-package com.aula.app_fluxar.fragments
+package com.aula.app_fluxar.ui.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.aula.app_fluxar.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -14,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [navigation_unidades.newInstance] factory method to
+ * Use the [NavigationNotificacoes.newInstance] factory method to
  * create an instance of this fragment.
  */
-class navigation_unidades : Fragment() {
+class NavigationNotificacoes : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -35,7 +35,7 @@ class navigation_unidades : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nav_unidades, container, false)
+        return inflater.inflate(R.layout.fragment_navigation_notificacoes, container, false)
     }
 
     companion object {
@@ -45,12 +45,12 @@ class navigation_unidades : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment navigation_unidades.
+         * @return A new instance of fragment Navigation_notificacoes.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            navigation_unidades().apply {
+            NavigationNotificacoes().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
