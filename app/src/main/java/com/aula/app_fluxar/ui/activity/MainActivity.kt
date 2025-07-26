@@ -1,20 +1,21 @@
 package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
-import com.aula.app_fluxar.ui.fragment.NavigationInfos
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,18 +51,22 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.nav_home)
                     true
                 }
+
                 R.id.nav_relatorio -> {
                     navController.navigate(R.id.nav_relatorio)
                     true
                 }
+
                 R.id.nav_unidades -> {
                     navController.navigate(R.id.nav_unidades)
                     true
                 }
+
                 R.id.nav_perfil -> {
                     navController.navigate(R.id.nav_perfil)
                     true
                 }
+
                 else -> false
             }
         }
@@ -100,8 +105,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_sair -> {
-                    val intent = Intent(this, SplashScreen::class.java)
-                    startActivity(intent)
+                    showDialogSairConta()
+                }
+
+                R.id.nav_tema -> {
+                    Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -134,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                     binding.iconNotificacoes.visibility = View.GONE
                     binding.iconMenu.visibility = View.GONE
                 }
+
                 else -> {
                     // Remover icones da navbar secundária
                     backButton.visibility = View.GONE
@@ -152,9 +161,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Configurando botão de voltar
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        return navController.navigateUp() || super.onSupportNavigateUp()
+    // Função para abrir o dialog personalizado (sair_da_conta.xml)
+    fun showDialogSairConta() {
+        val dialogSairConta = layoutInflater.inflate(R.layout.sair_da_conta, null)
+        val btnSim = dialogSairConta.findViewById<Button>(R.id.sairContaS)
+        val btnNao = dialogSairConta.findViewById<Button>(R.id.sairContaN)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogSairConta)
+            .create()
+
+        btnSim.setOnClickListener {
+            // Lógica para sair da conta
+            Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
+        }
+
+        btnNao.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 }
