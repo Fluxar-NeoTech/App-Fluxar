@@ -23,5 +23,10 @@
     <fragment
         android:id="@+id/nav_notificacoes"
         android:name="com.aula.app_fluxar.ui.fragment.NavigationNotificacoes"
-        tools:layout="@layout/fragment_navigation_notificacoes" />
+        tools:layout="@layout/fragment_nav_notificacoes" />
+    <fragment
+        android:id="@+id/nav_infos"
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationInfos"
+        android:label="fragment_nav_info"
+        tools:layout="@layout/fragment_nav_infos" />
 </navigation>

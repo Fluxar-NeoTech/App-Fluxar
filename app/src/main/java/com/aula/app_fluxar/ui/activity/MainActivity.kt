@@ -1,17 +1,20 @@
 package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
+import com.aula.app_fluxar.ui.fragment.NavigationInfos
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,10 +38,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_relatorio,
                 R.id.nav_unidades,
                 R.id.nav_perfil
-            )
+            ),
+            binding.drawerLayout
         )
         navView.setupWithNavController(navController)
 
+        // Navegação entre as páginas da navbar principal
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
@@ -66,9 +71,9 @@ class MainActivity : AppCompatActivity() {
         val logoNavSecundaria = binding.logoNavSecundaria
 
         // Calculando altura da navbar para abrir menu lateral
+        val navigationView = binding.navigationView
         binding.root.post {
             val toolbarHeight = binding.materialToolbar.height
-            val navigationView = binding.navigationView
             val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
 
             layoutParams.topMargin = toolbarHeight
@@ -83,6 +88,28 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.END)
         }
 
+        menuIcon.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.END)
+        }
+
+        // Navegação entre páginas do menu lateral
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_info -> {
+                    navController.navigate(R.id.nav_infos)
+                }
+
+                R.id.nav_sair -> {
+                    val intent = Intent(this, SplashScreen::class.java)
+                    startActivity(intent)
+                }
+            }
+
+            drawerLayout.closeDrawer(GravityCompat.END)
+            true
+        }
+
+
         // Configuração do icone de notificações
         val notificationIcon = binding.iconNotificacoes
         notificationIcon.setOnClickListener {
@@ -91,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_notificacoes -> {
+                R.id.nav_notificacoes, R.id.nav_infos -> {
                     backButton.visibility = View.VISIBLE
                     logoNavSecundaria.visibility = View.VISIBLE
                     backButton.setOnClickListener {
@@ -123,5 +150,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // Configurando botão de voltar
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
