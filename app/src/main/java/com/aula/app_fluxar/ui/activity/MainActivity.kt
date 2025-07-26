@@ -11,13 +11,11 @@ import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
-import com.aula.app_fluxar.ui.fragment.NavigationInfos
 
 class MainActivity : AppCompatActivity() {
 
@@ -73,21 +71,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Listener do menu lateral
-        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_sair -> {
-                    showDialogSairConta()
-                    true
-                }
-                R.id.nav_tema -> {
-                    Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                else -> false
-            }
-        }
-
         // Configuração dos ícones da navbar secundária
         val backButton = binding.iconVoltar
         val logoNavSecundaria = binding.logoNavSecundaria
@@ -122,8 +105,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_sair -> {
-                    val intent = Intent(this, SplashScreen::class.java)
-                    startActivity(intent)
+                    showDialogSairConta()
+                }
+
+                R.id.nav_tema -> {
+                    Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
                 }
             }
 
