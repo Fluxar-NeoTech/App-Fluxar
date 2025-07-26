@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popUpSairConta"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sairContaS"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/roboto"
+            android:text="Sim"
+            android:textAllCaps="false"
+            android:textColor="#FF1D00"
+            app:backgroundTint="@android:color/transparent"
+            app:cornerRadius="7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sairContaN"
+            app:layout_constraintTop_toBottomOf="@+id/tetxoDesejaSairConta"
+            app:strokeColor="#FF1D00"
+            app:strokeWidth="1.1dp" />
+
+        <Button
+            android:id="@+id/sairContaN"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#FF1D00"
+            android:fontFamily="@font/roboto"
+            android:text="Não"
+            android:textAllCaps="false"
+            android:textColor="#E4E4E4"
+            app:cornerRadius="7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/sairContaS"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tetxoDesejaSairConta" />
+
+        <TextView
+            android:id="@+id/tetxoDesejaSairConta"
+            android:layout_width="254dp"
+            android:layout_height="51dp"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Você deseja mesmo sair da conta?"
+            android:textAlignment="center"
+            android:textColor="#2F2F2F"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

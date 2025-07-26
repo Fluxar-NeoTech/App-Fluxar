@@ -1,9 +1,12 @@
 package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -45,16 +48,35 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.nav_home)
                     true
                 }
+
                 R.id.nav_relatorio -> {
                     navController.navigate(R.id.nav_relatorio)
                     true
                 }
+
                 R.id.nav_unidades -> {
                     navController.navigate(R.id.nav_unidades)
                     true
                 }
+
                 R.id.nav_perfil -> {
                     navController.navigate(R.id.nav_perfil)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        // Listener do menu lateral
+        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_sair -> {
+                    showDialogSairConta()
+                    true
+                }
+                R.id.nav_tema -> {
+                    Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false
@@ -107,6 +129,7 @@ class MainActivity : AppCompatActivity() {
                     binding.iconNotificacoes.visibility = View.GONE
                     binding.iconMenu.visibility = View.GONE
                 }
+
                 else -> {
                     // Remover icones da navbar secundária
                     backButton.visibility = View.GONE
@@ -123,5 +146,29 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // Função para abrir o dialog personalizado (sair_da_conta.xml)
+    fun showDialogSairConta() {
+        val dialogSairConta = layoutInflater.inflate(R.layout.sair_da_conta, null)
+        val btnSim = dialogSairConta.findViewById<Button>(R.id.sairContaS)
+        val btnNao = dialogSairConta.findViewById<Button>(R.id.sairContaN)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogSairConta)
+            .create()
+
+        btnSim.setOnClickListener {
+            // Lógica para sair da conta
+            Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
+        }
+
+        btnNao.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
     }
 }
