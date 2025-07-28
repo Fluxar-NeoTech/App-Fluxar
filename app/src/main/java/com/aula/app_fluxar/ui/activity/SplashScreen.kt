@@ -21,8 +21,18 @@ class SplashScreen : AppCompatActivity() {
         }
         // Redirecionar para a tela principal após um atraso
         Handler().postDelayed({
-            startActivity(Intent(this, Login::class.java))
+            if (isConnectedToInternet()) {
+                startActivity(Intent(this, Login::class.java))
+            } else {
+                startActivity(Intent(this, ErroConexaoInternet::class.java))
+            }
             finish()
         }, 5000)
+    }
+
+    private fun isConnectedToInternet(): Boolean {
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetworkInfo
+        return activeNetwork != null && activeNetwork.isConnected
     }
 }
