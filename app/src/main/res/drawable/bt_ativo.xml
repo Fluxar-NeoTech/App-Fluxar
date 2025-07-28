@@ -1,0 +1,8 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+
+    <!--Fundo transparente-->
+    <solid android:color="@color/roxo_principal" />
+
+    <!--Arredondamento dos cantos-->
+    <corners android:radius="8dp" />
+</shape>

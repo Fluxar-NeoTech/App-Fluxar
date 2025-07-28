@@ -1,60 +1,80 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.R
+import com.google.android.material.button.MaterialButton
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NavigationHome.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NavigationHome : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var homeScreenButton: Button
+    private lateinit var registerButton: Button
+    private lateinit var removeButton: Button
+    private lateinit var content: FrameLayout
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_nav_home, container, false)
+
+        homeScreenButton = view.findViewById(R.id.bt_info_gerais)
+        registerButton = view.findViewById(R.id.bt_adicionar_estoque)
+        removeButton = view.findViewById(R.id.bt_remover_estoque)
+        content = view.findViewById(R.id.container_conteudo)
+        val profileButton = view.findViewById<ImageView>(R.id.fotoPerfilGestor)
+
+        profileButton.setOnClickListener {
+            findNavController().navigate(R.id.nav_perfil)
+        }
+
+        showContent(R.layout.fragment_layout_home)
+        updateSelectedButtons(homeScreenButton)
+
+        homeScreenButton.setOnClickListener {
+            showContent(R.layout.fragment_layout_home)
+            updateSelectedButtons(homeScreenButton)
+        }
+
+        registerButton.setOnClickListener {
+            showContent(R.layout.fragment_layout_cadastrar_produto)
+            updateSelectedButtons(registerButton)
+        }
+
+        removeButton.setOnClickListener {
+            showContent(R.layout.fragment_layout_remover_produto)
+            updateSelectedButtons(removeButton)
+        }
+
+        return view
+
+    }
+
+    private fun showContent(layoutId: Int) {
+        val inflater = LayoutInflater.from(requireContext())
+        content.removeAllViews()
+        val novoConteudo = inflater.inflate(layoutId, content, false)
+        content.addView(novoConteudo)
+    }
+
+    private fun updateSelectedButtons(selectedButton: Button) {
+        val botoes = listOf(homeScreenButton, registerButton, removeButton)
+        botoes.forEach { botao ->
+            if (botao == selectedButton) {
+                botao.setBackgroundResource(R.drawable.bt_ativo)
+                botao.setTextColor(Color.WHITE)
+            } else {
+                botao.setBackgroundResource(R.drawable.bt_inativo)
+                botao.setTextColor(ContextCompat.getColor(requireContext(), R.color.roxo_principal))
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nav_home, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment navigation_home.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NavigationHome().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }
