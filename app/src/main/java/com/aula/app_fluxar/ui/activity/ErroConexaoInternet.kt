@@ -1,34 +1,44 @@
 package com.aula.app_fluxar.ui.activity
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.aula.app_fluxar.R
 
 class ErroConexaoInternet : AppCompatActivity() {
-    private lateinit var connectivityReceiver: BroadcastReceiver
+    private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_erro_conexao_internet)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Criar receiver para escutar reconexão
-        connectivityReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (isConnectedToInternet()) {
+        // Inicializa o ConnectivityManager
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        // Define o callback de rede
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                // Conexão com a internet foi restabelecida
+                runOnUiThread {
                     startActivity(Intent(this@ErroConexaoInternet, Login::class.java))
                     finish()
                 }
@@ -38,20 +48,20 @@ class ErroConexaoInternet : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        registerReceiver(
-            connectivityReceiver,
-            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )
+
+        // Cria uma requisição de rede para monitorar redes com internet
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+
+        // Registra o callback
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
     }
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(connectivityReceiver)
-    }
 
-    private fun isConnectedToInternet(): Boolean {
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
-        val network = cm.activeNetworkInfo
-        return network != null && network.isConnected
+        // Remove o callback quando a activity não estiver visível
+        connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 }
