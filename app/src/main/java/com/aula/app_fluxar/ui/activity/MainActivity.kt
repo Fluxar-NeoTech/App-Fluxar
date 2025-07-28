@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         // Configuração dos ícones da navbar secundária
         val backButton = binding.iconVoltar
-        val logoNavSecundaria = binding.logoNavSecundaria
+        val secundaryNavLogo = binding.logoNavSecundaria
 
         // Calculando altura da navbar para abrir menu lateral
         val navigationView = binding.navigationView
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_sair -> {
-                    showDialogSairConta()
+                    showDialogLogOut()
                 }
 
                 R.id.nav_tema -> {
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.nav_notificacoes, R.id.nav_infos -> {
                     backButton.visibility = View.VISIBLE
-                    logoNavSecundaria.visibility = View.VISIBLE
+                    secundaryNavLogo.visibility = View.VISIBLE
                     backButton.setOnClickListener {
                         navController.popBackStack()
                     }
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                 else -> {
                     // Remover icones da navbar secundária
                     backButton.visibility = View.GONE
-                    logoNavSecundaria.visibility = View.GONE
+                    secundaryNavLogo.visibility = View.GONE
 
                     // Mostrar bottom navigation
                     binding.navView.visibility = View.VISIBLE
@@ -162,21 +162,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Função para abrir o dialog personalizado (sair_da_conta.xml)
-    fun showDialogSairConta() {
-        val dialogSairConta = layoutInflater.inflate(R.layout.sair_da_conta, null)
-        val btnSim = dialogSairConta.findViewById<Button>(R.id.sairContaS)
-        val btnNao = dialogSairConta.findViewById<Button>(R.id.sairContaN)
+    fun showDialogLogOut() {
+        val dialogLogOut = layoutInflater.inflate(R.layout.sair_da_conta, null)
+        val positiveButton = dialogLogOut.findViewById<Button>(R.id.sairContaS)
+        val negativeButton = dialogLogOut.findViewById<Button>(R.id.sairContaN)
 
         val dialog = AlertDialog.Builder(this)
-            .setView(dialogSairConta)
+            .setView(dialogLogOut)
             .create()
 
-        btnSim.setOnClickListener {
+        positiveButton.setOnClickListener {
             // Lógica para sair da conta
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
         }
 
-        btnNao.setOnClickListener {
+        negativeButton.setOnClickListener {
             dialog.dismiss()
         }
 
