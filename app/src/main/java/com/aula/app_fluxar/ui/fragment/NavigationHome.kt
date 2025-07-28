@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.R
 import com.google.android.material.button.MaterialButton
 
@@ -27,6 +29,11 @@ class NavigationHome : Fragment() {
         registerButton = view.findViewById(R.id.bt_adicionar_estoque)
         removeButton = view.findViewById(R.id.bt_remover_estoque)
         content = view.findViewById(R.id.container_conteudo)
+        val profileButton = view.findViewById<ImageView>(R.id.fotoPerfilGestor)
+
+        profileButton.setOnClickListener {
+            findNavController().navigate(R.id.nav_perfil)
+        }
 
         showContent(R.layout.fragment_layout_home)
         updateSelectedButtons(homeScreenButton)
@@ -69,4 +76,5 @@ class NavigationHome : Fragment() {
             }
         }
     }
+
 }
