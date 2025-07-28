@@ -34,12 +34,7 @@ class NavigationPerfil : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_nav_perfil, container, false)
-        // Quadrado do perfil
-        val profileSquare = view.findViewById<View>(R.id.quadradoPerfil)
-        // Definindo a opacidade do quadrado do perfil
-        profileSquare.alpha = 0.18f
-        return view
+        return inflater.inflate(R.layout.fragment_nav_perfil, container, false)
     }
 
     companion object {
