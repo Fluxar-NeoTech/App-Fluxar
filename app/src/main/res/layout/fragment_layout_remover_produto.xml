@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.layout_remover_produto">
+
+    <!-- TODO: Update blank fragment layout -->
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_margin="50dp"
+        android:text="Remover Produto"
+        android:textSize="24sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textAlignment="center"
+        android:background="@color/roxo_principal"
+        android:textColor="#FFFF" />
+
+</FrameLayout>
