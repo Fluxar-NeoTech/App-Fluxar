@@ -31,17 +31,17 @@
         tools:layout="@layout/fragment_nav_infos" />
     <fragment
         android:id="@+id/layout_home"
-        android:name="com.aula.app_fluxar.ui.fragment.layout_home"
+        android:name="com.aula.app_fluxar.ui.fragment.Home"
         android:label="fragment_layout_home"
         tools:layout="@layout/fragment_layout_home" />
     <fragment
         android:id="@+id/layout_cadastrar_produto"
-        android:name="com.aula.app_fluxar.ui.fragment.layout_cadastrar_produto"
+        android:name="com.aula.app_fluxar.ui.fragment.CadastrarProduto"
         android:label="fragment_layout_cadastrar_produto"
         tools:layout="@layout/fragment_layout_cadastrar_produto" />
     <fragment
         android:id="@+id/layout_remover_produto"
-        android:name="com.aula.app_fluxar.ui.fragment.layout_remover_produto"
+        android:name="com.aula.app_fluxar.ui.fragment.RemoverProduto"
         android:label="fragment_layout_remover_produto"
         tools:layout="@layout/fragment_layout_remover_produto" />
 </navigation>
