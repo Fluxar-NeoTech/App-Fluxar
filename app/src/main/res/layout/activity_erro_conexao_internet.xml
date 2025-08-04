@@ -8,28 +8,30 @@
     tools:context=".ui.activity.ErroConexaoInternet">
 
 
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="195dp"
+        android:layout_height="199dp"
+        android:layout_marginTop="228dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/sem_conexao" />
+
     <TextView
         android:id="@+id/textView"
-        android:layout_width="173dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="136dp"
-        android:text="Sem conexão com a internet"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Sem Conexão"
+        android:textColor="#B3B1B1"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:layout_width="98dp"
-        android:layout_height="79dp"
-        android:layout_marginTop="83dp"
-        android:indeterminate="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView8" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
