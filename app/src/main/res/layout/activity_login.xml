@@ -25,7 +25,7 @@
             app:layout_constraintVertical_bias="0.32" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/emailGestor"
+            android:id="@+id/alturaCapacidade"
             android:layout_width="322dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView2">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputEmailGestor"
+                android:id="@+id/inputAlturaCapacidade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
@@ -69,7 +69,7 @@
             app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailGestor">
+            app:layout_constraintTop_toBottomOf="@+id/alturaCapacidade">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputSenhaGestor"
@@ -92,6 +92,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="36dp"
             android:backgroundTint="@color/roxo_principal"
+            android:fontFamily="@font/roboto_bold"
             android:text="Entrar"
             android:textColor="#FFFFFF"
             app:cornerRadius="10dp"
