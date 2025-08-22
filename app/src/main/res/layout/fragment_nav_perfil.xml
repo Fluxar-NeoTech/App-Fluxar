@@ -27,12 +27,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"></com.google.android.material.card.MaterialCardView>
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/fotoPerfilPadrao"
-            android:layout_width="87dp"
-            android:layout_height="91dp"
+            android:layout_width="98dp"
+            android:layout_height="98dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/foto_de_perfil_padrao"
             app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
             app:layout_constraintTop_toTopOf="@+id/quadradoPerfil" />
@@ -41,7 +43,7 @@
             android:id="@+id/nomeGestor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="50dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Nome aqui"
             android:textColor="#563516"
