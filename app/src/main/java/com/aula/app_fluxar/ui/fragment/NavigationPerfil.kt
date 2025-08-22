@@ -1,11 +1,8 @@
 package com.aula.app_fluxar.ui.fragment
 
-import androidx.exifinterface.media.ExifInterface
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -24,7 +21,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
-import java.io.InputStream
+import com.aula.app_fluxar.ui.CloudnaryConfig
+import com.cloudinary.android.MediaManager
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,7 +36,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class NavigationPerfil : Fragment() {
     private lateinit var defaultProfilePhoto: ImageView
-    private var bitmapProfilePhoto: Bitmap? = null
     private var photoUri: Uri? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -65,6 +62,8 @@ class NavigationPerfil : Fragment() {
                     .load(photoUri)
                     .transform(CircleCrop())
                     .into(defaultProfilePhoto)
+
+                uploadToCloudinary(photoUri!!)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -81,46 +80,44 @@ class NavigationPerfil : Fragment() {
                     .load(uri)
                     .transform(CircleCrop())
                     .into(defaultProfilePhoto)
+
+                uploadToCloudinary(uri)
             }
         }
     }
 
-
-    private fun rotateImageIfRequired(bitmap: Bitmap, uri: Uri? = null): Bitmap {
-        if (uri == null) return bitmap
-
-        return try {
-            val inputStream: InputStream? = requireActivity().contentResolver.openInputStream(uri)
-            inputStream?.use { stream ->
-                val exif = ExifInterface(stream)
-                val orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL
-                )
-
-                when (orientation) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
-                    ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
-                    ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
-                    else -> bitmap
+    private fun uploadToCloudinary(uri: Uri) {
+        MediaManager.get().upload(uri)
+            .option("folder","user_profile_photos")
+            .callback(object : com.cloudinary.android.callback.UploadCallback {
+                override fun onStart(requestId: String?) {
+                    Toast.makeText(requireContext(), "Enviando foto...", Toast.LENGTH_SHORT).show()
                 }
-            } ?: bitmap
-        } catch (e: Exception) {
-            e.printStackTrace()
-            bitmap
-        }
-    }
 
-    private fun rotateBitmap(bitmap: Bitmap, degrees: Float): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(degrees)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {}
+
+                override fun onSuccess(requestId: String?, resultData: MutableMap<*, *>?) {
+                    val url = resultData?.get("secure_url") as String
+                    Toast.makeText(requireContext(), "Upload concluído", Toast.LENGTH_SHORT).show()
+
+                    Toast.makeText(requireContext(), "URL da imagem: $url", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError(requestId: String?, error: com.cloudinary.android.callback.ErrorInfo?) {
+                    Toast.makeText(requireContext(), "Erro no upload: ${error?.description}", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onReschedule(requestId: String?, error: com.cloudinary.android.callback.ErrorInfo?) {
+                    Toast.makeText(requireContext(), "Upload reagendado: ${error?.description}", Toast.LENGTH_SHORT).show()
+                }
+            }).dispatch()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        CloudnaryConfig.init(requireContext())
         val view = inflater.inflate(R.layout.fragment_nav_perfil, container, false)
 
         defaultProfilePhoto = view.findViewById(R.id.fotoPerfilPadrao)
