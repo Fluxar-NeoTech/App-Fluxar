@@ -141,7 +141,6 @@ class MainActivity : AppCompatActivity() {
 
                     // Esconder todos os elementos da antiga navbar
                     binding.logo.visibility = View.GONE
-                    binding.iconCalendario.visibility = View.GONE
                     binding.iconNotificacoes.visibility = View.GONE
                     binding.iconMenu.visibility = View.GONE
                 }
@@ -156,7 +155,6 @@ class MainActivity : AppCompatActivity() {
 
                     // Mostrar todos os elementos da navbar
                     binding.logo.visibility = View.VISIBLE
-                    binding.iconCalendario.visibility = View.VISIBLE
                     binding.iconNotificacoes.visibility = View.VISIBLE
                     binding.iconMenu.visibility = View.VISIBLE
                 }
