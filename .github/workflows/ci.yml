@@ -1,0 +1,36 @@
+name: 🚀 CI Android
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Baixar código
+        uses: actions/checkout@v4
+      
+      - name: ⚙️ Configurar JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 📦 Dar permissão ao Gradlew
+        run: chmod +x ./gradlew
+
+      - name: 🧪 Executar testes
+        run: ./gradlew testDebugUnitTest
+
+      - name: 🏗️ Fazer build (Debug)
+        run: ./gradlew assembleDebug
+
+      - name: 📤 Salvar APK de Debug (opcional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
