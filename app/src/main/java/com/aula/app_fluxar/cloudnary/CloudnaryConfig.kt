@@ -1,4 +1,4 @@
-package com.aula.app_fluxar.ui
+package com.aula.app_fluxar.cloudnary
 
 import android.content.Context
 import com.cloudinary.android.MediaManager

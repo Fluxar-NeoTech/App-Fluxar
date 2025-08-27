@@ -21,7 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
-import com.aula.app_fluxar.ui.CloudnaryConfig
+import com.aula.app_fluxar.cloudnary.CloudnaryConfig
 import com.cloudinary.android.MediaManager
 
 // TODO: Rename parameter arguments, choose names that match
