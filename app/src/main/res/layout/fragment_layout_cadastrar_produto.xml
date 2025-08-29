@@ -86,6 +86,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/numLoteLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="315dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -95,21 +96,21 @@
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
             app:boxStrokeColor="@color/laranja_principal_selector"
+            app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/typeInputLayout">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/numLote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
                 android:hint="Número do lote"
-                android:paddingStart="12dp"
+                android:paddingLeft="10dp"
                 android:paddingTop="18dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="18dp"
-                android:textColor="@android:color/black"
+                android:paddingEnd="18dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro" />
         </com.google.android.material.textfield.TextInputLayout>
 
