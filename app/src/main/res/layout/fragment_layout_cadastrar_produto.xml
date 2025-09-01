@@ -115,6 +115,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Grupo de dimensões (Altura, Largura, Comprimento) -->
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/alturaInputLayout"
             android:layout_width="315dp"
@@ -128,6 +129,7 @@
             app:boxCornerRadiusTopStart="10dp"
             app:boxStrokeColor="@color/laranja_principal_selector"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.541"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/numLoteLayout">
 
@@ -159,6 +161,7 @@
             app:boxCornerRadiusTopStart="10dp"
             app:boxStrokeColor="@color/laranja_principal_selector"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.541"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/alturaInputLayout">
 
@@ -177,6 +180,7 @@
                 android:textColorHint="@color/cinza_claro" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/comprimentoInputLayout"
             android:layout_width="315dp"
@@ -190,6 +194,7 @@
             app:boxCornerRadiusTopStart="10dp"
             app:boxStrokeColor="@color/laranja_principal_selector"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.541"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/larguraInputLayout">
 
@@ -208,7 +213,6 @@
                 android:textColorHint="@color/cinza_claro" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/dateInputLayout"
             android:layout_width="315dp"
@@ -223,7 +227,7 @@
             app:endIconDrawable="@drawable/icon_calendar"
             app:endIconMode="custom"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.461"
+            app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/comprimentoInputLayout">
 
@@ -246,7 +250,7 @@
 
         <Button
             android:id="@+id/btCadastrar"
-            android:layout_width="324dp"
+            android:layout_width="315dp"
             android:layout_height="60dp"
             android:layout_marginTop="36dp"
             android:layout_marginBottom="25dp"
@@ -257,8 +261,10 @@
             app:cornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateInputLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/dateInputLayout"
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

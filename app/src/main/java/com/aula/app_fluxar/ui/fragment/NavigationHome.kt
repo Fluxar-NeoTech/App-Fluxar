@@ -26,8 +26,6 @@ class NavigationHome : Fragment() {
     private lateinit var registerButton: Button
     private lateinit var removeButton: Button
     private lateinit var content: FrameLayout
-    private lateinit var inflater: LayoutInflater
-    private lateinit var container: ViewGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -57,16 +55,21 @@ class NavigationHome : Fragment() {
             updateSelectedButtons(registerButton)
 
             content.post {
-                addProductDropList()
+                addProductDropListAdd()
                 addTypeDropList()
                 setupDatePicker()
-                setupFieldDependencies()
+                setupFieldDependenciesAdd()
             }
         }
 
         removeButton.setOnClickListener {
             showContent(R.layout.fragment_layout_remover_produto)
             updateSelectedButtons(removeButton)
+
+            content.post {
+                addProductDropListRemove()
+                setupFieldDependenciesRemove()
+            }
         }
 
         return view
@@ -93,20 +96,38 @@ class NavigationHome : Fragment() {
         }
     }
 
-    private fun addProductDropList() {
-        val autoComplete = content.findViewById<AutoCompleteTextView>(R.id.productInput)
+    private fun addProductDropListAdd() {
+        val autoCompleteAdd = content.findViewById<AutoCompleteTextView>(R.id.productInput)
         val options = listOf("Linguiça", "Bisteca", "Maminha", "Optimus Prime", "+ Adicionar")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, options)
 
-        autoComplete.setAdapter(adapter)
+        autoCompleteAdd.setAdapter(adapter)
 
-        autoComplete.setOnItemClickListener { parent, view, position, id ->
+        autoCompleteAdd.setOnItemClickListener { parent, view, position, id ->
             val selectedItem = parent.getItemAtPosition(position).toString()
 
             // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
             if (selectedItem == "+ Adicionar") {
                 // Aqui você pode implementar a navegação para adicionar novo produto
-                autoComplete.setText("") // Limpa o campo
+                autoCompleteAdd.setText("") // Limpa o campo
+            }
+        }
+    }
+
+    private fun addProductDropListRemove() {
+        val autoCompleteRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
+        val options = listOf("Linguiça", "Bisteca", "Maminha", "Optimus Prime", "+ Adicionar")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, options)
+
+        autoCompleteRemove.setAdapter(adapter)
+
+        autoCompleteRemove.setOnItemClickListener { parent, view, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+
+            // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
+            if (selectedItem == "+ Adicionar") {
+                // Aqui você pode implementar a navegação para adicionar novo produto
+                autoCompleteRemove.setText("") // Limpa o campo
             }
         }
     }
@@ -155,7 +176,7 @@ class NavigationHome : Fragment() {
         datePickerDialog.show()
     }
 
-    private fun setupFieldDependencies() {
+    private fun setupFieldDependenciesAdd() {
         val productInput = content.findViewById<AutoCompleteTextView>(R.id.productInput)
         val numLoteLayout = content.findViewById<TextInputLayout>(R.id.numLoteLayout)
         val numLote = content.findViewById<AutoCompleteTextView>(R.id.numLote)
@@ -192,6 +213,48 @@ class NavigationHome : Fragment() {
                 // Limpa o campo de número do lote se o produto for deselecionado
                 if (!isProductSelected) {
                     numLote.text?.clear()
+                }
+            }
+        })
+    }
+
+    private fun setupFieldDependenciesRemove() {
+        val productInputRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
+        val numLoteLayoutRemove = content.findViewById<TextInputLayout>(R.id.numLoteLayoutRemove)
+        val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
+
+        // Inicialmente desabilita o campo de número do lote
+        numLoteLayoutRemove.isEnabled = false
+        numLoteRemove.isEnabled = false
+
+        numLoteRemove.setOnClickListener {
+            if (!numLoteRemove.isEnabled) {
+                showSnackbarMessage("Selecione um produto primeiro")
+            }
+        }
+
+        numLoteLayoutRemove.setOnClickListener {
+            if (!numLoteLayoutRemove.isEnabled) {
+                showSnackbarMessage("Selecione um produto primeiro")
+            }
+        }
+
+        // Adiciona um listener para monitorar mudanças no campo de produto
+        productInputRemove.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val isProductSelected = s?.isNotEmpty() == true && s.toString() != "Escolha um produto"
+
+                // Habilita ou desabilita o campo de número do lote baseado na seleção do produto
+                numLoteLayoutRemove.isEnabled = isProductSelected
+                numLoteRemove.isEnabled = isProductSelected
+
+                // Limpa o campo de número do lote se o produto for deselecionado
+                if (!isProductSelected) {
+                    numLoteRemove.text?.clear()
                 }
             }
         })
