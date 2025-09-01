@@ -1,10 +1,15 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -12,13 +17,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.R
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import java.util.Calendar
 
 class NavigationHome : Fragment() {
     private lateinit var homeScreenButton: Button
     private lateinit var registerButton: Button
     private lateinit var removeButton: Button
     private lateinit var content: FrameLayout
+    private lateinit var inflater: LayoutInflater
+    private lateinit var container: ViewGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -46,6 +55,13 @@ class NavigationHome : Fragment() {
         registerButton.setOnClickListener {
             showContent(R.layout.fragment_layout_cadastrar_produto)
             updateSelectedButtons(registerButton)
+
+            content.post {
+                addProductDropList()
+                addTypeDropList()
+                setupDatePicker()
+                setupFieldDependencies()
+            }
         }
 
         removeButton.setOnClickListener {
@@ -77,4 +93,111 @@ class NavigationHome : Fragment() {
         }
     }
 
+    private fun addProductDropList() {
+        val autoComplete = content.findViewById<AutoCompleteTextView>(R.id.productInput)
+        val options = listOf("Linguiça", "Bisteca", "Maminha", "Optimus Prime", "+ Adicionar")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, options)
+
+        autoComplete.setAdapter(adapter)
+
+        autoComplete.setOnItemClickListener { parent, view, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+
+            // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
+            if (selectedItem == "+ Adicionar") {
+                // Aqui você pode implementar a navegação para adicionar novo produto
+                autoComplete.setText("") // Limpa o campo
+            }
+        }
+    }
+
+    private fun addTypeDropList() {
+        val autoComplete = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
+        val options = listOf("sim", "olá", "aqui")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_expandable_list_item_1, options)
+
+        autoComplete.setAdapter(adapter)
+    }
+
+    private fun setupDatePicker() {
+        val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+        val calendar = Calendar.getInstance()
+
+        dateInput.setOnClickListener {
+            showDatePickerDialog(dateInput, calendar)
+        }
+
+        // Também configure o ícone do calendário para abrir o date picker
+        val dateInputLayout = content.findViewById<TextInputLayout>(R.id.dateInputLayout)
+        dateInputLayout.setEndIconOnClickListener {
+            showDatePickerDialog(dateInput, calendar)
+        }
+    }
+
+    private fun showDatePickerDialog(dateInput: TextInputEditText, calendar: Calendar) {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // Formatando a data no padrão DD / MM / AAAA
+                val formattedDate = String.format("%02d / %02d / %04d", selectedDay, selectedMonth + 1, selectedYear)
+                dateInput.setText(formattedDate)
+
+                // Atualiza o calendário com a data selecionada
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+            },
+            year, month, day
+        )
+
+        datePickerDialog.show()
+    }
+
+    private fun setupFieldDependencies() {
+        val productInput = content.findViewById<AutoCompleteTextView>(R.id.productInput)
+        val numLoteLayout = content.findViewById<TextInputLayout>(R.id.numLoteLayout)
+        val numLote = content.findViewById<AutoCompleteTextView>(R.id.numLote)
+
+        // Inicialmente desabilita o campo de número do lote
+        numLoteLayout.isEnabled = false
+        numLote.isEnabled = false
+
+        numLote.setOnClickListener {
+            if (!numLote.isEnabled) {
+                showSnackbarMessage("Selecione um produto primeiro")
+            }
+        }
+
+        numLoteLayout.setOnClickListener {
+            if (!numLoteLayout.isEnabled) {
+                showSnackbarMessage("Selecione um produto primeiro")
+            }
+        }
+
+        // Adiciona um listener para monitorar mudanças no campo de produto
+        productInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val isProductSelected = s?.isNotEmpty() == true && s.toString() != "Escolha um produto"
+
+                // Habilita ou desabilita o campo de número do lote baseado na seleção do produto
+                numLoteLayout.isEnabled = isProductSelected
+                numLote.isEnabled = isProductSelected
+
+                // Limpa o campo de número do lote se o produto for deselecionado
+                if (!isProductSelected) {
+                    numLote.text?.clear()
+                }
+            }
+        })
+    }
+
+    private fun showSnackbarMessage(message: String) {
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+    }
 }
