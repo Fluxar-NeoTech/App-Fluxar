@@ -84,37 +84,39 @@
                 android:textColorHint="@color/cinza_claro" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Grupo de dimensões (Altura, Largura, Comprimento) -->
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/numLoteLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:id="@+id/numLoteInputLayout"
             android:layout_width="315dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="8dp"
             app:boxBackgroundMode="outline"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
             app:boxStrokeColor="@color/laranja_principal_selector"
-            app:endIconMode="dropdown_menu"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.541"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/typeInputLayout">
 
-            <AutoCompleteTextView
-                android:id="@+id/numLote"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/numLoteInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Número do lote"
-                android:paddingLeft="10dp"
+                android:inputType="numberDecimal"
+                android:paddingStart="12dp"
                 android:paddingTop="18dp"
-                android:paddingEnd="18dp"
-                android:paddingRight="10dp"
-                android:textColor="@color/preto"
+                android:paddingEnd="12dp"
+                android:paddingBottom="18dp"
+                android:textColor="@android:color/black"
                 android:textColorHint="@color/cinza_claro" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Grupo de dimensões (Altura, Largura, Comprimento) -->
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/alturaInputLayout"
@@ -131,7 +133,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.541"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/numLoteLayout">
+            app:layout_constraintTop_toBottomOf="@+id/numLoteInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/alturaInput"
