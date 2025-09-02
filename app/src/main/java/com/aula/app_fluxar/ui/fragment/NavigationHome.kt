@@ -58,7 +58,6 @@ class NavigationHome : Fragment() {
                 addProductDropListAdd()
                 addTypeDropList()
                 setupDatePicker()
-                setupFieldDependenciesAdd()
             }
         }
 
@@ -174,48 +173,6 @@ class NavigationHome : Fragment() {
         )
 
         datePickerDialog.show()
-    }
-
-    private fun setupFieldDependenciesAdd() {
-        val productInput = content.findViewById<AutoCompleteTextView>(R.id.productInput)
-        val numLoteLayout = content.findViewById<TextInputLayout>(R.id.numLoteLayout)
-        val numLote = content.findViewById<AutoCompleteTextView>(R.id.numLote)
-
-        // Inicialmente desabilita o campo de número do lote
-        numLoteLayout.isEnabled = false
-        numLote.isEnabled = false
-
-        numLote.setOnClickListener {
-            if (!numLote.isEnabled) {
-                showSnackbarMessage("Selecione um produto primeiro")
-            }
-        }
-
-        numLoteLayout.setOnClickListener {
-            if (!numLoteLayout.isEnabled) {
-                showSnackbarMessage("Selecione um produto primeiro")
-            }
-        }
-
-        // Adiciona um listener para monitorar mudanças no campo de produto
-        productInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-                val isProductSelected = s?.isNotEmpty() == true && s.toString() != "Escolha um produto"
-
-                // Habilita ou desabilita o campo de número do lote baseado na seleção do produto
-                numLoteLayout.isEnabled = isProductSelected
-                numLote.isEnabled = isProductSelected
-
-                // Limpa o campo de número do lote se o produto for deselecionado
-                if (!isProductSelected) {
-                    numLote.text?.clear()
-                }
-            }
-        })
     }
 
     private fun setupFieldDependenciesRemove() {
