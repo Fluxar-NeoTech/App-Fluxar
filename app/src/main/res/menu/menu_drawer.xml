@@ -9,11 +9,6 @@
             android:iconTint="#FFFFFF"
             android:title="Fábricas" />
         <item
-            android:id="@+id/nav_calendario"
-            android:icon="@drawable/calendariobraco"
-            android:iconTint="#FFFFFF"
-            android:title="Calendário" />
-        <item
             android:id="@+id/nav_tema"
             android:icon="@drawable/tema"
             android:iconTint="#FFFFFF"

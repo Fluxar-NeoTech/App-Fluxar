@@ -1,18 +1,27 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.R
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import java.util.Calendar
 
 class NavigationHome : Fragment() {
     private lateinit var homeScreenButton: Button
@@ -46,11 +55,34 @@ class NavigationHome : Fragment() {
         registerButton.setOnClickListener {
             showContent(R.layout.fragment_layout_cadastrar_produto)
             updateSelectedButtons(registerButton)
+
+            content.post {
+                val addButton = content.findViewById<Button>(R.id.btCadastrar)
+
+                addProductDropListAdd()
+                addTypeDropList()
+                setupDatePicker()
+
+                addButton.setOnClickListener {
+                    openAddProductPopUp()
+                }
+            }
         }
 
         removeButton.setOnClickListener {
             showContent(R.layout.fragment_layout_remover_produto)
             updateSelectedButtons(removeButton)
+
+            content.post {
+                val removeButton = content.findViewById<Button>(R.id.btRemover)
+
+                addProductDropListRemove()
+                setupFieldDependenciesRemove()
+
+                removeButton.setOnClickListener {
+                    openRemoverProductPopUp()
+                }
+            }
         }
 
         return view
@@ -77,4 +109,173 @@ class NavigationHome : Fragment() {
         }
     }
 
+    private fun addProductDropListAdd() {
+        val autoCompleteAdd = content.findViewById<AutoCompleteTextView>(R.id.productInput)
+        val options = listOf("Linguiça", "Bisteca", "Maminha", "Optimus Prime", "+ Adicionar")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, options)
+
+        autoCompleteAdd.setAdapter(adapter)
+
+        autoCompleteAdd.setOnItemClickListener { parent, view, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+
+            // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
+            if (selectedItem == "+ Adicionar") {
+                // Aqui você pode implementar a navegação para adicionar novo produto
+                autoCompleteAdd.setText("") // Limpa o campo
+            }
+        }
+    }
+
+    private fun addProductDropListRemove() {
+        val autoCompleteRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
+        val options = listOf("Linguiça", "Bisteca", "Maminha", "Optimus Prime", "+ Adicionar")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, options)
+
+        autoCompleteRemove.setAdapter(adapter)
+
+        autoCompleteRemove.setOnItemClickListener { parent, view, position, id ->
+            val selectedItem = parent.getItemAtPosition(position).toString()
+
+            // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
+            if (selectedItem == "+ Adicionar") {
+                // Aqui você pode implementar a navegação para adicionar novo produto
+                autoCompleteRemove.setText("") // Limpa o campo
+            }
+        }
+    }
+
+    private fun addTypeDropList() {
+        val autoComplete = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
+        val options = listOf("sim", "olá", "aqui")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_expandable_list_item_1, options)
+
+        autoComplete.setAdapter(adapter)
+    }
+
+    private fun setupDatePicker() {
+        val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+        val calendar = Calendar.getInstance()
+
+        dateInput.setOnClickListener {
+            showDatePickerDialog(dateInput, calendar)
+        }
+
+        // Também configure o ícone do calendário para abrir o date picker
+        val dateInputLayout = content.findViewById<TextInputLayout>(R.id.dateInputLayout)
+        dateInputLayout.setEndIconOnClickListener {
+            showDatePickerDialog(dateInput, calendar)
+        }
+    }
+
+    private fun showDatePickerDialog(dateInput: TextInputEditText, calendar: Calendar) {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // Formatando a data no padrão DD / MM / AAAA
+                val formattedDate = String.format("%02d / %02d / %04d", selectedDay, selectedMonth + 1, selectedYear)
+                dateInput.setText(formattedDate)
+
+                // Atualiza o calendário com a data selecionada
+                calendar.set(selectedYear, selectedMonth, selectedDay)
+            },
+            year, month, day
+        )
+
+        datePickerDialog.show()
+    }
+
+    private fun setupFieldDependenciesRemove() {
+        val productInputRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
+        val numLoteLayoutRemove = content.findViewById<TextInputLayout>(R.id.numLoteLayoutRemove)
+        val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
+
+        // Inicialmente desabilita o campo de número do lote
+        numLoteLayoutRemove.isEnabled = false
+        numLoteRemove.isEnabled = false
+
+        numLoteRemove.setOnClickListener {
+            if (!numLoteRemove.isEnabled) {
+                showSnackbarMessage("Selecione um produto primeiro")
+            }
+        }
+
+        numLoteLayoutRemove.setOnClickListener {
+            if (!numLoteLayoutRemove.isEnabled) {
+                showSnackbarMessage("Selecione um produto primeiro")
+            }
+        }
+
+        // Adiciona um listener para monitorar mudanças no campo de produto
+        productInputRemove.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val isProductSelected = s?.isNotEmpty() == true && s.toString() != "Escolha um produto"
+
+                // Habilita ou desabilita o campo de número do lote baseado na seleção do produto
+                numLoteLayoutRemove.isEnabled = isProductSelected
+                numLoteRemove.isEnabled = isProductSelected
+
+                // Limpa o campo de número do lote se o produto for deselecionado
+                if (!isProductSelected) {
+                    numLoteRemove.text?.clear()
+                }
+            }
+        })
+    }
+
+    private fun showSnackbarMessage(message: String) {
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openAddProductPopUp() {
+        val dialogAddProduct = layoutInflater.inflate(R.layout.pop_up_cadastrar_produto, null)
+        val positiveButton = dialogAddProduct.findViewById<Button>(R.id.cadastrarProdutoS)
+        val negativeButton = dialogAddProduct.findViewById<Button>(R.id.cadastrarProdutoN)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogAddProduct)
+            .create()
+
+        positiveButton.setOnClickListener {
+            // Lógica para cadastrar produto
+            Toast.makeText(requireContext(), "Você cadastrou um produto", Toast.LENGTH_SHORT).show()
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
+    private fun openRemoverProductPopUp() {
+        val dialogAddProduct = layoutInflater.inflate(R.layout.pop_up_remover_produto, null)
+        val positiveButton = dialogAddProduct.findViewById<Button>(R.id.removerProdutoS)
+        val negativeButton = dialogAddProduct.findViewById<Button>(R.id.removerProdutoN)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogAddProduct)
+            .create()
+
+        positiveButton.setOnClickListener {
+            // Lógica para remover produto
+            Toast.makeText(requireContext(), "Você removeu um produto", Toast.LENGTH_SHORT).show()
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
 }
