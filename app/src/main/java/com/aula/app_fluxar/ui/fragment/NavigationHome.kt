@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
@@ -13,6 +14,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -55,9 +57,15 @@ class NavigationHome : Fragment() {
             updateSelectedButtons(registerButton)
 
             content.post {
+                val addButton = content.findViewById<Button>(R.id.btCadastrar)
+
                 addProductDropListAdd()
                 addTypeDropList()
                 setupDatePicker()
+
+                addButton.setOnClickListener {
+                    openAddProductPopUp()
+                }
             }
         }
 
@@ -66,8 +74,14 @@ class NavigationHome : Fragment() {
             updateSelectedButtons(removeButton)
 
             content.post {
+                val removeButton = content.findViewById<Button>(R.id.btRemover)
+
                 addProductDropListRemove()
                 setupFieldDependenciesRemove()
+
+                removeButton.setOnClickListener {
+                    openRemoverProductPopUp()
+                }
             }
         }
 
@@ -219,5 +233,49 @@ class NavigationHome : Fragment() {
 
     private fun showSnackbarMessage(message: String) {
         android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openAddProductPopUp() {
+        val dialogAddProduct = layoutInflater.inflate(R.layout.pop_up_cadastrar_produto, null)
+        val positiveButton = dialogAddProduct.findViewById<Button>(R.id.cadastrarProdutoS)
+        val negativeButton = dialogAddProduct.findViewById<Button>(R.id.cadastrarProdutoN)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogAddProduct)
+            .create()
+
+        positiveButton.setOnClickListener {
+            // Lógica para cadastrar produto
+            Toast.makeText(requireContext(), "Você cadastrou um produto", Toast.LENGTH_SHORT).show()
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
+    private fun openRemoverProductPopUp() {
+        val dialogAddProduct = layoutInflater.inflate(R.layout.pop_up_remover_produto, null)
+        val positiveButton = dialogAddProduct.findViewById<Button>(R.id.removerProdutoS)
+        val negativeButton = dialogAddProduct.findViewById<Button>(R.id.removerProdutoN)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogAddProduct)
+            .create()
+
+        positiveButton.setOnClickListener {
+            // Lógica para remover produto
+            Toast.makeText(requireContext(), "Você removeu um produto", Toast.LENGTH_SHORT).show()
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 }
