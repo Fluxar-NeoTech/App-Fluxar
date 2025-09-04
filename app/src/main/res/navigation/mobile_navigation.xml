@@ -44,4 +44,9 @@
         android:name="com.aula.app_fluxar.ui.fragment.RemoverProduto"
         android:label="fragment_layout_remover_produto"
         tools:layout="@layout/fragment_layout_remover_produto" />
+    <fragment
+        android:id="@+id/nav_limite_estoque"
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationLimiteEstoque"
+        android:label="fragment_layout_nav_limite_estoque"
+        tools:layout="@layout/fragment_layout_nav_limite_estoque"/>
 </navigation>
