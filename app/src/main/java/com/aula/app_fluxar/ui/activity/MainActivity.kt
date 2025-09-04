@@ -114,6 +114,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_tema -> {
                     Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
                 }
+
+                R.id.nav_limite_estoque -> {
+                    navController.navigate(R.id.nav_limite_estoque)
+                }
             }
 
             drawerLayout.closeDrawer(GravityCompat.END)
