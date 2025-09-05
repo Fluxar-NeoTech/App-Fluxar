@@ -27,6 +27,7 @@ class NavigationHome : Fragment() {
     private lateinit var homeScreenButton: Button
     private lateinit var registerButton: Button
     private lateinit var removeButton: Button
+    private lateinit var listProductsButton: Button
     private lateinit var content: FrameLayout
 
     override fun onCreateView(
@@ -37,6 +38,7 @@ class NavigationHome : Fragment() {
         homeScreenButton = view.findViewById(R.id.bt_info_gerais)
         registerButton = view.findViewById(R.id.bt_adicionar_estoque)
         removeButton = view.findViewById(R.id.bt_remover_estoque)
+        listProductsButton = view.findViewById(R.id.bt_listar_produtos)
         content = view.findViewById(R.id.container_conteudo)
         val profileButton = view.findViewById<ImageView>(R.id.fotoPerfilGestor)
 
@@ -82,6 +84,20 @@ class NavigationHome : Fragment() {
                 removeButton.setOnClickListener {
                     openRemoverProductPopUp()
                 }
+            }
+        }
+
+        listProductsButton.setOnClickListener {
+            showContent(R.layout.fragment_layout_listar_produtos)
+            updateSelectedButtons(listProductsButton)
+
+            content.post {
+                // add lógica de verificar se existe produto ou não
+                val exists = false
+                if (exists)
+                    showContent(R.layout.fragment_layout_listar_produtos)
+                else
+                    showContent(R.layout.fragment_sem_produtos_cadastrados)
             }
         }
 

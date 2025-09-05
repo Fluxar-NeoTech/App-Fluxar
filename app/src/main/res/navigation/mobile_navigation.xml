@@ -45,6 +45,11 @@
         android:label="fragment_layout_remover_produto"
         tools:layout="@layout/fragment_layout_remover_produto" />
     <fragment
+        android:id="@+id/layout_listar_produto"
+        android:name="com.aula.app_fluxar.ui.fragment.ListarProdutos"
+        android:label="fragment_listar_produtos"
+        tools:layout="@layout/fragment_layout_listar_produtos" />
+    <fragment
         android:id="@+id/nav_limite_estoque"
         android:name="com.aula.app_fluxar.ui.fragment.NavigationLimiteEstoque"
         android:label="fragment_layout_nav_limite_estoque"
