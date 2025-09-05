@@ -36,14 +36,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -53,10 +48,17 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.activity)
+
+    // Dependências do Retrofit (USE ESTAS VERSÕES)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+
+    // Outras dependências
     implementation("com.cloudinary:cloudinary-android:2.3.1")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation(libs.play.services.cast.tv)
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
