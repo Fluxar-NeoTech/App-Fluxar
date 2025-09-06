@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_notificacoes, R.id.nav_infos -> {
+                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque -> {
                     backButton.visibility = View.VISIBLE
                     secundaryNavLogo.visibility = View.VISIBLE
                     backButton.setOnClickListener {

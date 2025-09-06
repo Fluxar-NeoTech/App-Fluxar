@@ -113,7 +113,7 @@ class NavigationHome : Fragment() {
     }
 
     private fun updateSelectedButtons(selectedButton: Button) {
-        val botoes = listOf(homeScreenButton, registerButton, removeButton)
+        val botoes = listOf(homeScreenButton, registerButton, removeButton, listProductsButton)
         botoes.forEach { botao ->
             if (botao == selectedButton) {
                 botao.setBackgroundResource(R.drawable.bt_ativo)
