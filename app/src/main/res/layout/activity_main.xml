@@ -97,15 +97,15 @@
 
         <ImageView
             android:id="@+id/iconVoltar"
-            android:layout_width="72dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="20dp"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="28dp"
             android:layout_marginBottom="2dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.0"
-            android:visibility="gone"
+            app:layout_constraintVertical_bias="0.25"
             app:srcCompat="@drawable/voltar_bt" />
 
         <ImageView
