@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityLoginBinding
-import com.aula.app_fluxar.viewModel.LoginViewModel
+import com.aula.app_fluxar.API.viewModel.LoginViewModel
 
 class Login : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -41,6 +41,8 @@ class Login : AppCompatActivity() {
         viewModel.errorMessage.observe(this, Observer { error ->
             if (error.isNotEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                binding.progressBar.visibility = View.GONE
+                binding.btEntrarLogin.isEnabled = true
             }
         })
 
@@ -49,11 +51,10 @@ class Login : AppCompatActivity() {
             binding.btEntrarLogin.isEnabled = !isLoading
         })
 
-        // Observador para navegar para a MainActivity quando o login for bem-sucedido
         viewModel.navigateToMain.observe(this, Observer { shouldNavigate ->
             if (shouldNavigate) {
                 navigateToMainActivity()
-                viewModel.onNavigationComplete() // Reseta o estado
+                viewModel.onNavigationComplete()
             }
         })
     }
@@ -73,8 +74,17 @@ class Login : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        val employee = viewModel.getUser()
+        if (employee != null) {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("USER_DATA", employee)
+            }
+            startActivity(intent)
+            finish()
+        } else {
+            Toast.makeText(this, "Erro ao carregar dados do usuário", Toast.LENGTH_SHORT).show()
+            binding.progressBar.visibility = View.GONE
+            binding.btEntrarLogin.isEnabled = true
+        }
     }
 }

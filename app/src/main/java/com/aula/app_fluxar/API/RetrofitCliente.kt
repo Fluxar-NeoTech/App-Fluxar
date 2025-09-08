@@ -1,4 +1,4 @@
-package com.aula.app_fluxar
+package com.aula.app_fluxar.API
 
 import com.aula.app_fluxar.API.service.APIService
 import okhttp3.OkHttpClient
