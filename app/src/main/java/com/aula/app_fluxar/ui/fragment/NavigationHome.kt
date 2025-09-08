@@ -14,6 +14,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -33,6 +34,7 @@ class NavigationHome : Fragment() {
     private lateinit var listProductsButton: Button
     private lateinit var content: FrameLayout
     private lateinit var profileButton: ImageView
+    private lateinit var greetingManager: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,6 +47,7 @@ class NavigationHome : Fragment() {
         listProductsButton = view.findViewById(R.id.bt_listar_produtos)
         content = view.findViewById(R.id.container_conteudo)
         profileButton = view.findViewById(R.id.fotoPerfilGestor)
+        greetingManager = view.findViewById(R.id.cumprimentoGestor)
 
         return view
     }
@@ -52,11 +55,11 @@ class NavigationHome : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loadProfilePhoto()
+        loadProfileInfos()
 
         (activity as? MainActivity)?.employeeLiveData?.observe(viewLifecycleOwner) { employee ->
             if (employee != null) {
-                loadProfilePhoto()
+                loadProfileInfos()
             }
         }
 
@@ -310,10 +313,16 @@ class NavigationHome : Fragment() {
         dialog.show()
     }
 
-    private fun loadProfilePhoto() {
+    private fun loadProfileInfos() {
         val employee = (activity as? MainActivity)?.getEmployee()
 
         employee?.let {
+            if (it.nome.isNotEmpty()) {
+                greetingManager.text = "Olá, ${it.nome}!"
+            } else {
+                greetingManager.text = "Olá, usuário!"
+            }
+
             if (it.fotoPerfil.isNotEmpty()) {
                 Glide.with(requireContext())
                     .load(it.fotoPerfil)
