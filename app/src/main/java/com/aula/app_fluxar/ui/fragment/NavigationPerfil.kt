@@ -184,8 +184,6 @@ class NavigationPerfil : Fragment() {
         if (!url.isNullOrEmpty()) {
             Glide.with(requireContext())
                 .load(url)
-                .placeholder(R.drawable.foto_de_perfil_padrao)
-                .error(R.drawable.foto_de_perfil_padrao)
                 .transform(CircleCrop())
                 .into(binding.fotoPerfilPadrao)
         } else {

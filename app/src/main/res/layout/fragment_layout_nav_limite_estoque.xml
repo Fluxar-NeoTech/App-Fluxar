@@ -90,11 +90,11 @@
             app:layout_constraintTop_toBottomOf="@+id/larguraCapacidade">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputProfundidadeCapacidade"
+                android:id="@+id/inputComprimentoCapacidade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
-                android:hint="Profundidade"
+                android:hint="Comprimento"
                 android:inputType="number|numberDecimal"
                 android:paddingStart="12dp"
                 android:paddingTop="20dp"
