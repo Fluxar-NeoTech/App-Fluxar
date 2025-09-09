@@ -14,11 +14,15 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.ui.activity.MainActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Calendar
@@ -29,6 +33,8 @@ class NavigationHome : Fragment() {
     private lateinit var removeButton: Button
     private lateinit var listProductsButton: Button
     private lateinit var content: FrameLayout
+    private lateinit var profileButton: ImageView
+    private lateinit var greetingManager: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -40,7 +46,22 @@ class NavigationHome : Fragment() {
         removeButton = view.findViewById(R.id.bt_remover_estoque)
         listProductsButton = view.findViewById(R.id.bt_listar_produtos)
         content = view.findViewById(R.id.container_conteudo)
-        val profileButton = view.findViewById<ImageView>(R.id.fotoPerfilGestor)
+        profileButton = view.findViewById(R.id.fotoPerfilGestor)
+        greetingManager = view.findViewById(R.id.cumprimentoGestor)
+
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        loadProfileInfos()
+
+        (activity as? MainActivity)?.employeeLiveData?.observe(viewLifecycleOwner) { employee ->
+            if (employee != null) {
+                loadProfileInfos()
+            }
+        }
 
         profileButton.setOnClickListener {
             findNavController().navigate(R.id.nav_perfil)
@@ -100,9 +121,6 @@ class NavigationHome : Fragment() {
                     showContent(R.layout.fragment_sem_produtos_cadastrados)
             }
         }
-
-        return view
-
     }
 
     private fun showContent(layoutId: Int) {
@@ -248,7 +266,7 @@ class NavigationHome : Fragment() {
     }
 
     private fun showSnackbarMessage(message: String) {
-        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun openAddProductPopUp() {
@@ -293,5 +311,30 @@ class NavigationHome : Fragment() {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
+    }
+
+    private fun loadProfileInfos() {
+        val employee = (activity as? MainActivity)?.getEmployee()
+
+        employee?.let {
+            if (it.nome.isNotEmpty()) {
+                greetingManager.text = "Olá, ${it.nome}!"
+            } else {
+                greetingManager.text = "Olá, usuário!"
+            }
+
+            if (it.fotoPerfil.isNotEmpty()) {
+                Glide.with(requireContext())
+                    .load(it.fotoPerfil)
+                    .placeholder(R.drawable.foto_de_perfil_padrao)
+                    .error(R.drawable.foto_de_perfil_padrao)
+                    .transform(CircleCrop())
+                    .into(profileButton)
+            } else {
+                profileButton.setImageResource(R.drawable.foto_de_perfil_padrao)
+            }
+        } ?: run {
+            profileButton.setImageResource(R.drawable.foto_de_perfil_padrao)
+        }
     }
 }

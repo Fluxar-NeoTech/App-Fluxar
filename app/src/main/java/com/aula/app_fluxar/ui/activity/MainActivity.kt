@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -24,6 +26,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var employee: Employee? = null
+    private val _employeeLiveData = MutableLiveData<Employee?>()
+    val employeeLiveData: LiveData<Employee?> = _employeeLiveData
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         employee = intent.getParcelableExtra("USER_DATA")
+        _employeeLiveData.value = employee
 
         if (employee != null) {
             println("DADOS RECEBIDOS NA MAIN: ${employee!!.nome} ${employee!!.sobrenome}")
@@ -152,6 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     fun updateEmployee(updatedEmployee: Employee) {
         this.employee = updatedEmployee
+        _employeeLiveData.value = updatedEmployee // Notifica os observadores
     }
 
     fun showDialogLogOut() {
@@ -178,7 +184,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onLoginSuccess(employee: Employee) {
         this.employee = employee
-        // Notifica o fragmento de perfil para atualizar a UI
+        _employeeLiveData.value = employee
         supportFragmentManager.fragments.forEach { fragment ->
             if (fragment is NavigationPerfil) {
                 fragment.updateEmployeeData(employee)
