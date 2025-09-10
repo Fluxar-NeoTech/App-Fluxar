@@ -8,19 +8,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
+import com.aula.app_fluxar.ui.fragment.NavigationPerfil
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private var employee: Employee? = null
+    private val _employeeLiveData = MutableLiveData<Employee?>()
+    val employeeLiveData: LiveData<Employee?> = _employeeLiveData
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,11 +38,19 @@ class MainActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        val navView: BottomNavigationView = binding.navView
+        employee = intent.getParcelableExtra("USER_DATA")
+        _employeeLiveData.value = employee
 
+        if (employee != null) {
+            println("DADOS RECEBIDOS NA MAIN: ${employee!!.nome} ${employee!!.sobrenome}")
+            println("FOTO: ${employee!!.fotoPerfil}")
+        } else {
+            Toast.makeText(this, "Dados do usuário não encontrados", Toast.LENGTH_SHORT).show()
+        }
+
+        val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
@@ -47,48 +62,39 @@ class MainActivity : AppCompatActivity() {
         )
         navView.setupWithNavController(navController)
 
-        // Navegação entre as páginas da navbar principal
         navView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
                     navController.navigate(R.id.nav_home)
                     true
                 }
-
                 R.id.nav_relatorio -> {
                     navController.navigate(R.id.nav_relatorio)
                     true
                 }
-
                 R.id.nav_unidades -> {
                     navController.navigate(R.id.nav_unidades)
                     true
                 }
-
                 R.id.nav_perfil -> {
                     navController.navigate(R.id.nav_perfil)
                     true
                 }
-
                 else -> false
             }
         }
 
-        // Configuração dos ícones da navbar secundária
         val backButton = binding.iconVoltar
-        val secundaryNavLogo = binding.logoNavSecundaria
+        val secondaryNavLogo = binding.logoNavSecundaria
 
-        // Calculando altura da navbar para abrir menu lateral
         val navigationView = binding.navigationView
         binding.root.post {
             val toolbarHeight = binding.materialToolbar.height
             val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
-
             layoutParams.topMargin = toolbarHeight
             navigationView.layoutParams = layoutParams
         }
 
-        // Configurando o menu lateral
         val drawerLayout = binding.drawerLayout
         val menuIcon = binding.iconMenu
 
@@ -96,36 +102,25 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.openDrawer(GravityCompat.END)
         }
 
-        menuIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.END)
-        }
-
-        // Navegação entre páginas do menu lateral
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.nav_info -> {
                     navController.navigate(R.id.nav_infos)
                 }
-
                 R.id.nav_sair -> {
                     showDialogLogOut()
                 }
-
                 R.id.nav_tema -> {
                     Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
                 }
-
                 R.id.nav_limite_estoque -> {
                     navController.navigate(R.id.nav_limite_estoque)
                 }
             }
-
             drawerLayout.closeDrawer(GravityCompat.END)
             true
         }
 
-
-        // Configuração do icone de notificações
         val notificationIcon = binding.iconNotificacoes
         notificationIcon.setOnClickListener {
             navController.navigate(R.id.nav_notificacoes)
@@ -133,31 +128,21 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_notificacoes, R.id.nav_infos -> {
+                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque -> {
                     backButton.visibility = View.VISIBLE
-                    secundaryNavLogo.visibility = View.VISIBLE
+                    secondaryNavLogo.visibility = View.VISIBLE
                     backButton.setOnClickListener {
                         navController.popBackStack()
                     }
-
-                    // Esconder bottom navigation
                     binding.navView.visibility = View.GONE
-
-                    // Esconder todos os elementos da antiga navbar
                     binding.logo.visibility = View.GONE
                     binding.iconNotificacoes.visibility = View.GONE
                     binding.iconMenu.visibility = View.GONE
                 }
-
                 else -> {
-                    // Remover icones da navbar secundária
                     backButton.visibility = View.GONE
-                    secundaryNavLogo.visibility = View.GONE
-
-                    // Mostrar bottom navigation
+                    secondaryNavLogo.visibility = View.GONE
                     binding.navView.visibility = View.VISIBLE
-
-                    // Mostrar todos os elementos da navbar
                     binding.logo.visibility = View.VISIBLE
                     binding.iconNotificacoes.visibility = View.VISIBLE
                     binding.iconMenu.visibility = View.VISIBLE
@@ -166,7 +151,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Função para abrir o dialog personalizado (sair_da_conta.xml)
+    fun getEmployee(): Employee? {
+        return employee
+    }
+
+    fun updateEmployee(updatedEmployee: Employee) {
+        this.employee = updatedEmployee
+        _employeeLiveData.value = updatedEmployee // Notifica os observadores
+    }
+
     fun showDialogLogOut() {
         val dialogLogOut = layoutInflater.inflate(R.layout.sair_da_conta, null)
         val positiveButton = dialogLogOut.findViewById<Button>(R.id.sairContaS)
@@ -177,8 +170,8 @@ class MainActivity : AppCompatActivity() {
             .create()
 
         positiveButton.setOnClickListener {
-            // Lógica para sair da conta
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
+            finish()
         }
 
         negativeButton.setOnClickListener {
@@ -187,5 +180,15 @@ class MainActivity : AppCompatActivity() {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
+    }
+
+    fun onLoginSuccess(employee: Employee) {
+        this.employee = employee
+        _employeeLiveData.value = employee
+        supportFragmentManager.fragments.forEach { fragment ->
+            if (fragment is NavigationPerfil) {
+                fragment.updateEmployeeData(employee)
+            }
+        }
     }
 }

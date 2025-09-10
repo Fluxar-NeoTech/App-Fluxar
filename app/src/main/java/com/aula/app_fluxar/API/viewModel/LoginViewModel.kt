@@ -1,13 +1,12 @@
-package com.aula.app_fluxar.viewModel
+package com.aula.app_fluxar.API.viewModel
 
-import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.LoginRequest
-import com.aula.app_fluxar.RetrofitClient
+import com.aula.app_fluxar.API.RetrofitClient
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -20,9 +19,11 @@ class LoginViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // LiveData para controlar quando navegar para a MainActivity
     private val _navigateToMain = MutableLiveData<Boolean>()
     val navigateToMain: LiveData<Boolean> = _navigateToMain
+
+    private val _userData = MutableLiveData<Employee?>()
+    val userData: LiveData<Employee?> = _userData
 
     fun login(email: String, senha: String) {
         _isLoading.value = true
@@ -34,9 +35,10 @@ class LoginViewModel : ViewModel() {
                 val response = RetrofitClient.instance.login(LoginRequest(email, senha))
 
                 if(response.isSuccessful) {
-                    _loginResult.value = response.body()
+                    val employee = response.body()
+                    _loginResult.value = employee
+                    _userData.value = employee
                     _errorMessage.value = ""
-                    // Indica que pode navegar para a MainActivity
                     _navigateToMain.value = true
                 } else {
                     when (response.code()) {
@@ -49,7 +51,7 @@ class LoginViewModel : ViewModel() {
                     _navigateToMain.value = false
                 }
             } catch (e: java.net.SocketTimeoutException) {
-                _errorMessage.value = "Timeout: O servidor demorou muito para responder"
+                _errorMessage.value = "Timeout: O servidor demorou muito para responderasync"
                 _navigateToMain.value = false
             } catch (e: java.net.ConnectException) {
                 _errorMessage.value = "Não foi possível conectar ao servidor"
@@ -66,8 +68,11 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    // Método para resetar a navegação
     fun onNavigationComplete() {
         _navigateToMain.value = false
+    }
+
+    fun getUser(): Employee? {
+        return _userData.value
     }
 }
