@@ -26,8 +26,9 @@
 
             <TextView
                 android:id="@+id/cumprimentoGestor"
-                android:layout_width="0dp"
+                android:layout_width="647dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Olá, nome!"
@@ -36,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/fotoPerfilGestor"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:contentDescription="Foto do perfil"
                 android:src="@drawable/foto_de_perfil_padrao" />
         </LinearLayout>
