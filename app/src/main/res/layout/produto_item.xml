@@ -7,9 +7,11 @@
     android:padding="8dp">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="381dp"
-        android:layout_height="88dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -17,7 +19,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cardProduto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:padding="12dp">
 
             <TextView
@@ -27,9 +30,8 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Molho de Tomate"
                 android:textColor="@color/roxo_principal"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toStartOf="@id/produto_lote"
-                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -41,7 +43,7 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="AR0310B2"
                 android:textColor="@color/laranja_principal"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/produto_nome" />
 
@@ -53,7 +55,7 @@
                 android:fontFamily="@font/roboto"
                 android:text="Conservado válido até"
                 android:textColor="@color/preto"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/produto_nome" />
 
@@ -65,11 +67,10 @@
                 android:layout_marginTop="8dp"
                 android:text="11/2025"
                 android:textColor="@color/preto"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toStartOf="@id/produto_medidas"
-                app:layout_constraintHorizontal_bias="0.0"
+                android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@id/textView5"
-                app:layout_constraintTop_toBottomOf="@id/produto_nome" />
+                app:layout_constraintTop_toBottomOf="@id/produto_nome"
+                app:layout_constraintEnd_toStartOf="@id/produto_medidas" />
 
             <TextView
                 android:id="@+id/produto_medidas"
@@ -78,7 +79,7 @@
                 android:layout_marginTop="8dp"
                 android:text="12 × 6 × 6 cm"
                 android:textColor="@color/preto"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/produto_lote" />
 

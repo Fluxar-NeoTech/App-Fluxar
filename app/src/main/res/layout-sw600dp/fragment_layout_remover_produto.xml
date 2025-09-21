@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.fragment.RemoverProduto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/removerEstoqueTitulo"
+            android:layout_width="457dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="360dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Remover do Estoque"
+            android:textAlignment="center"
+            android:textColor="@color/roxo_principal"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/productInputLayoutRemove"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="489dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="40dp"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeColor="@color/laranja_principal_selector"
+            app:endIconMode="dropdown_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/removerEstoqueTitulo"
+            app:layout_constraintWidth_percent="0.7">
+
+            <AutoCompleteTextView
+                android:id="@+id/productInputRemove"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="Escolha um produto"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/preto"
+                android:textColorHint="@color/cinza_claro"
+                android:textSize="18sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/numLoteLayoutRemove"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="489dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="20dp"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeColor="@color/laranja_principal_selector"
+            app:endIconMode="dropdown_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/productInputLayoutRemove"
+            app:layout_constraintWidth_percent="0.7">
+
+            <AutoCompleteTextView
+                android:id="@+id/numLoteRemove"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="Número do lote"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/preto"
+                android:textColorHint="@color/cinza_claro"
+                android:textSize="18sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btRemover"
+            android:layout_width="489dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/roxo_principal"
+            android:fontFamily="@font/roboto_bold"
+            android:text="REMOVER"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/numLoteLayoutRemove"
+            app:layout_constraintWidth_percent="0.5" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
