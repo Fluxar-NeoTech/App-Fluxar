@@ -15,8 +15,8 @@
         <!-- Foto -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/quadradoPerfil"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="697dp"
+            android:layout_height="357dp"
             android:layout_marginTop="12dp"
             android:backgroundTint="#FDEDDD"
             app:cardCornerRadius="12dp"
@@ -29,8 +29,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/fotoPerfilPadrao"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="189dp"
+            android:layout_height="183dp"
             android:layout_margin="16dp"
             android:layout_marginBottom="142dp"
             android:adjustViewBounds="true"
@@ -128,7 +128,7 @@
             android:fontFamily="@font/montserrat_bold"
             android:text="Sobre a empresa"
             android:textColor="@color/preto"
-            android:textSize="30sp"
+            android:textSize="35sp"
             app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
             app:layout_constraintTop_toBottomOf="@id/quadradoPerfil" />
 
@@ -148,11 +148,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:padding="14dp">
 
                 <ImageView
-                    android:layout_width="90sp"
-                    android:layout_height="90sp"
+                    android:layout_width="100sp"
+                    android:layout_height="100sp"
                     android:src="@drawable/icone_mala_nome_empresa" />
 
                 <TextView
@@ -172,11 +172,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:padding="14dp">
 
                 <ImageView
-                    android:layout_width="90sp"
-                    android:layout_height="90sp"
+                    android:layout_width="100sp"
+                    android:layout_height="100sp"
                     android:src="@drawable/icone_cnpj" />
 
                 <TextView
@@ -196,11 +196,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:padding="14dp">
 
                 <ImageView
-                    android:layout_width="90sp"
-                    android:layout_height="90sp"
+                    android:layout_width="100sp"
+                    android:layout_height="100sp"
                     android:src="@drawable/icone_local_empresa" />
 
                 <TextView
@@ -220,11 +220,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:padding="14dp">
 
                 <ImageView
-                    android:layout_width="90sp"
-                    android:layout_height="90sp"
+                    android:layout_width="100sp"
+                    android:layout_height="100sp"
                     android:src="@drawable/icone_unidade" />
 
                 <TextView
@@ -244,11 +244,11 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="8dp">
+                android:padding="14dp">
 
                 <ImageView
-                    android:layout_width="90sp"
-                    android:layout_height="90sp"
+                    android:layout_width="100sp"
+                    android:layout_height="100sp"
                     android:src="@drawable/icone_estoque" />
 
                 <TextView

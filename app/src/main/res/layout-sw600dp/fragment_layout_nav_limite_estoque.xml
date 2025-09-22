@@ -14,7 +14,7 @@
             android:id="@+id/capacidadeEstoqueTitulo"
             android:layout_width="465dp"
             android:layout_height="110dp"
-            android:layout_marginTop="340dp"
+            android:layout_marginTop="300dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Capacidade Máxima do Estoque"
             android:textAlignment="center"
