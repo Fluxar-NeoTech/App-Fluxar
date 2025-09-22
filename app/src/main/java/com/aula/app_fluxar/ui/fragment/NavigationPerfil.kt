@@ -97,13 +97,10 @@ class NavigationPerfil : Fragment() {
         CloudnaryConfig.init(requireContext())
         binding = FragmentNavPerfilBinding.inflate(inflater, container, false)
 
-        // Inicializa o ViewModel para atualizar foto
         updateFotoViewModel = ViewModelProvider(this).get(UpdateFotoViewModel::class.java)
 
-        // Observa os resultados da atualização
         observeUpdatePhoto()
 
-        // Pega os dados da MainActivity
         employee = (activity as? MainActivity)?.getEmployee()
 
         if (employee != null) {
@@ -123,13 +120,8 @@ class NavigationPerfil : Fragment() {
     private fun observeUpdatePhoto() {
         updateFotoViewModel.updateFotoResult.observe(viewLifecycleOwner) { result ->
             result?.let { responseMap ->
-                val fotoUrl = responseMap["fotoPerfil"] ?: responseMap["url"] ?: responseMap["secure_url"]
-
-                if (!fotoUrl.isNullOrEmpty()) {
-                    profilePhotoUrl = fotoUrl
-
+                profilePhotoUrl?.let { fotoUrl ->
                     employee = employee?.copy(fotoPerfil = fotoUrl)
-
                     loadProfilePhoto(fotoUrl)
 
                     Toast.makeText(requireContext(), "Foto atualizada com sucesso!", Toast.LENGTH_SHORT).show()
@@ -137,19 +129,19 @@ class NavigationPerfil : Fragment() {
                     employee?.let { emp ->
                         (activity as? MainActivity)?.updateEmployee(emp)
                     }
-                } else {
-                    Toast.makeText(requireContext(), "Erro: URL da foto não encontrada na resposta", Toast.LENGTH_SHORT).show()
-                    Log.e("UpdatePhoto", "Resposta do servidor: $responseMap")
+                } ?: run {
+                    Toast.makeText(requireContext(), "Erro: URL da foto não encontrada", Toast.LENGTH_SHORT).show()
+                    Log.e("UpdatePhoto", "profilePhotoUrl está null. Resposta servidor: $responseMap")
                 }
             }
         }
 
         updateFotoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            if (error.isNotEmpty()) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
-                Log.e("UpdatePhoto", error)
+                if (error.isNotEmpty()) {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                    Log.e("UpdatePhoto", error)
+                }
             }
-        }
 
         updateFotoViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             if (isLoading) {
@@ -171,6 +163,12 @@ class NavigationPerfil : Fragment() {
     private fun updateUIWithUserData(employee: Employee) {
         try {
             binding.nomeGestor.text = "${employee.nome ?: ""} ${employee.sobrenome ?: ""}"
+            binding.nomeEmpresaGestor.text = employee.unit.industry.nome ?: "Indisponível"
+            binding.setorGestor.text = "Setor: ${employee.setor.nome}" ?: "Indisponível"
+            binding.cnpjEmpresaGestor.text = formatCNPJ(employee.unit.industry.cnpj) ?: "Indisponível"
+            binding.unidadeGestor.text = employee.unit.nome ?: "Indisponível"
+            binding.enderecoUnidadeGestor.text = "${employee.unit.rua}, ${employee.unit.numero}" ?: "Indisponível"
+            binding.estoqueGestor.text = "Capacidade máx. - ${employee.capacidadeMaxima}m³" ?: "Indisponível"
 
             profilePhotoUrl = employee.fotoPerfil
 
@@ -181,7 +179,7 @@ class NavigationPerfil : Fragment() {
     }
 
     private fun loadProfilePhoto(url: String?) {
-        if (!url.isNullOrEmpty()) {
+        if (url!!.isNotEmpty()) {
             Glide.with(requireContext())
                 .load(url)
                 .transform(CircleCrop())
@@ -311,7 +309,19 @@ class NavigationPerfil : Fragment() {
         updateUIWithUserData(newEmployee)
     }
 
-    fun getProfilePhotoUrl(): String? {
-        return profilePhotoUrl
+    fun formatCNPJ(cnpj: String?): String {
+        if (cnpj.isNullOrBlank()) return ""
+
+        val somenteNumeros = cnpj.filter { it.isDigit() }
+
+        return if (somenteNumeros.length == 14) {
+            "${somenteNumeros.substring(0, 2)}." +
+                    "${somenteNumeros.substring(2, 5)}." +
+                    "${somenteNumeros.substring(5, 8)}/" +
+                    "${somenteNumeros.substring(8, 12)}-" +
+                    "${somenteNumeros.substring(12, 14)}"
+        } else {
+            cnpj
+        }
     }
 }

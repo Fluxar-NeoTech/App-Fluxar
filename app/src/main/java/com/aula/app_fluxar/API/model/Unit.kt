@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Unit(
+    val id: Long,
     val nome: String,
     val cep: String,
     val rua: String,
@@ -12,4 +13,5 @@ data class Unit(
     val estado: String,
     val numero: String,
     val bairro: String,
+    val industry: Industry
 ) : Parcelable

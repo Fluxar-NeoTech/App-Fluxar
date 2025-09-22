@@ -86,8 +86,8 @@
 
         <TextView
             android:id="@+id/setorGestor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="148dp"
+            android:layout_height="43dp"
             android:fontFamily="@font/roboto"
             android:text="Setor: *setor*"
             android:textColor="#563516"

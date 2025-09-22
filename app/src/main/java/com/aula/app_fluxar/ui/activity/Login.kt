@@ -76,11 +76,15 @@ class Login : AppCompatActivity() {
     private fun navigateToMainActivity() {
         val employee = viewModel.getUser()
         if (employee != null) {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra("USER_DATA", employee)
+            if (employee.cargo == 'A')
+                Toast.makeText(this, "Você não tem permissão para acessar este aplicativo.", Toast.LENGTH_SHORT).show()
+            else {
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    putExtra("USER_DATA", employee)
+                }
+                startActivity(intent)
+                finish()
             }
-            startActivity(intent)
-            finish()
         } else {
             Toast.makeText(this, "Erro ao carregar dados do usuário", Toast.LENGTH_SHORT).show()
             binding.progressBar.visibility = View.GONE
