@@ -167,7 +167,8 @@ class NavigationPerfil : Fragment() {
             binding.setorGestor.text = "Setor: ${employee.setor.nome}" ?: "Indisponível"
             binding.cnpjEmpresaGestor.text = formatCNPJ(employee.unit.industry.cnpj) ?: "Indisponível"
             binding.unidadeGestor.text = employee.unit.nome ?: "Indisponível"
-            binding.enderecoUnidadeGestor.text = "${employee.unit.rua}, ${employee.unit.numero}"
+            binding.enderecoUnidadeGestor.text = "${employee.unit.rua}, ${employee.unit.numero}" ?: "Indisponível"
+            binding.estoqueGestor.text = "Estoque do setor - ${employee.capacidadeMaxima}m³" ?: "Indisponível""
 
             profilePhotoUrl = employee.fotoPerfil
 
