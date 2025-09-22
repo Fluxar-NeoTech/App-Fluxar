@@ -9,7 +9,11 @@ data class Employee(
     val nome: String,
     val sobrenome: String,
     val email: String,
-    val fotoPerfil: String
+    val cargo: Char,
+    val fotoPerfil: String,
+    val setor: Sector,
+    val unit: Unit,
+    val capacidadeMaxima: Double
 ) : Parcelable
 
 data class LoginRequest(
