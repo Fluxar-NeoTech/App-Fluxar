@@ -15,7 +15,7 @@
             android:id="@+id/removerEstoqueTitulo"
             android:layout_width="457dp"
             android:layout_height="60dp"
-            android:layout_marginTop="300dp"
+            android:layout_marginTop="270dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Remover do Estoque"
             android:textAlignment="center"

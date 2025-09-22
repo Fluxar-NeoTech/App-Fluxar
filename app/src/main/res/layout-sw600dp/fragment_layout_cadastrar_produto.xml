@@ -29,12 +29,11 @@
         <!-- Produto -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/productInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             app:boxBackgroundMode="outline"
-            app:boxBackgroundColor="@color/laranja_principal_selector"
+            app:boxStrokeColor="@color/laranja_principal_selector"
             app:boxCornerRadiusTopStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
@@ -47,10 +46,13 @@
             <AutoCompleteTextView
                 android:id="@+id/productInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Escolha um produto"
-                android:background="@android:color/transparent"
-                android:padding="20dp"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
                 android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
                 android:textSize="24sp" />
@@ -77,10 +79,13 @@
             <AutoCompleteTextView
                 android:id="@+id/typeInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Escolha um tipo"
-                android:padding="20dp"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
                 android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
                 android:textSize="24sp" />
@@ -104,17 +109,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.9">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/numLoteInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Número do lote"
-                android:inputType="numberDecimal"
-                android:padding="20dp"
-                android:textColor="@android:color/black"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Altura -->
@@ -135,17 +142,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.9">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/alturaInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Altura"
-                android:inputType="numberDecimal"
-                android:padding="20dp"
-                android:textColor="@android:color/black"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Largura -->
@@ -166,17 +175,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.9">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/larguraInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Largura"
-                android:inputType="numberDecimal"
-                android:padding="20dp"
-                android:textColor="@android:color/black"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Comprimento -->
@@ -197,17 +208,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.9">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/comprimentoInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Comprimento"
-                android:inputType="numberDecimal"
-                android:padding="20dp"
-                android:textColor="@android:color/black"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Data -->
@@ -230,18 +243,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.9">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/dateInput"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
+                android:layout_height="75dp"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="Validade DD / MM / AAAA"
-                android:focusable="false"
-                android:clickable="true"
-                android:padding="20dp"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
                 android:textColor="@color/preto"
                 android:textColorHint="@color/cinza_claro"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botão -->
