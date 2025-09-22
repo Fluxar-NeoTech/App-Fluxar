@@ -23,6 +23,7 @@ import com.aula.app_fluxar.R
 import com.aula.app_fluxar.ui.activity.MainActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Calendar
@@ -114,7 +115,7 @@ class NavigationHome : Fragment() {
 
             content.post {
                 // add lógica de verificar se existe produto ou não
-                val exists = false
+                val exists = true
                 if (exists)
                     showContent(R.layout.fragment_layout_listar_produtos)
                 else
@@ -188,7 +189,7 @@ class NavigationHome : Fragment() {
     }
 
     private fun setupDatePicker() {
-        val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+        val dateInput = content.findViewById<AutoCompleteTextView>(R.id.dateInput)
         val calendar = Calendar.getInstance()
 
         dateInput.setOnClickListener {
@@ -202,7 +203,7 @@ class NavigationHome : Fragment() {
         }
     }
 
-    private fun showDatePickerDialog(dateInput: TextInputEditText, calendar: Calendar) {
+    private fun showDatePickerDialog(dateInput: AutoCompleteTextView, calendar: Calendar) {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
