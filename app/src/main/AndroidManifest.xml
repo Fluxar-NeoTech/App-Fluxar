@@ -60,7 +60,7 @@
 
         <meta-data
             android:name="com.aula.app_fluxar.API_KEY"
-            android:resource="${GOOGLE_MAPS_API_KEY}" />
+            android:value="${GOOGLE_MAPS_API_KEY}" />
     </application>
 
 </manifest>
