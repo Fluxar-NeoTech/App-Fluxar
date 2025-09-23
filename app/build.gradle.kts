@@ -17,6 +17,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders.put(
+            "GOOGLE_MAPS_API_KEY",
+            project.findProperty("GOOGLE_MAPS_API_KEY")
+                ?: System.getenv("GOOGLE_MAPS_API_KEY")
+                ?: ""
+        )
     }
 
     buildTypes {
