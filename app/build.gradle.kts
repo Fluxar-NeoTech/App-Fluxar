@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
 }
 
 android {
@@ -50,7 +51,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.activity)
 
-    // Dependências do Retrofit (USE ESTAS VERSÕES)
+    // Dependências do Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
@@ -59,6 +60,12 @@ dependencies {
     implementation("com.cloudinary:cloudinary-android:2.3.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
+
+    // Google Play Services - Maps
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+
+    // Google Play Services - Location
+    implementation ("com.google.android.gms:play-services-location:21.3.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

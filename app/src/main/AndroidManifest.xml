@@ -59,8 +59,8 @@
         </activity>
 
         <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
+            android:name="com.aula.app_fluxar.API_KEY"
+            android:resource="${GOOGLE_MAPS_API_KEY}" />
     </application>
 
 </manifest>
