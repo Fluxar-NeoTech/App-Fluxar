@@ -26,6 +26,11 @@ jobs:
           api-level: 34
           build-tools: 34.0.0
 
+      - name: Criar local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+        env:
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
+
       - name: 📦 Dar permissão ao Gradlew
         run: chmod +x ./gradlew
 
