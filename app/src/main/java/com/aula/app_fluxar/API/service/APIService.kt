@@ -5,8 +5,10 @@ import com.aula.app_fluxar.API.model.LoginRequest
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface APIService {
     @POST("api/employee/login")

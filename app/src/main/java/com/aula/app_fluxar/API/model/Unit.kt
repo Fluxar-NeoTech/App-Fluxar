@@ -14,4 +14,8 @@ data class Unit(
     val numero: String,
     val bairro: String,
     val industry: Industry
-) : Parcelable
+) : Parcelable {
+    fun enderecoCompleto(): String {
+        return "$rua, $numero - $bairro, $cidade - $estado, $cep"
+    }
+}
