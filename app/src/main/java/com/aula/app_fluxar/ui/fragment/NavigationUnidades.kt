@@ -1,6 +1,5 @@
 package com.aula.app_fluxar.ui.fragment
 
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.aula.app_fluxar.API.RetrofitClientMapsAPI
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.ui.activity.MainActivity
@@ -16,14 +16,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.adpters.UnitAdapter
 import com.google.android.gms.maps.model.MarkerOptions
@@ -57,17 +55,29 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         }
     }
 
+    suspend fun getLatLngFromAddress(address: String): LatLng? {
+        return try {
+            val response =
+                RetrofitClientMapsAPI.instance.getLocation(address, getString(R.string.google_maps_geocoding_key))
+            if (response.status == "OK" && response.results.isNotEmpty()) {
+                val loc = response.results[0].geometry.location
+                LatLng(loc.lat, loc.lng)
+            } else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 
     private fun loadUnits(employee: Employee) {
         CoroutineScope(Dispatchers.IO).launch {
-            val geocoder = Geocoder(requireContext(), Locale.getDefault())
 
-            //Unidade do usuário
-            val userAddresses = geocoder.getFromLocationName(employee.unit.enderecoCompleto(), 1)
-            if (userAddresses.isNullOrEmpty()) return@launch
-            val userLatLng = LatLng(userAddresses[0].latitude, userAddresses[0].longitude)
+            // Pega LatLng da unidade do usuário
+            val userLatLng = getLatLngFromAddress(employee.unit.enderecoCompleto())
+            if (userLatLng == null) return@launch
 
-            //Outras unidades (mock)
+            // Outras unidades (mock)
             val unidadesMock = listOf(
                 UnitModel(1, "Unidade São Paulo", "01001000", "Rua XV de Novembro", "São Paulo", "SP", "123", "Centro", employee.unit.industry),
                 UnitModel(2, "Unidade Belo Horizonte", "30140071", "Av. Afonso Pena", "Belo Horizonte", "MG", "456", "Funcionários", employee.unit.industry),
@@ -75,25 +85,20 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                 UnitModel(4, "Unidade Curitiba", "80010010", "Rua Marechal Deodoro", "Curitiba", "PR", "321", "Centro", employee.unit.industry)
             )
 
-            val listaComDistancias = mutableListOf<Pair<UnitModel, Float>>()
-
+            // Pega LatLng de cada unidade e calcula distância
+            val listaComDistancias = mutableListOf<Triple<UnitModel, LatLng, Float>>()
             for (unidade in unidadesMock) {
-                val addresses = geocoder.getFromLocationName(unidade.enderecoCompleto(), 1)
-                if (!addresses.isNullOrEmpty()) {
-                    val latLng = LatLng(addresses[0].latitude, addresses[0].longitude)
-
-                    val result = FloatArray(1)
-                    Location.distanceBetween(
-                        userLatLng.latitude, userLatLng.longitude,
-                        latLng.latitude, latLng.longitude,
-                        result
-                    )
-
-                    listaComDistancias.add(unidade to (result[0] / 1000f))
-                }
+                val latLng = getLatLngFromAddress(unidade.enderecoCompleto()) ?: continue
+                val result = FloatArray(1)
+                Location.distanceBetween(
+                    userLatLng.latitude, userLatLng.longitude,
+                    latLng.latitude, latLng.longitude, result
+                )
+                listaComDistancias.add(Triple(unidade, latLng, result[0] / 1000f)) // km
             }
 
-            val ordenada = listaComDistancias.sortedBy { it.second }
+            // Ordena por distância
+            val ordenada = listaComDistancias.sortedBy { it.third }
 
             withContext(Dispatchers.Main) {
                 // Marcador da unidade do usuário
@@ -102,31 +107,29 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         .position(userLatLng)
                         .title("Minha Unidade")
                         .snippet(employee.unit.enderecoCompleto())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
                 )
 
                 // Centraliza o mapa
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
 
                 // Marcadores das outras unidades
-                for ((unidade, distancia) in ordenada) {
-                    val addresses = geocoder.getFromLocationName(unidade.enderecoCompleto(), 1)
-                    if (!addresses.isNullOrEmpty()) {
-                        val latLng = LatLng(addresses[0].latitude, addresses[0].longitude)
-                        mMap.addMarker(
-                            MarkerOptions()
-                                .position(latLng)
-                                .title(unidade.nome)
-                                .snippet("Distância: %.2f km".format(distancia))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-                        )
-                    }
+                for ((unidade, latLng, distancia) in ordenada) {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(latLng)
+                            .title(unidade.nome)
+                            .snippet("Distância: %.2f km".format(distancia))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                    )
                 }
 
                 // Preenche RecyclerView
                 val recyclerView = view?.findViewById<RecyclerView>(R.id.rvUnidade)
                 recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-                recyclerView?.adapter = UnitAdapter(ordenada)
+                recyclerView?.adapter = UnitAdapter(
+                    ordenada.map { it.first to it.third }
+                )
             }
         }
     }
