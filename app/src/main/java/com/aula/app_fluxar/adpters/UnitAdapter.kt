@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 
-class UnitAdapter (private val unidades: List<Pair<UnitModel, Float>>) : RecyclerView.Adapter<UnitAdapter.UnitViewHolder>() {
+class UnitAdapter(private val unidades: List<Triple<UnitModel, Float, Int>>) : RecyclerView.Adapter<UnitAdapter.UnitViewHolder>() {
+
+    // Lista visível no RecyclerView (começa com todos)
+    private var filteredList: List<Triple<UnitModel, Float, Int>> = unidades.toList()
 
     inner class UnitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titulo: TextView = itemView.findViewById(R.id.txtTitulo)
@@ -23,13 +26,31 @@ class UnitAdapter (private val unidades: List<Pair<UnitModel, Float>>) : Recycle
     }
 
     override fun onBindViewHolder(holder: UnitViewHolder, position: Int) {
-        val (unidade, distancia) = unidades[position]
+        val (unidade, distancia, disponibilidade) = filteredList[position]
         holder.titulo.text = unidade.nome
         holder.distancia.text = "Distância: %.2f km".format(distancia)
-        holder.disponivel.text = "170 m³\nDisponíveis" // mock por enquanto
+        holder.disponivel.text = "$disponibilidade m³\nDisponíveis"
+
         Log.d("RV_BIND", "Exibindo: ${holder.titulo.text}")
     }
 
-    override fun getItemCount(): Int = unidades.size
+    override fun getItemCount(): Int = filteredList.size
 
+    // Ordena por distância (menor primeiro)
+    fun sortByDistance() {
+        filteredList = unidades.sortedBy { it.second }
+        notifyDataSetChanged()
+    }
+
+    // Ordena por disponibilidade (maior primeiro)
+    fun sortByDisponibilidade() {
+        filteredList = unidades.sortedByDescending { it.third }
+        notifyDataSetChanged()
+    }
+
+    // Restaura lista original
+    fun reset() {
+        filteredList = unidades.toList()
+        notifyDataSetChanged()
+    }
 }

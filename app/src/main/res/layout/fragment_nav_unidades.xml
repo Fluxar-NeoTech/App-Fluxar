@@ -31,29 +31,28 @@
             android:textColor="@color/roxo_principal"
             android:textSize="22sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintEnd_toStartOf="@+id/spinnerFiltro"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/map" />
 
-        <Button
-            android:id="@+id/button"
+        <Spinner
+            android:id="@+id/spinnerFiltro"
             android:layout_width="153dp"
             android:layout_height="41dp"
             android:layout_marginTop="7dp"
             android:background="@drawable/bt_inativo"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:text="Filtrar"
-            android:textAllCaps="false"
-            android:textColor="@color/roxo_principal"
-            android:textSize="16sp"
-            app:icon="@drawable/filtro_icon"
-            app:iconSize="20dp"
-            app:iconTint="@color/roxo_principal"
+            android:dropDownWidth="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:popupBackground="@color/ic_launcher_background"
+            android:spinnerMode="dropdown"
+            android:textAlignment="center"
+            android:textDirection="locale"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/textView4"
             app:layout_constraintTop_toBottomOf="@+id/map" />
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvUnidade"
@@ -63,7 +62,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro"
             tools:listitem="@layout/unidade_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
