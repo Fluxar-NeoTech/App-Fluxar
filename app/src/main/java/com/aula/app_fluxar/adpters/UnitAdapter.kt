@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.adpters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class UnitAdapter (private val unidades: List<Pair<UnitModel, Float>>) : Recycle
         holder.titulo.text = unidade.nome
         holder.distancia.text = "Distância: %.2f km".format(distancia)
         holder.disponivel.text = "170 m³\nDisponíveis" // mock por enquanto
+        Log.d("RV_BIND", "Exibindo: ${holder.titulo.text}")
     }
 
     override fun getItemCount(): Int = unidades.size

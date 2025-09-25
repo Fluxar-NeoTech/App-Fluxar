@@ -2,6 +2,7 @@ package com.aula.app_fluxar.ui.fragment
 
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,6 +90,10 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
             val listaComDistancias = mutableListOf<Triple<UnitModel, LatLng, Float>>()
             for (unidade in unidadesMock) {
                 val latLng = getLatLngFromAddress(unidade.enderecoCompleto()) ?: continue
+                if (latLng == null) {
+                    Log.d("GeoCoding", "Falhou ao geocodificar: ${unidade.nome} - ${unidade.enderecoCompleto()}")
+                    continue
+                }
                 val result = FloatArray(1)
                 Location.distanceBetween(
                     userLatLng.latitude, userLatLng.longitude,
@@ -130,6 +135,11 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                 recyclerView?.adapter = UnitAdapter(
                     ordenada.map { it.first to it.third }
                 )
+
+                Log.d("RV_CHECK", "Itens no RecyclerView: ${ordenada.size}")
+                ordenada.forEach {
+                    Log.d("RV_CHECK", "${it.first.nome} - ${it.third} km")
+                }
             }
         }
     }
