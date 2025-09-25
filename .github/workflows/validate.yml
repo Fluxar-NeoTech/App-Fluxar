@@ -15,7 +15,5 @@ jobs:
       - name: ⬇️ Baixar código
         uses: actions/checkout@v4
 
-      - name: 🔎 Validar workflows
-        uses: jazzsequence/github-action-validator@v1
-        with:
-          show_ascii: true
+      - name: Lint GitHub Actions
+        uses: rhysd/actionlint@v1.6.18

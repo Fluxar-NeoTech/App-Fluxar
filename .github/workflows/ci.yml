@@ -20,8 +20,24 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 34
+          build-tools: 34.0.0
+
+      - name: Criar local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+        env:
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
+
       - name: 📦 Dar permissão ao Gradlew
         run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: ./gradlew build
 
       - name: 🧪 Executar testes
         run: ./gradlew testDebugUnitTest

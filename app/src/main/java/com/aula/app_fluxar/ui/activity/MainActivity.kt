@@ -116,6 +116,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_limite_estoque -> {
                     navController.navigate(R.id.nav_limite_estoque)
                 }
+                R.id.nav_fabricas -> {
+                    navController.navigate(R.id.nav_unidades)
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.END)
             true
