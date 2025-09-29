@@ -4,6 +4,7 @@ import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.GeocodingResponse
 import com.aula.app_fluxar.API.model.LoginRequest
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
+import com.aula.app_fluxar.API.model.Unit as UnitModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,7 +21,7 @@ interface APIService {
     suspend fun updatePhoto(@Body employee: UpdatePhotoRequest): Response<Map<String, String>>
 
     @GET("api/unit/searchAll/Unit/Industry/{id}")
-    suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<Unit>>
+    suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
 
     // MAPS- API
     @GET("geocode/json")

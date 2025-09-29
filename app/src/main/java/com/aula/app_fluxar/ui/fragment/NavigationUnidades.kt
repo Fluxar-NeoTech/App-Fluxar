@@ -15,23 +15,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.RetrofitClientMapsAPI
 import com.aula.app_fluxar.API.model.Employee
+import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.adpters.UnitAdapter
 import com.aula.app_fluxar.ui.activity.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.aula.app_fluxar.API.model.Unit as UnitModel
-import com.aula.app_fluxar.adpters.UnitAdapter
-import com.cloudinary.android.BuildConfig
-import com.google.android.gms.maps.model.MarkerOptions
+import com.aula.app_fluxar.BuildConfig
 
 class NavigationUnidades : Fragment(), OnMapReadyCallback {
 
@@ -40,14 +40,13 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
     private lateinit var filter: Spinner
     private lateinit var unitAdapter: UnitAdapter
     private lateinit var getUnitsViewModel: GetUnitsViewModel
-    private val apiKey = BuildConfig.GEOCODING_API_KEY
+
+    private lateinit var apiKey: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_nav_unidades, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_nav_unidades, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,10 +54,8 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // inicializa ViewModel
         getUnitsViewModel = ViewModelProvider(this).get(GetUnitsViewModel::class.java)
 
-        // Spinner com filtros fixos
         filter = view.findViewById(R.id.spinnerFiltro)
         val filtros = listOf("Sem Filtro", "Mais Próximas", "Maior Disponibilidade")
         val filtroAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filtros)
@@ -68,11 +65,17 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        apiKey = BuildConfig.GEOCODING_API_KEY
+
+        if (apiKey.isEmpty()) {
+            Log.e("NavigationUnidades", "API Key não configurada!")
+            return
+        }
+
         employee = (activity as? MainActivity)?.getEmployee()
         employee?.let { emp ->
-            // observa os resultados do ViewModel
             observeUnits()
-            // dispara chamada API
             getUnitsViewModel.getUnits(emp.unit.industry.id)
         }
     }
@@ -82,21 +85,24 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
             if (unidades != null && employee != null) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val userLatLng = getLatLngFromAddress(employee!!.unit.enderecoCompleto())
-                    if (userLatLng == null) return@launch
+                    if (userLatLng == null) {
+                        Log.e("NavigationUnidades", "Não foi possível obter a localização do usuário")
+                        return@launch
+                    }
 
-                    val listaComDistancias = mutableListOf<Triple<UnitModel, LatLng, Float>>()
-
-                    for (unidade in unidades) {
-                        val latLng = getLatLngFromAddress(unidade.enderecoCompleto()) ?: continue
+                    val listaComDistancias: List<Triple<UnitModel, LatLng, Float>> = unidades.mapNotNull { unidade ->
+                        val latLng = getLatLngFromAddress(unidade.enderecoCompleto()) ?: return@mapNotNull null
                         val result = FloatArray(1)
                         Location.distanceBetween(
                             userLatLng.latitude, userLatLng.longitude,
                             latLng.latitude, latLng.longitude, result
                         )
-                        listaComDistancias.add(Triple(unidade, latLng, result[0] / 1000f)) // km
-                    }
-
-                    val ordenada = listaComDistancias.sortedBy { it.third }
+                        Triple<UnitModel, LatLng, Float>(
+                            unidade,
+                            latLng,
+                            result[0] / 1000f
+                        )
+                    }.sortedBy { it.third }
 
                     // Mock de disponibilidades
                     val disponibilidadesMock = mapOf(
@@ -106,13 +112,16 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         4L to 300
                     )
 
-                    // Lista final com distância + disponibilidade
-                    val listaFinal = ordenada.map {
-                        Triple(it.first, it.second, disponibilidadesMock[it.first.id] ?: 0)
+                    val listaFinal = listaComDistancias.map { triple ->
+                        Triple<UnitModel, Float, Int>(
+                            triple.first,
+                            triple.third,
+                            disponibilidadesMock[triple.first.id] ?: 0
+                        )
                     }
 
                     withContext(Dispatchers.Main) {
-                        // marcador da unidade do usuário
+                        // Adiciona marcador da unidade do usuário
                         mMap.addMarker(
                             MarkerOptions()
                                 .position(userLatLng)
@@ -120,11 +129,14 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                                 .snippet(employee!!.unit.enderecoCompleto())
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
                         )
-
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
 
-                        // marcadores das outras unidades
-                        for ((unidade, latLng, distancia) in ordenada) {
+                        // CORREÇÃO: Loop for corrigido
+                        for (triple in listaComDistancias) {
+                            val unidade = triple.first
+                            val latLng = triple.second
+                            val distancia = triple.third
+
                             mMap.addMarker(
                                 MarkerOptions()
                                     .position(latLng)
@@ -134,13 +146,13 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                             )
                         }
 
-                        // RecyclerView
+                        // Configura o RecyclerView
                         val recyclerView = view?.findViewById<RecyclerView>(R.id.rvUnidade)
                         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
                         unitAdapter = UnitAdapter(listaFinal)
                         recyclerView?.adapter = unitAdapter
 
-                        // filtros
+                        // Configura o filtro
                         filter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                                 when (position) {
@@ -157,24 +169,22 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         }
 
         getUnitsViewModel.errorMessage.observe(viewLifecycleOwner) { erro ->
-            if (!erro.isNullOrEmpty()) {
-                Log.e("NavigationUnidades", erro)
-            }
+            if (!erro.isNullOrEmpty()) Log.e("NavigationUnidades", erro)
         }
     }
 
-    suspend fun getLatLngFromAddress(address: String): LatLng? {
+    private suspend fun getLatLngFromAddress(address: String): LatLng? {
         return try {
-            val response = RetrofitClientMapsAPI.instance.getLocation(
-                address,
-                apiKey
-            )
+            val response = RetrofitClientMapsAPI.instance.getLocation(address, apiKey)
             if (response.status == "OK" && response.results.isNotEmpty()) {
                 val loc = response.results[0].geometry.location
                 LatLng(loc.lat, loc.lng)
-            } else null
+            } else {
+                Log.e("Geocoding", "Erro na resposta: ${response.status}")
+                null
+            }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("Geocoding", "Erro ao buscar localização: ${e.message}")
             null
         }
     }
