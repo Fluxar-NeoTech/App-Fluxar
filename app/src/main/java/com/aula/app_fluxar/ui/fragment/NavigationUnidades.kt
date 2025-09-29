@@ -96,9 +96,17 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
 
                     val ordenada = listaComDistancias.sortedBy { it.third }
 
-                    // Lista final com disponibilidade (se existir no model)
+                    // Mock de disponibilidades
+                    val disponibilidadesMock = mapOf(
+                        1L to 170,
+                        2L to 250,
+                        3L to 120,
+                        4L to 300
+                    )
+
+                    // Lista final com disponibilidade mockada
                     val listaFinal = ordenada.map {
-                        Triple(it.first, it.third, it.first.disponibilidade ?: 0)
+                        Triple(it.first, it.third, disponibilidadesMock[it.first.id] ?: 0)
                     }
 
                     withContext(Dispatchers.Main) {
