@@ -4,11 +4,6 @@
 
     <group android:id="@+id/group_top_items" android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_limite_estoque"
-            android:icon="@drawable/limite_estoque"
-            android:iconTint="#FFFFFF"
-            android:title="Capacidade" />
-        <item
             android:id="@+id/nav_fabricas"
             android:icon="@drawable/fabrica"
             android:iconTint="#FFFFFF"
@@ -18,6 +13,11 @@
             android:icon="@drawable/tema"
             android:iconTint="#FFFFFF"
             android:title="Tema" />
+        <item
+            android:id="@+id/nav_limite_estoque"
+            android:icon="@drawable/limite_estoque"
+            android:iconTint="#FFFFFF"
+            android:title="Capacidade" />
         <item
             android:id="@+id/nav_info"
             android:icon="@drawable/info"
