@@ -189,21 +189,20 @@ class NavigationHome : Fragment() {
     }
 
     private fun setupDatePicker() {
-        val dateInput = content.findViewById<AutoCompleteTextView>(R.id.dateInput)
+        val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
         val calendar = Calendar.getInstance()
 
         dateInput.setOnClickListener {
             showDatePickerDialog(dateInput, calendar)
         }
 
-        // Também configure o ícone do calendário para abrir o date picker
         val dateInputLayout = content.findViewById<TextInputLayout>(R.id.dateInputLayout)
         dateInputLayout.setEndIconOnClickListener {
             showDatePickerDialog(dateInput, calendar)
         }
     }
 
-    private fun showDatePickerDialog(dateInput: AutoCompleteTextView, calendar: Calendar) {
+    private fun showDatePickerDialog(dateInput: TextInputEditText, calendar: Calendar) {
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -211,11 +210,8 @@ class NavigationHome : Fragment() {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
-                // Formatando a data no padrão DD / MM / AAAA
                 val formattedDate = String.format("%02d / %02d / %04d", selectedDay, selectedMonth + 1, selectedYear)
                 dateInput.setText(formattedDate)
-
-                // Atualiza o calendário com a data selecionada
                 calendar.set(selectedYear, selectedMonth, selectedDay)
             },
             year, month, day
@@ -223,6 +219,7 @@ class NavigationHome : Fragment() {
 
         datePickerDialog.show()
     }
+
 
     private fun setupFieldDependenciesRemove() {
         val productInputRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
