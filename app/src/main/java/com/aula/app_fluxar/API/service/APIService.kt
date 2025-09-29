@@ -19,6 +19,8 @@ interface APIService {
     @PUT("api/employee/update/photo")
     suspend fun updatePhoto(@Body employee: UpdatePhotoRequest): Response<Map<String, String>>
 
+    @GET("api/unit/searchAll/Unit/Industry/{id}")
+    suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<Unit>>
 
     // MAPS- API
     @GET("geocode/json")
