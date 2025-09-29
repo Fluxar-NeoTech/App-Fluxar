@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.adpters.UnitAdapter
+import com.cloudinary.android.BuildConfig
 import com.google.android.gms.maps.model.MarkerOptions
 
 class NavigationUnidades : Fragment(), OnMapReadyCallback {
@@ -39,6 +40,7 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
     private lateinit var filter: Spinner
     private lateinit var unitAdapter: UnitAdapter
     private lateinit var getUnitsViewModel: GetUnitsViewModel
+    private val apiKey = BuildConfig.GEOCODING_API_KEY
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -104,9 +106,9 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         4L to 300
                     )
 
-                    // Lista final com disponibilidade mockada
+                    // Lista final com distância + disponibilidade
                     val listaFinal = ordenada.map {
-                        Triple(it.first, it.third, disponibilidadesMock[it.first.id] ?: 0)
+                        Triple(it.first, it.second, disponibilidadesMock[it.first.id] ?: 0)
                     }
 
                     withContext(Dispatchers.Main) {
@@ -165,7 +167,7 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         return try {
             val response = RetrofitClientMapsAPI.instance.getLocation(
                 address,
-                getString(R.string.google_maps_geocoding_key)
+                apiKey
             )
             if (response.status == "OK" && response.results.isNotEmpty()) {
                 val loc = response.results[0].geometry.location
