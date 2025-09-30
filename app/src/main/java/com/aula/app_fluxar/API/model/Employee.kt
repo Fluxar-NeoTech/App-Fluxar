@@ -12,10 +12,10 @@ data class Employee(
 
 data class LoginRequest(
     val email: String,
-    val senha: String
+    val password: String
 )
 
 data class UpdatePhotoRequest(
     val email: String,
-    val fotoPerfil: String
+    val profilePhoto: String
 )

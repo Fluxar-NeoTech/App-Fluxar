@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
+import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.API.viewModel.UpdateFotoViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.cloudnary.CloudnaryConfig
@@ -37,6 +38,7 @@ class NavigationPerfil : Fragment() {
     private lateinit var binding: FragmentNavPerfilBinding
     private var employee: Profile? = null
     private lateinit var updateFotoViewModel: UpdateFotoViewModel
+    private lateinit var profileViewModel: ProfileViewModel
     private var profilePhotoUrl: String? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -94,17 +96,16 @@ class NavigationPerfil : Fragment() {
         CloudnaryConfig.init(requireContext())
         binding = FragmentNavPerfilBinding.inflate(inflater, container, false)
 
+        // INICIALIZA OS VIEWMODELS
         updateFotoViewModel = ViewModelProvider(this).get(UpdateFotoViewModel::class.java)
+        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
+        // CONFIGURA OS OBSERVERS
         observeUpdatePhoto()
+        observeProfileUpdates()
 
-        employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
-
-        if (employee != null) {
-            updateUIWithUserData(employee!!)
-        } else {
-            Toast.makeText(requireContext(), "Dados do usuário não disponíveis", Toast.LENGTH_SHORT).show()
-        }
+        // CARREGA OS DADOS ATUALIZADOS
+        loadCurrentProfile()
 
         defaultProfilePhoto = binding.fotoPerfilPadrao
         defaultProfilePhoto.setOnClickListener {
@@ -112,6 +113,36 @@ class NavigationPerfil : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun observeProfileUpdates() {
+        profileViewModel.profileResult.observe(viewLifecycleOwner) { profile ->
+            profile?.let {
+                // ATUALIZA O SESSION MANAGER E OS DADOS LOCAIS
+                com.aula.app_fluxar.sessionManager.SessionManager.saveProfile(it)
+                employee = it
+                profilePhotoUrl = it.profilePhoto
+                updateUIWithUserData(it)
+                Log.d("NavigationPerfil", "✅ Profile atualizado via ViewModel - Capacidade: ${it.maxCapacity}")
+            }
+        }
+
+        profileViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (error.isNotEmpty()) {
+                Log.e("NavigationPerfil", "❌ Erro ao carregar profile: $error")
+                // Fallback: usa dados do SessionManager se houver erro
+                employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
+                employee?.let {
+                    updateUIWithUserData(it)
+                }
+            }
+        }
+
+        profileViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                Log.d("NavigationPerfil", "🔄 Carregando profile...")
+            }
+        }
     }
 
     private fun observeUpdatePhoto() {
@@ -122,6 +153,8 @@ class NavigationPerfil : Fragment() {
                     loadProfilePhoto(fotoUrl)
 
                     Toast.makeText(requireContext(), "Foto atualizada com sucesso!", Toast.LENGTH_SHORT).show()
+
+                    loadCurrentProfile()
                 } ?: run {
                     Toast.makeText(requireContext(), "Erro: URL da foto não encontrada", Toast.LENGTH_SHORT).show()
                     Log.e("UpdatePhoto", "profilePhotoUrl está null. Resposta servidor: $responseMap")
@@ -130,11 +163,11 @@ class NavigationPerfil : Fragment() {
         }
 
         updateFotoViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-                if (error.isNotEmpty()) {
-                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
-                    Log.e("UpdatePhoto", error)
-                }
+            if (error.isNotEmpty()) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                Log.e("UpdatePhoto", error)
             }
+        }
 
         updateFotoViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             if (isLoading) {
@@ -143,8 +176,15 @@ class NavigationPerfil : Fragment() {
         }
     }
 
+    private fun loadCurrentProfile() {
+        profileViewModel.loadProfile()
+    }
+
     override fun onResume() {
         super.onResume()
+        Log.d("NavigationPerfil", "🔄 onResume() - Recarregando dados...")
+        loadCurrentProfile()
+
         employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
         employee?.let {
             profilePhotoUrl = it.profilePhoto
@@ -156,28 +196,38 @@ class NavigationPerfil : Fragment() {
     private fun updateUIWithUserData(employee: Profile) {
         try {
             binding.nomeGestor.text = "${employee.firstName ?: ""} ${employee.lastName ?: ""}"
-            binding.nomeEmpresaGestor.text = employee.unit.industry.nome ?: "Indisponível"
-            binding.setorGestor.text = "Setor: ${employee.sector.nome}" ?: "Indisponível"
+            binding.nomeEmpresaGestor.text = employee.unit.industry.name ?: "Indisponível"
+            binding.setorGestor.text = "Setor: ${employee.sector.name}" ?: "Indisponível"
             binding.cnpjEmpresaGestor.text = formatCNPJ(employee.unit.industry.cnpj) ?: "Indisponível"
-            binding.unidadeGestor.text = employee.unit.nome ?: "Indisponível"
-            binding.enderecoUnidadeGestor.text = "${employee.unit.rua}, ${employee.unit.numero}" ?: "Indisponível"
+            binding.unidadeGestor.text = employee.unit.name ?: "Indisponível"
+            binding.enderecoUnidadeGestor.text = "${employee.unit.street}, ${employee.unit.number}" ?: "Indisponível"
             binding.estoqueGestor.text = "Capacidade máx. - ${employee.maxCapacity}m³" ?: "Indisponível"
 
             profilePhotoUrl = employee.profilePhoto
 
             loadProfilePhoto(profilePhotoUrl)
+
+            Log.d("NavigationPerfil", "🎯 UI atualizada - Capacidade: ${employee.maxCapacity}")
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "Erro ao carregar dados: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("NavigationPerfil", "❌ Erro no updateUIWithUserData: ${e.message}")
         }
     }
 
     private fun loadProfilePhoto(url: String?) {
-        if (url!!.isNotEmpty()) {
-            Glide.with(requireContext())
-                .load(url)
-                .transform(CircleCrop())
-                .into(binding.fotoPerfilPadrao)
-        } else {
+        try {
+            if (!url.isNullOrEmpty()) {
+                Glide.with(requireContext())
+                    .load(url)
+                    .transform(CircleCrop())
+                    .into(binding.fotoPerfilPadrao)
+                Log.d("NavigationPerfil", "📸 Foto carregada: $url")
+            } else {
+                binding.fotoPerfilPadrao.setImageResource(R.drawable.foto_de_perfil_padrao)
+                Log.d("NavigationPerfil", "📸 Usando foto padrão")
+            }
+        } catch (e: Exception) {
+            Log.e("NavigationPerfil", "❌ Erro ao carregar foto: ${e.message}")
             binding.fotoPerfilPadrao.setImageResource(R.drawable.foto_de_perfil_padrao)
         }
     }

@@ -23,10 +23,10 @@ interface APIService {
     @PUT("api/employee/update/photo")
     suspend fun updatePhoto(@Body employee: UpdatePhotoRequest): Response<Map<String, String>>
 
-    @POST("/api/capacityStock/addCapacityStock")
+    @POST("/api/capacityStock/add")
     suspend fun addCapacityStock(@Body capacityStockRequest: CapacityStockRequest): Response<CapacityStockResponse>
 
-    @GET("api/unit/searchAll/Unit/Industry/{id}")
+    @GET("api/unit/search/all/by/industry/id/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
 
     @GET("/api/employee/profile/{id}")

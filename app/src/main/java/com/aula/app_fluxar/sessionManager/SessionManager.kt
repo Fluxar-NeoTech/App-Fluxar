@@ -15,7 +15,7 @@ object SessionManager {
 
     fun saveProfile(profile: Profile) {
         currentProfile = profile
-        Log.d("SessionManager", "Perfil salvo - Nome: ${profile.nome}")
+        Log.d("SessionManager", "Perfil salvo - Nome: ${profile.firstName}")
     }
 
     fun getEmployeeId(): Long {

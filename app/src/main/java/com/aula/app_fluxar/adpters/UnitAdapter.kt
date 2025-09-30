@@ -27,7 +27,7 @@ class UnitAdapter(private val unidades: List<Triple<UnitModel, Float, Int>>) : R
 
     override fun onBindViewHolder(holder: UnitViewHolder, position: Int) {
         val (unidade, distancia, disponibilidade) = filteredList[position]
-        holder.titulo.text = unidade.nome
+        holder.titulo.text = unidade.name
         holder.distancia.text = "Distância: %.2f km".format(distancia)
         holder.disponivel.text = "$disponibilidade m³\nDisponíveis"
 

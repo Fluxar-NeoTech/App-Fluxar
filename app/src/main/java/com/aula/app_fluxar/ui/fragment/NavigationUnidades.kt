@@ -46,6 +46,23 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_nav_unidades, container, false)
 
+    private fun debugProfileStructure() {
+        val profile = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
+        if (profile != null) {
+            println("=== DEBUG PROFILE STRUCTURE ===")
+            println("Profile: $profile")
+            println("Profile class: ${profile.javaClass}")
+            println("Setor field: ${profile.sector}")
+            println("Setor class: ${profile.sector.javaClass}")
+            println("Unit field: ${profile.unit}")
+            println("Unit class: ${profile.unit.javaClass}")
+            println("=== FIM DEBUG ===")
+        } else {
+            println("DEBUG: Profile é null")
+        }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -59,6 +76,7 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         val filtroAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filtros)
         filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         filter.adapter = filtroAdapter
+        debugProfileStructure()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -137,13 +155,12 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                             mMap.addMarker(
                                 MarkerOptions()
                                     .position(latLng)
-                                    .title(unidade.nome)
+                                    .title(unidade.name)
                                     .snippet("Distância: %.2f km".format(distancia))
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                             )
                         }
 
-                        // Configura o RecyclerView
                         val recyclerView = view?.findViewById<RecyclerView>(R.id.rvUnidade)
                         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
                         unitAdapter = UnitAdapter(listaFinal)
