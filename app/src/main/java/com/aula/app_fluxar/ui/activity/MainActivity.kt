@@ -175,7 +175,7 @@ class MainActivity : AppCompatActivity() {
         profileViewModel.loadProfile()
         profileViewModel.profileResult.observe(this) { profile ->
             if (profile != null) {
-                Log.d("MainActivity", "Profile carregado: ${profile.nome}")
+                Log.d("MainActivity", "Profile carregado: ${profile.firstName}")
             }
         }
     }

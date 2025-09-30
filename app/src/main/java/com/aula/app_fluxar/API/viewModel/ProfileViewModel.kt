@@ -38,7 +38,7 @@ class ProfileViewModel : ViewModel() {
                         _profileResult.value = profile
                         SessionManager.saveProfile(profile)
                         _errorMessage.value = ""
-                        Log.d("ProfileViewModel", "Perfil carregado: ${profile.nome} - Capacidade: ${profile.capacidadeMaxima}")
+                        Log.d("ProfileViewModel", "Perfil carregado: ${profile.firstName} - Capacidade: ${profile.maxCapacity}")
                     }
                 } else {
                     _errorMessage.value = "Erro ao buscar perfil: ${response.code()} - ${response.message()}"

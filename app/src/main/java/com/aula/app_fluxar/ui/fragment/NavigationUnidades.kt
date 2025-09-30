@@ -14,13 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.RetrofitClientMapsAPI
-import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.adpters.UnitAdapter
-import com.aula.app_fluxar.ui.activity.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -131,7 +129,6 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         )
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
 
-                        // CORREÇÃO: Loop for corrigido
                         for (triple in listaComDistancias) {
                             val unidade = triple.first
                             val latLng = triple.second

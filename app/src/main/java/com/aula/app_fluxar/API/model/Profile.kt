@@ -1,11 +1,11 @@
 package com.aula.app_fluxar.API.model
 
 data class Profile(
-    val nome: String,
-    val sobrenome: String,
+    val firstName: String,
+    val lastName: String,
     val email: String,
-    val fotoPerfil: String,
-    val setor: Sector,
+    val profilePhoto: String,
+    val sector: Sector,
     val unit: Unit,
-    val capacidadeMaxima: Double
+    val maxCapacity: Double
 )

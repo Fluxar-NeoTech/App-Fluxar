@@ -118,7 +118,7 @@ class NavigationPerfil : Fragment() {
         updateFotoViewModel.updateFotoResult.observe(viewLifecycleOwner) { result ->
             result?.let { responseMap ->
                 profilePhotoUrl?.let { fotoUrl ->
-                    employee = employee?.copy(fotoPerfil = fotoUrl)
+                    employee = employee?.copy(profilePhoto = fotoUrl)
                     loadProfilePhoto(fotoUrl)
 
                     Toast.makeText(requireContext(), "Foto atualizada com sucesso!", Toast.LENGTH_SHORT).show()
@@ -147,7 +147,7 @@ class NavigationPerfil : Fragment() {
         super.onResume()
         employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
         employee?.let {
-            profilePhotoUrl = it.fotoPerfil
+            profilePhotoUrl = it.profilePhoto
             updateUIWithUserData(it)
         }
     }
@@ -155,15 +155,15 @@ class NavigationPerfil : Fragment() {
     @SuppressLint("ResourceType", "SetTextI18n")
     private fun updateUIWithUserData(employee: Profile) {
         try {
-            binding.nomeGestor.text = "${employee.nome ?: ""} ${employee.sobrenome ?: ""}"
+            binding.nomeGestor.text = "${employee.firstName ?: ""} ${employee.lastName ?: ""}"
             binding.nomeEmpresaGestor.text = employee.unit.industry.nome ?: "Indisponível"
-            binding.setorGestor.text = "Setor: ${employee.setor.nome}" ?: "Indisponível"
+            binding.setorGestor.text = "Setor: ${employee.sector.nome}" ?: "Indisponível"
             binding.cnpjEmpresaGestor.text = formatCNPJ(employee.unit.industry.cnpj) ?: "Indisponível"
             binding.unidadeGestor.text = employee.unit.nome ?: "Indisponível"
             binding.enderecoUnidadeGestor.text = "${employee.unit.rua}, ${employee.unit.numero}" ?: "Indisponível"
-            binding.estoqueGestor.text = "Capacidade máx. - ${employee.capacidadeMaxima}m³" ?: "Indisponível"
+            binding.estoqueGestor.text = "Capacidade máx. - ${employee.maxCapacity}m³" ?: "Indisponível"
 
-            profilePhotoUrl = employee.fotoPerfil
+            profilePhotoUrl = employee.profilePhoto
 
             loadProfilePhoto(profilePhotoUrl)
         } catch (e: Exception) {
@@ -298,7 +298,7 @@ class NavigationPerfil : Fragment() {
 
     fun updateEmployeeData(newEmployee: Profile) {
         employee = newEmployee
-        profilePhotoUrl = newEmployee.fotoPerfil
+        profilePhotoUrl = newEmployee.profilePhoto
         updateUIWithUserData(newEmployee)
     }
 

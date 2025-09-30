@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Employee(
     val id: Long,
     val email: String,
-    val cargo: Char,
+    val role: Char,
 ) : Parcelable
 
 data class LoginRequest(

@@ -315,15 +315,15 @@ class NavigationHome : Fragment() {
         val employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
 
         employee?.let {
-            if (it.nome.isNotEmpty()) {
-                greetingManager.text = "Olá, ${it.nome}!"
+            if (it.firstName.isNotEmpty()) {
+                greetingManager.text = "Olá, ${it.firstName}!"
             } else {
                 greetingManager.text = "Olá, usuário!"
             }
 
-            if (it.fotoPerfil.isNotEmpty()) {
+            if (it.profilePhoto.isNotEmpty()) {
                 Glide.with(requireContext())
-                    .load(it.fotoPerfil)
+                    .load(it.profilePhoto)
                     .placeholder(R.drawable.foto_de_perfil_padrao)
                     .error(R.drawable.foto_de_perfil_padrao)
                     .transform(CircleCrop())

@@ -71,7 +71,7 @@ class NavigationLimiteEstoque : Fragment() {
                 return@setOnClickListener
             }
 
-            val setorId = profile.setor.id
+            val setorId = profile.sector.id
             val unidadeId = profile.unit.id
 
             val alturaStr = alturaEstoque.text.toString().trim()
