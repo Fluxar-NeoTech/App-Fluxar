@@ -312,7 +312,7 @@ class NavigationHome : Fragment() {
     }
 
     private fun loadProfileInfos() {
-        val employee = (activity as? MainActivity)?.getEmployee()
+        val employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
 
         employee?.let {
             if (it.nome.isNotEmpty()) {

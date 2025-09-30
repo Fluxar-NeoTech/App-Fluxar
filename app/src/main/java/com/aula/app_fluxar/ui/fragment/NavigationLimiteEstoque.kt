@@ -64,14 +64,15 @@ class NavigationLimiteEstoque : Fragment() {
 
     private fun setupListeners() {
         concluirBt.setOnClickListener {
-            var setorId: Long = 0
-            var unidadeId: Long = 0
-            (activity as? MainActivity)?.employeeLiveData?.observe(viewLifecycleOwner) { employee ->
-                if (employee != null) {
-                    unidadeId = employee.unit.id
-                    setorId = employee.setor.id
-                }
+            val profile = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
+
+            if (profile == null) {
+                Toast.makeText(context, "Erro: Perfil não carregado", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            val setorId = profile.setor.id
+            val unidadeId = profile.unit.id
 
             val alturaStr = alturaEstoque.text.toString().trim()
             val larguraStr = larguraEstoque.text.toString().trim()

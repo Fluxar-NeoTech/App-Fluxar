@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.RetrofitClientMapsAPI
 import com.aula.app_fluxar.API.model.Employee
+import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
 import com.aula.app_fluxar.R
@@ -36,7 +37,7 @@ import com.aula.app_fluxar.BuildConfig
 class NavigationUnidades : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    private var employee: Employee? = null
+    private var employee: Profile? = null
     private lateinit var filter: Spinner
     private lateinit var unitAdapter: UnitAdapter
     private lateinit var getUnitsViewModel: GetUnitsViewModel
@@ -72,7 +73,7 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
             return
         }
 
-        employee = (activity as? MainActivity)?.getEmployee()
+        employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
         employee?.let { emp ->
             observeUnits()
             getUnitsViewModel.getUnits(emp.unit.industry.id)

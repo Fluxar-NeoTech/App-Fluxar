@@ -5,6 +5,7 @@ import com.aula.app_fluxar.API.model.CapacityStockResponse
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.GeocodingResponse
 import com.aula.app_fluxar.API.model.LoginRequest
+import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import retrofit2.Response
@@ -27,6 +28,9 @@ interface APIService {
 
     @GET("api/unit/searchAll/Unit/Industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
+
+    @GET("/api/employee/profile/{id}")
+    suspend fun getProfileInfos(@Path("id") id: Long): Response<Profile>
 
     // MAPS- API
     @GET("geocode/json")

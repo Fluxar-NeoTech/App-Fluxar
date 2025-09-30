@@ -2,8 +2,8 @@ package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -17,15 +17,16 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.aula.app_fluxar.API.model.Employee
+import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.sessionManager.SessionManager
+import androidx. activity.viewModels
 import com.aula.app_fluxar.databinding.ActivityMainBinding
-import com.aula.app_fluxar.ui.fragment.NavigationPerfil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
-
+    private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private var employee: Employee? = null
     private val _employeeLiveData = MutableLiveData<Employee?>()
     val employeeLiveData: LiveData<Employee?> = _employeeLiveData
 
@@ -36,17 +37,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-        employee = intent.getParcelableExtra("USER_DATA")
-        _employeeLiveData.value = employee
-
-        if (employee != null) {
-            println("DADOS RECEBIDOS NA MAIN: ${employee!!.nome} ${employee!!.sobrenome}")
-            println("FOTO: ${employee!!.fotoPerfil}")
-        } else {
-            Toast.makeText(this, "Dados do usuário não encontrados", Toast.LENGTH_SHORT).show()
+        if (SessionManager.getCurrentProfile() != null) {
+            loadProfile()
         }
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
@@ -154,15 +149,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getEmployee(): Employee? {
-        return employee
-    }
-
-    fun updateEmployee(updatedEmployee: Employee) {
-        this.employee = updatedEmployee
-        _employeeLiveData.value = updatedEmployee // Notifica os observadores
-    }
-
     fun showDialogLogOut() {
         val dialogLogOut = layoutInflater.inflate(R.layout.sair_da_conta, null)
         val positiveButton = dialogLogOut.findViewById<Button>(R.id.sairContaS)
@@ -185,12 +171,11 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    fun onLoginSuccess(employee: Employee) {
-        this.employee = employee
-        _employeeLiveData.value = employee
-        supportFragmentManager.fragments.forEach { fragment ->
-            if (fragment is NavigationPerfil) {
-                fragment.updateEmployeeData(employee)
+    private fun loadProfile() {
+        profileViewModel.loadProfile()
+        profileViewModel.profileResult.observe(this) { profile ->
+            if (profile != null) {
+                Log.d("MainActivity", "Profile carregado: ${profile.nome}")
             }
         }
     }

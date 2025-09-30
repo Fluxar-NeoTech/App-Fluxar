@@ -19,13 +19,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.aula.app_fluxar.API.model.Employee
+import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import com.aula.app_fluxar.API.viewModel.UpdateFotoViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.cloudnary.CloudnaryConfig
 import com.aula.app_fluxar.databinding.FragmentNavPerfilBinding
-import com.aula.app_fluxar.ui.activity.MainActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.cloudinary.android.MediaManager
@@ -36,10 +35,8 @@ class NavigationPerfil : Fragment() {
     private lateinit var defaultProfilePhoto: ImageView
     private var photoUri: Uri? = null
     private lateinit var binding: FragmentNavPerfilBinding
-    private var employee: Employee? = null
+    private var employee: Profile? = null
     private lateinit var updateFotoViewModel: UpdateFotoViewModel
-
-    // Variável para armazenar a URL da foto
     private var profilePhotoUrl: String? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -101,7 +98,7 @@ class NavigationPerfil : Fragment() {
 
         observeUpdatePhoto()
 
-        employee = (activity as? MainActivity)?.getEmployee()
+        employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
 
         if (employee != null) {
             updateUIWithUserData(employee!!)
@@ -125,10 +122,6 @@ class NavigationPerfil : Fragment() {
                     loadProfilePhoto(fotoUrl)
 
                     Toast.makeText(requireContext(), "Foto atualizada com sucesso!", Toast.LENGTH_SHORT).show()
-
-                    employee?.let { emp ->
-                        (activity as? MainActivity)?.updateEmployee(emp)
-                    }
                 } ?: run {
                     Toast.makeText(requireContext(), "Erro: URL da foto não encontrada", Toast.LENGTH_SHORT).show()
                     Log.e("UpdatePhoto", "profilePhotoUrl está null. Resposta servidor: $responseMap")
@@ -152,7 +145,7 @@ class NavigationPerfil : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        employee = (activity as? MainActivity)?.getEmployee()
+        employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
         employee?.let {
             profilePhotoUrl = it.fotoPerfil
             updateUIWithUserData(it)
@@ -160,7 +153,7 @@ class NavigationPerfil : Fragment() {
     }
 
     @SuppressLint("ResourceType", "SetTextI18n")
-    private fun updateUIWithUserData(employee: Employee) {
+    private fun updateUIWithUserData(employee: Profile) {
         try {
             binding.nomeGestor.text = "${employee.nome ?: ""} ${employee.sobrenome ?: ""}"
             binding.nomeEmpresaGestor.text = employee.unit.industry.nome ?: "Indisponível"
@@ -210,7 +203,7 @@ class NavigationPerfil : Fragment() {
                         profilePhotoUrl = url
 
                         employee?.email?.let { email ->
-                            val updateRequest = UpdatePhotoRequest(email = email, fotoPerfil = url)
+                            val updateRequest = UpdatePhotoRequest(email, url)
                             updateFotoViewModel.updatePhoto(updateRequest)
                         }
                     } else {
@@ -303,7 +296,7 @@ class NavigationPerfil : Fragment() {
         pickPhotoResult.launch(pickPhotoIntent)
     }
 
-    fun updateEmployeeData(newEmployee: Employee) {
+    fun updateEmployeeData(newEmployee: Profile) {
         employee = newEmployee
         profilePhotoUrl = newEmployee.fotoPerfil
         updateUIWithUserData(newEmployee)
