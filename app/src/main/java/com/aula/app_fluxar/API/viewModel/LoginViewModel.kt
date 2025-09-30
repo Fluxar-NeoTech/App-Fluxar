@@ -42,7 +42,9 @@ class LoginViewModel : ViewModel() {
                     _navigateToMain.value = true
                 } else {
                     when (response.code()) {
-                        403 -> _errorMessage.value = "Email ou senha incorretos"
+                        400 -> _errorMessage.value = "Credenciais inválidas!"
+                        401 -> _errorMessage.value = "Email ou senha incorretos!"
+                        403 -> _errorMessage.value = "Não autorizado!"
                         404 -> _errorMessage.value = "Requisição não encontrada"
                         500 -> _errorMessage.value = "Erro interno do servidor"
                         504 -> _errorMessage.value = "Gateway Timeout"
