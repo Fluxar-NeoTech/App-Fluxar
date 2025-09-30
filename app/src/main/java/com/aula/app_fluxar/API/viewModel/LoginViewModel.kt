@@ -51,7 +51,7 @@ class LoginViewModel : ViewModel() {
                     _navigateToMain.value = false
                 }
             } catch (e: java.net.SocketTimeoutException) {
-                _errorMessage.value = "Timeout: O servidor demorou muito para responderasync"
+                _errorMessage.value = "Timeout: O servidor demorou muito para responder"
                 _navigateToMain.value = false
             } catch (e: java.net.ConnectException) {
                 _errorMessage.value = "Não foi possível conectar ao servidor"

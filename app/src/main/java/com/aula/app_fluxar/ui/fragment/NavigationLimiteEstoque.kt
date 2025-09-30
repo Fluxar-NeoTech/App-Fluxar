@@ -5,56 +5,93 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import com.aula.app_fluxar.API.viewModel.CapacityStockViewModel
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.ui.activity.MainActivity
+import com.google.android.material.textfield.TextInputEditText
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NavigationLimiteEstoque.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NavigationLimiteEstoque : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val viewModel: CapacityStockViewModel by viewModels()
+    private lateinit var alturaEstoque: TextInputEditText
+    private lateinit var larguraEstoque: TextInputEditText
+    private lateinit var comprimentoEstoque: TextInputEditText
+    private lateinit var concluirBt: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_layout_nav_limite_estoque, container, false)
+        val view = inflater.inflate(R.layout.fragment_layout_nav_limite_estoque, container, false)
+
+        alturaEstoque = view.findViewById(R.id.inputAlturaCapacidade)
+        larguraEstoque = view.findViewById(R.id.inputlarguraCapacidade)
+        comprimentoEstoque = view.findViewById(R.id.inputComprimentoCapacidade)
+        concluirBt = view.findViewById(R.id.concluirBt)
+
+        setupListeners()
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CadastrarLimiteEstoque.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NavigationLimiteEstoque().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.capacityStockResult.observe(viewLifecycleOwner) { result ->
+            if (result != null) {
+                Toast.makeText(
+                    requireContext(),
+                    "Capacidade salva com sucesso!",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                alturaEstoque.text?.clear()
+                larguraEstoque.text?.clear()
+                comprimentoEstoque.text?.clear()
+
+                viewModel.clearResult()
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (error.isNotEmpty()) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                viewModel.clearResult()
+            }
+        }
+    }
+
+    private fun setupListeners() {
+        concluirBt.setOnClickListener {
+            var setorId: Long = 0
+            var unidadeId: Long = 0
+            (activity as? MainActivity)?.employeeLiveData?.observe(viewLifecycleOwner) { employee ->
+                if (employee != null) {
+                    unidadeId = employee.unit.id
+                    setorId = employee.setor.id
                 }
             }
+
+            val alturaStr = alturaEstoque.text.toString().trim()
+            val larguraStr = larguraEstoque.text.toString().trim()
+            val comprimentoStr = comprimentoEstoque.text.toString().trim()
+
+            if (alturaStr.isEmpty() || larguraStr.isEmpty() || comprimentoStr.isEmpty()) {
+                Toast.makeText(context, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val altura = alturaStr.toDoubleOrNull()
+            val largura = larguraStr.toDoubleOrNull()
+            val comprimento = comprimentoStr.toDoubleOrNull()
+
+            if (altura == null || largura == null || comprimento == null) {
+                Toast.makeText(context, "Digite apenas números válidos!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            viewModel.updateCapacityStock(largura, altura, comprimento, setorId, unidadeId)
+        }
     }
 }
