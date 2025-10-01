@@ -26,7 +26,7 @@ interface APIService {
     @POST("/api/capacityStock/add")
     suspend fun addCapacityStock(@Body capacityStockRequest: CapacityStockRequest): Response<CapacityStockResponse>
 
-    @GET("api/unit/search/all/by/industry/id/{id}")
+    @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
 
     @GET("/api/employee/profile/{id}")
