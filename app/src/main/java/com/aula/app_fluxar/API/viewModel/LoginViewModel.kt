@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.API.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.LoginRequest
 import com.aula.app_fluxar.API.RetrofitClient
+import com.aula.app_fluxar.sessionManager.SessionManager
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -36,10 +38,14 @@ class LoginViewModel : ViewModel() {
 
                 if(response.isSuccessful) {
                     val employee = response.body()
-                    _loginResult.value = employee
-                    _userData.value = employee
-                    _errorMessage.value = ""
-                    _navigateToMain.value = true
+                    employee?.let {
+                        SessionManager.saveLoginData(it)
+                        _loginResult.value = employee
+                        _userData.value = employee
+                        _errorMessage.value = ""
+                        _navigateToMain.value = true
+                        Log.d("LoginViewModel", "Login bem-sucedido para: ${it.email}")
+                    }
                 } else {
                     when (response.code()) {
                         400 -> _errorMessage.value = "Credenciais inválidas!"

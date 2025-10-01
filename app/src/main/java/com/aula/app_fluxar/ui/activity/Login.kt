@@ -2,6 +2,7 @@ package com.aula.app_fluxar.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -14,10 +15,12 @@ import androidx.lifecycle.Observer
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityLoginBinding
 import com.aula.app_fluxar.API.viewModel.LoginViewModel
+import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 
 class Login : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +56,21 @@ class Login : AppCompatActivity() {
 
         viewModel.navigateToMain.observe(this, Observer { shouldNavigate ->
             if (shouldNavigate) {
+                loadProfileAndNavigate()
+            }
+        })
+
+        profileViewModel.profileResult.observe(this, Observer { profile ->
+            if (profile != null) {
+                Log.d("Login", "Profile carregado com sucesso: ${profile.firstName}")
                 navigateToMainActivity()
-                viewModel.onNavigationComplete()
+            }
+        })
+
+        profileViewModel.errorMessage.observe(this, Observer { error ->
+            if (error.isNotEmpty()) {
+                Toast.makeText(this, "Erro ao carregar perfil: $error", Toast.LENGTH_SHORT).show()
+                navigateToMainActivity()
             }
         })
     }
@@ -73,15 +89,22 @@ class Login : AppCompatActivity() {
         }
     }
 
+    private fun loadProfileAndNavigate() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btEntrarLogin.isEnabled = false
+
+        profileViewModel.loadProfile()
+    }
+
     private fun navigateToMainActivity() {
         val employee = viewModel.getUser()
         if (employee != null) {
-            if (employee.cargo == 'A')
+            if (employee.role == 'A') {
                 Toast.makeText(this, "Você não tem permissão para acessar este aplicativo.", Toast.LENGTH_SHORT).show()
-            else {
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    putExtra("USER_DATA", employee)
-                }
+                binding.progressBar.visibility = View.GONE
+                binding.btEntrarLogin.isEnabled = true
+            } else {
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }
@@ -90,5 +113,7 @@ class Login : AppCompatActivity() {
             binding.progressBar.visibility = View.GONE
             binding.btEntrarLogin.isEnabled = true
         }
+
+        viewModel.onNavigationComplete()
     }
 }

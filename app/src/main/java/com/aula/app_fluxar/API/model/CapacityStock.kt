@@ -1,18 +1,18 @@
 package com.aula.app_fluxar.API.model
 
 data class CapacityStockRequest(
-    val largura: Double,
-    val altura: Double,
-    val comprimento: Double,
-    val setorId: Long,
-    val unidadeId: Long
+    val width: Double,
+    val height: Double,
+    val length: Double,
+    val sectorId: Long,
+    val unitId: Long
 )
 
 data class CapacityStockResponse(
-    val altura: Double,
-    val capacidadeMaxima: Double,
-    val comprimento: Double,
-    val largura: Double,
-    val setor: Sector,
-    val unidade: Unit
+    val width: Double,
+    val height: Double,
+    val length: Double,
+    val maxCapacity: Double,
+    val sector: Sector,
+    val unit: Unit
 )
