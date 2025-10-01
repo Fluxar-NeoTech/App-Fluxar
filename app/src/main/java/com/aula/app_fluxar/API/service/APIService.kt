@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.API.service
 
+import com.aula.app_fluxar.API.model.Batch
 import com.aula.app_fluxar.API.model.CapacityStockRequest
 import com.aula.app_fluxar.API.model.CapacityStockResponse
 import com.aula.app_fluxar.API.model.Employee
@@ -31,6 +32,12 @@ interface APIService {
 
     @GET("/api/employee/profile/{id}")
     suspend fun getProfileInfos(@Path("id") id: Long): Response<Profile>
+
+    @GET("/api/batch/search/all/product/by/unit/sector")
+    suspend fun getBatchesEmployee(
+        @Query("unitId") unitID: Long,
+        @Query("sectorId") sectorID: Long
+    ): Response<List<Batch>>
 
     // MAPS- API
     @GET("geocode/json")

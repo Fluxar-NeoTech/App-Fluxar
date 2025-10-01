@@ -29,7 +29,7 @@ class GetUnitsViewModel : ViewModel() {
                     _errorMessage.value = ""
                     Log.d("GetUnits", "Unidades retornadas: ${response.body()}")
                 } else {
-                    _errorMessage.value = "Erro ao atualizar foto: ${response.code()} - ${response.message()}"
+                    _errorMessage.value = "Erro ao buscar unidades: ${response.code()} - ${response.message()}"
                     Log.e("GetUnits", "Erro na API: ${response.code()} - ${response.message()}")
                 }
             } catch (e: Exception) {
