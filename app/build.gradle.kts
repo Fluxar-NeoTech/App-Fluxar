@@ -45,6 +45,24 @@ android {
             "MAPS_API_KEY",
             "\"${localProperties.getProperty("MAPS_API_KEY", "")}\""
         )
+
+        buildConfigField(
+            "String",
+            "CLOUD_NAME",
+            "\"${localProperties.getProperty("CLOUD_NAME", "")}\""
+        )
+
+        buildConfigField(
+            "String",
+            "API_KEY",
+            "\"${localProperties.getProperty("API_KEY", "")}\""
+        )
+
+        buildConfigField(
+            "String",
+            "API_SECRET",
+            "\"${localProperties.getProperty("API_SECRET", "")}\""
+        )
     }
 
     buildTypes {
