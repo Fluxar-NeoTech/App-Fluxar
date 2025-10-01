@@ -20,7 +20,7 @@ import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
-import androidx. activity.viewModels
+import androidx.activity.viewModels
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

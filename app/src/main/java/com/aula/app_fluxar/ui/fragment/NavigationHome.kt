@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,14 +17,20 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.aula.app_fluxar.API.viewModel.GetBatchesViewModel
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.adpters.BatchAdapter
+import com.aula.app_fluxar.sessionManager.SessionManager
 import com.aula.app_fluxar.ui.activity.MainActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import androidx.fragment.app.viewModels
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Calendar
@@ -36,6 +43,7 @@ class NavigationHome : Fragment() {
     private lateinit var content: FrameLayout
     private lateinit var profileButton: ImageView
     private lateinit var greetingManager: TextView
+    private val getBatchesViewModel: GetBatchesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -57,12 +65,6 @@ class NavigationHome : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadProfileInfos()
-
-        (activity as? MainActivity)?.employeeLiveData?.observe(viewLifecycleOwner) { employee ->
-            if (employee != null) {
-                loadProfileInfos()
-            }
-        }
 
         profileButton.setOnClickListener {
             findNavController().navigate(R.id.nav_perfil)
@@ -114,14 +116,13 @@ class NavigationHome : Fragment() {
             updateSelectedButtons(listProductsButton)
 
             content.post {
-                // add lógica de verificar se existe produto ou não
-                val exists = true
-                if (exists)
-                    showContent(R.layout.fragment_layout_listar_produtos)
-                else
-                    showContent(R.layout.fragment_sem_produtos_cadastrados)
+                // Carrega os lotes quando o layout for inflado
+                loadBatchesForListProducts()
             }
         }
+
+        // Observar os resultados dos lotes
+        setupBatchesObserver()
     }
 
     private fun showContent(layoutId: Int) {
@@ -144,6 +145,65 @@ class NavigationHome : Fragment() {
         }
     }
 
+    private fun loadBatchesForListProducts() {
+        val employee = SessionManager.getCurrentProfile()
+
+        if (employee != null) {
+            val unitID = employee.unit.id
+            val sectorID = employee.sector.id
+
+            Log.d("NavigationHome", "Carregando batches para unitID: $unitID, sectorID: $sectorID")
+            getBatchesViewModel.getBatches(unitID, sectorID)
+        } else {
+            Log.e("NavigationHome", "Employee não encontrado na sessão")
+            showEmptyState()
+        }
+    }
+
+    private fun setupBatchesObserver() {
+        getBatchesViewModel.getBatchesResult.observe(viewLifecycleOwner) { batches ->
+            Log.d("NavigationHome", "Batches recebidos: ${batches?.size ?: 0}")
+
+            if (batches != null && batches.isNotEmpty()) {
+                setupRecyclerViewWithBatches(batches)
+            } else {
+                showEmptyState()
+            }
+        }
+
+        getBatchesViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (!error.isNullOrEmpty()) {
+                Log.e("NavigationHome", "Erro ao carregar lotes: $error")
+                showEmptyState()
+            }
+        }
+    }
+
+    private fun setupRecyclerViewWithBatches(batches: List<com.aula.app_fluxar.API.model.Batch>) {
+        try {
+            val recyclerView = content.findViewById<RecyclerView>(R.id.product_list_RV)
+            if (recyclerView != null) {
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                val adapter = BatchAdapter(batches)
+                recyclerView.adapter = adapter
+                Log.d("NavigationHome", "RecyclerView configurado com ${batches.size} lotes")
+
+                adapter.notifyDataSetChanged()
+            } else {
+                Log.e("NavigationHome", "RecyclerView não encontrado no layout")
+            }
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao configurar RecyclerView: ${e.message}")
+        }
+    }
+
+    private fun showEmptyState() {
+        // Se não há lotes, mostra o layout de lista vazia
+        showContent(R.layout.fragment_sem_produtos_cadastrados)
+        Log.d("NavigationHome", "Mostrando estado vazio - sem produtos")
+    }
+
+    // Os demais métodos permanecem iguais...
     private fun addProductDropListAdd() {
         val autoCompleteAdd = content.findViewById<AutoCompleteTextView>(R.id.productInput)
         val options = listOf("Linguiça", "Bisteca", "Maminha", "Optimus Prime", "+ Adicionar")
@@ -154,10 +214,8 @@ class NavigationHome : Fragment() {
         autoCompleteAdd.setOnItemClickListener { parent, view, position, id ->
             val selectedItem = parent.getItemAtPosition(position).toString()
 
-            // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
             if (selectedItem == "+ Adicionar") {
-                // Aqui você pode implementar a navegação para adicionar novo produto
-                autoCompleteAdd.setText("") // Limpa o campo
+                autoCompleteAdd.setText("")
             }
         }
     }
@@ -172,10 +230,8 @@ class NavigationHome : Fragment() {
         autoCompleteRemove.setOnItemClickListener { parent, view, position, id ->
             val selectedItem = parent.getItemAtPosition(position).toString()
 
-            // Se selecionar "+ Adicionar", abre uma tela para adicionar novo produto
             if (selectedItem == "+ Adicionar") {
-                // Aqui você pode implementar a navegação para adicionar novo produto
-                autoCompleteRemove.setText("") // Limpa o campo
+                autoCompleteRemove.setText("")
             }
         }
     }
@@ -220,13 +276,11 @@ class NavigationHome : Fragment() {
         datePickerDialog.show()
     }
 
-
     private fun setupFieldDependenciesRemove() {
         val productInputRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
         val numLoteLayoutRemove = content.findViewById<TextInputLayout>(R.id.numLoteLayoutRemove)
         val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
 
-        // Inicialmente desabilita o campo de número do lote
         numLoteLayoutRemove.isEnabled = false
         numLoteRemove.isEnabled = false
 
@@ -242,20 +296,13 @@ class NavigationHome : Fragment() {
             }
         }
 
-        // Adiciona um listener para monitorar mudanças no campo de produto
         productInputRemove.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
                 val isProductSelected = s?.isNotEmpty() == true && s.toString() != "Escolha um produto"
-
-                // Habilita ou desabilita o campo de número do lote baseado na seleção do produto
                 numLoteLayoutRemove.isEnabled = isProductSelected
                 numLoteRemove.isEnabled = isProductSelected
-
-                // Limpa o campo de número do lote se o produto for deselecionado
                 if (!isProductSelected) {
                     numLoteRemove.text?.clear()
                 }
@@ -277,7 +324,6 @@ class NavigationHome : Fragment() {
             .create()
 
         positiveButton.setOnClickListener {
-            // Lógica para cadastrar produto
             Toast.makeText(requireContext(), "Você cadastrou um produto", Toast.LENGTH_SHORT).show()
         }
 
@@ -299,7 +345,6 @@ class NavigationHome : Fragment() {
             .create()
 
         positiveButton.setOnClickListener {
-            // Lógica para remover produto
             Toast.makeText(requireContext(), "Você removeu um produto", Toast.LENGTH_SHORT).show()
         }
 
@@ -312,7 +357,7 @@ class NavigationHome : Fragment() {
     }
 
     private fun loadProfileInfos() {
-        val employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
+        val employee = SessionManager.getCurrentProfile()
 
         employee?.let {
             if (it.firstName.isNotEmpty()) {
