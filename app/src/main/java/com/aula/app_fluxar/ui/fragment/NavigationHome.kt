@@ -26,7 +26,9 @@ import com.aula.app_fluxar.API.viewModel.GetBatchesViewModel
 import com.aula.app_fluxar.API.viewModel.GetProductsViewModel
 import com.aula.app_fluxar.API.viewModel.GetBatchesNamesViewModel
 import com.aula.app_fluxar.API.viewModel.AddProductViewModel
-import com.aula.app_fluxar.API.model.ProductRequest
+import com.aula.app_fluxar.API.viewModel.AddBatchViewModel
+import com.aula.app_fluxar.API.viewModel.DeleteBatchViewModel
+import com.aula.app_fluxar.API.model.BatchRequest
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.adpters.BatchAdapter
 import com.aula.app_fluxar.sessionManager.SessionManager
@@ -50,7 +52,8 @@ class NavigationHome : Fragment() {
     private val getProductsViewModel: GetProductsViewModel by viewModels()
     private val getBatchesNamesViewModel: GetBatchesNamesViewModel by viewModels()
     private val addProductViewModel: AddProductViewModel by viewModels()
-
+    private val addBatchViewModel: AddBatchViewModel by viewModels()
+    private val deleteBatchViewModel: DeleteBatchViewModel by viewModels()
     private var currentProducts: List<ProductResponse> = emptyList()
     private var selectedProductIdForBatch: Long? = null
     private var selectedProductIdForRemoval: Long? = null
@@ -102,7 +105,9 @@ class NavigationHome : Fragment() {
                 setupDatePicker()
 
                 addBatchButton.setOnClickListener {
-                    openAddBatchPopUp()
+                    if (validateBatchFields()) {
+                        openAddBatchPopUp()
+                    }
                 }
             }
         }
@@ -136,6 +141,8 @@ class NavigationHome : Fragment() {
         setupProductsObserver()
         setupBatchesNamesObserver()
         setupAddProductObserver()
+        setupAddBatchObserver()
+        setupDeleteBatchObserver()
     }
 
     private fun showContent(layoutId: Int) {
@@ -225,9 +232,7 @@ class NavigationHome : Fragment() {
 
             if (products != null && products.isNotEmpty()) {
                 currentProducts = products
-
                 updateProductDropdownForCurrentLayout()
-
             } else {
                 val fallbackOptions = listOf("+ Adicionar", "Linguiça", "Bisteca", "Maminha")
                 updateDropdownsWithFallback(fallbackOptions)
@@ -336,14 +341,42 @@ class NavigationHome : Fragment() {
                 if (selectedItem == "+ Adicionar") {
                     productInput.setText("")
                     selectedProductIdForBatch = null
+                    clearTypeField()
                     openAddProductDialog()
                 } else {
                     selectedProductIdForBatch = getProductIdByName(selectedItem, products)
                     Log.d("NavigationHome", "Produto selecionado para LOTE: $selectedItem - ID: $selectedProductIdForBatch")
+                    fillProductType(selectedItem, products)
                 }
             }
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao atualizar dropdown de produto para lote: ${e.message}")
+        }
+    }
+
+    private fun fillProductType(selectedProductName: String, products: List<ProductResponse>) {
+        try {
+            val typeInput = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
+            val product = products.find { it.name == selectedProductName }
+
+            product?.let {
+                typeInput.setText(it.type ?: "Tipo não definido")
+                Log.d("NavigationHome", "Tipo do produto preenchido automaticamente: ${it.type}")
+            } ?: run {
+                Log.e("NavigationHome", "Produto não encontrado para preencher tipo: $selectedProductName")
+                typeInput.setText("")
+            }
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao preencher tipo do produto: ${e.message}")
+        }
+    }
+
+    private fun clearTypeField() {
+        try {
+            val typeInput = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
+            typeInput.setText("")
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao limpar campo de tipo: ${e.message}")
         }
     }
 
@@ -396,11 +429,14 @@ class NavigationHome : Fragment() {
                 val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, batchesNames)
                 numLoteRemove.setAdapter(adapter)
                 numLoteRemove.isEnabled = true
+                numLoteLayoutRemove.isEnabled = true
+                numLoteRemove.hint = "Número do lote"
                 Log.d("NavigationHome", "Dropdown de números de lote atualizado com ${batchesNames.size} opções")
             } else {
                 val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf("Nenhum lote encontrado"))
                 numLoteRemove.setAdapter(emptyAdapter)
                 numLoteRemove.isEnabled = false
+                numLoteLayoutRemove.isEnabled = false
             }
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao atualizar dropdown de números de lote: ${e.message}")
@@ -418,6 +454,7 @@ class NavigationHome : Fragment() {
 
             val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf("Selecione um produto primeiro"))
             numLoteRemove.setAdapter(emptyAdapter)
+            numLoteRemove.hint = "Selecione um produto primeiro"
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao resetar dropdown de números de lote: ${e.message}")
         }
@@ -433,7 +470,6 @@ class NavigationHome : Fragment() {
             result?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 Log.d("NavigationHome", "Produto adicionado: $it")
-
                 loadProducts()
             }
         }
@@ -454,32 +490,87 @@ class NavigationHome : Fragment() {
         }
     }
 
-    private fun openAddProductDialog() {
-        // Aqui você vai implementar quando tiver o layout do dialog
-//        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_product_simple, null)
-//
-//        val dialog = AlertDialog.Builder(requireContext())
-//            .setView(dialogView)
-//            .setTitle("Adicionar Novo Produto")
-//            .setMessage("Funcionalidade de adicionar produto será implementada aqui")
-//            .setPositiveButton("OK") { dialog, _ ->
-//                dialog.dismiss()
-//            }
-//            .create()
-//
-//        dialog.show()
+    private fun setupAddBatchObserver() {
+        addBatchViewModel.addBatchResult.observe(viewLifecycleOwner) { result ->
+            result?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Log.d("NavigationHome", "Lote adicionado: $it")
+                clearBatchFields()
+                loadBatchesForListing()
+            }
+        }
+
+        addBatchViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                if (it.isNotEmpty()) {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    Log.e("NavigationHome", "Erro ao adicionar lote: $error")
+                }
+            }
+        }
+
+        addBatchViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                Log.d("NavigationHome", "Adicionando lote...")
+            }
+        }
     }
 
-    // MÉTODOS AUXILIARES
+    private fun setupDeleteBatchObserver() {
+        deleteBatchViewModel.deleteBatchResult.observe(viewLifecycleOwner) { result ->
+            result?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Log.d("NavigationHome", "Lote deletado: $it")
+                clearRemoveBatchFields()
+                loadBatchesForListing()
+
+                selectedProductIdForRemoval?.let { productId ->
+                    loadBatchNumbersForProduct(productId)
+                }
+            }
+        }
+
+        deleteBatchViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                if (it.isNotEmpty()) {
+                    Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    Log.e("NavigationHome", "Erro ao deletar lote: $error")
+                }
+            }
+        }
+
+        deleteBatchViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                Log.d("NavigationHome", "Deletando lote...")
+            }
+        }
+    }
+
+    private fun openAddProductDialog() {
+        // Implementar quando tiver o layout do dialog
+    }
+
     private fun getProductIdByName(productName: String, products: List<ProductResponse>): Long? {
         return products.find { it.name == productName }?.id
     }
 
     private fun setupTypeDropdown() {
-        val typeInput = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
-        val options = listOf("Tipo A", "Tipo B", "Tipo C")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_expandable_list_item_1, options)
-        typeInput.setAdapter(adapter)
+        try {
+            val typeInput = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
+            val typeInputLayout = content.findViewById<TextInputLayout>(R.id.typeInputLayout)
+
+            typeInput.isEnabled = false
+            typeInput.isClickable = false
+            typeInput.isFocusable = false
+            typeInput.isFocusableInTouchMode = false
+
+            typeInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
+            typeInput.hint = "Tipo (preenchido automaticamente)"
+
+            Log.d("NavigationHome", "Campo de tipo configurado como bloqueado")
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao configurar campo de tipo: ${e.message}")
+        }
     }
 
     private fun setupDatePicker() {
@@ -557,6 +648,152 @@ class NavigationHome : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun validateBatchFields(): Boolean {
+        return try {
+            val employee = SessionManager.getCurrentProfile()
+            val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+            val numLoteInput = content.findViewById<TextInputEditText>(R.id.numLoteInput)
+            val alturaInput = content.findViewById<TextInputEditText>(R.id.alturaInput)
+            val larguraInput = content.findViewById<TextInputEditText>(R.id.larguraInput)
+            val comprimentoInput = content.findViewById<TextInputEditText>(R.id.comprimentoInput)
+
+            if (selectedProductIdForBatch == null || selectedProductIdForBatch == 0L) {
+                Toast.makeText(requireContext(), "Selecione um produto válido", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (employee == null || employee.unit.id == 0L) {
+                Toast.makeText(requireContext(), "Dados do usuário inválidos", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (dateInput.text.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Informe a data de validade", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (numLoteInput.text.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Informe o número do lote", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            val altura = alturaInput.text.toString().toDoubleOrNull()
+            val largura = larguraInput.text.toString().toDoubleOrNull()
+            val comprimento = comprimentoInput.text.toString().toDoubleOrNull()
+
+            if (altura == null || altura <= 0) {
+                Toast.makeText(requireContext(), "Altura deve ser maior que zero", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (largura == null || largura <= 0) {
+                Toast.makeText(requireContext(), "Largura deve ser maior que zero", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (comprimento == null || comprimento <= 0) {
+                Toast.makeText(requireContext(), "Comprimento deve ser maior que zero", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (altura < 0.01 || largura < 0.01 || comprimento < 0.01) {
+                Toast.makeText(requireContext(), "Dimensões muito pequenas (mínimo 0.01)", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            true
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro na validação: ${e.message}")
+            Toast.makeText(requireContext(), "Erro ao validar campos", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
+
+    private fun addBatch() {
+        try {
+            val employee = SessionManager.getCurrentProfile()
+            val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+            val numLoteInput = content.findViewById<TextInputEditText>(R.id.numLoteInput)
+            val alturaInput = content.findViewById<TextInputEditText>(R.id.alturaInput)
+            val larguraInput = content.findViewById<TextInputEditText>(R.id.larguraInput)
+            val comprimentoInput = content.findViewById<TextInputEditText>(R.id.comprimentoInput)
+
+            if (employee == null) {
+                Toast.makeText(requireContext(), "Usuário não logado", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val unitId = employee.unit?.id
+            if (unitId == null || unitId == 0L) {
+                Toast.makeText(requireContext(), "Unidade não configurada", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val productId = selectedProductIdForBatch
+            if (productId == null || productId == 0L) {
+                Toast.makeText(requireContext(), "Produto não selecionado", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val batchRequest = BatchRequest(
+                batchCode = numLoteInput.text.toString().trim().ifEmpty { "LOTE-${System.currentTimeMillis()}" },
+                expirationDate = formatDateForAPI(dateInput.text.toString()),
+                height = alturaInput.text.toString().toDoubleOrNull() ?: 1.0,
+                width = larguraInput.text.toString().toDoubleOrNull() ?: 1.0,
+                length = comprimentoInput.text.toString().toDoubleOrNull() ?: 1.0,
+                unitId = unitId,
+                productId = productId
+            )
+
+            Log.d("NavigationHome", "Enviando BatchRequest: $batchRequest")
+            addBatchViewModel.addBatch(batchRequest)
+
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao criar BatchRequest: ${e.message}", e)
+            Toast.makeText(requireContext(), "Erro ao processar dados: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun formatDateForAPI(dateInput: String): String {
+        return try {
+            val dateParts = dateInput.split(" / ").map { it.trim() }
+            if (dateParts.size == 3) {
+                val day = dateParts[0].padStart(2, '0')
+                val month = dateParts[1].padStart(2, '0')
+                val year = dateParts[2]
+                "$year-$month-$day"
+            } else {
+                dateInput
+            }
+        } catch (e: Exception) {
+            dateInput
+        }
+    }
+
+    private fun clearBatchFields() {
+        try {
+            val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+            val numLoteInput = content.findViewById<TextInputEditText>(R.id.numLoteInput)
+            val alturaInput = content.findViewById<TextInputEditText>(R.id.alturaInput)
+            val larguraInput = content.findViewById<TextInputEditText>(R.id.larguraInput)
+            val comprimentoInput = content.findViewById<TextInputEditText>(R.id.comprimentoInput)
+            val productInput = content.findViewById<AutoCompleteTextView>(R.id.productInput)
+            val typeInput = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
+
+            dateInput.text?.clear()
+            numLoteInput.text?.clear()
+            alturaInput.text?.clear()
+            larguraInput.text?.clear()
+            comprimentoInput.text?.clear()
+            productInput.text?.clear()
+            typeInput.text?.clear()
+
+            selectedProductIdForBatch = null
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao limpar campos: ${e.message}")
+        }
+    }
+
     private fun openAddBatchPopUp() {
         val dialogAddBatch = layoutInflater.inflate(R.layout.pop_up_cadastrar_produto, null)
         val positiveButton = dialogAddBatch.findViewById<Button>(R.id.cadastrarProdutoS)
@@ -567,19 +804,8 @@ class NavigationHome : Fragment() {
             .create()
 
         positiveButton.setOnClickListener {
-            if (selectedProductIdForBatch != null) {
-                Log.d("NavigationHome", "Cadastrando LOTE para produto ID: $selectedProductIdForBatch")
-
-                val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
-                val typeInput = content.findViewById<AutoCompleteTextView>(R.id.typeInput)
-
-                val selectedDate = dateInput.text.toString()
-                val selectedType = typeInput.text.toString()
-
-                Toast.makeText(requireContext(), "LOTE cadastrado para produto ID: $selectedProductIdForBatch\nData: $selectedDate\nTipo: $selectedType", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(requireContext(), "Selecione um produto primeiro", Toast.LENGTH_SHORT).show()
-            }
+            addBatch()
+            dialog.dismiss()
         }
 
         negativeButton.setOnClickListener {
@@ -603,11 +829,9 @@ class NavigationHome : Fragment() {
             val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
             val selectedBatchNumber = numLoteRemove.text.toString()
 
-            if (selectedProductIdForRemoval != null && selectedBatchNumber.isNotEmpty() && selectedBatchNumber != "Nenhum lote encontrado" && selectedBatchNumber != "Selecione um produto primeiro") {
-                Log.d("NavigationHome", "Removendo LOTE - Produto ID: $selectedProductIdForRemoval, Número do Lote: $selectedBatchNumber")
-                Toast.makeText(requireContext(), "LOTE removido - Produto ID: $selectedProductIdForRemoval, Lote: $selectedBatchNumber", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Selecione um produto e um número de lote primeiro", Toast.LENGTH_SHORT).show()
+            if (validateRemoveBatchFields(selectedBatchNumber)) {
+                deleteBatch(selectedBatchNumber)
+                dialog.dismiss()
             }
         }
 
@@ -617,6 +841,51 @@ class NavigationHome : Fragment() {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
+    }
+
+    private fun validateRemoveBatchFields(selectedBatchNumber: String): Boolean {
+        if (selectedProductIdForRemoval == null) {
+            Toast.makeText(requireContext(), "Selecione um produto primeiro", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (selectedBatchNumber.isEmpty() ||
+            selectedBatchNumber == "Nenhum lote encontrado" ||
+            selectedBatchNumber == "Selecione um produto primeiro") {
+            Toast.makeText(requireContext(), "Selecione um número de lote válido", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        return true
+    }
+
+    private fun deleteBatch(batchCode: String) {
+        try {
+            Log.d("NavigationHome", "Iniciando deleção do lote: $batchCode")
+            Log.d("NavigationHome", "Produto ID relacionado: $selectedProductIdForRemoval")
+
+            deleteBatchViewModel.deleteBatch(batchCode)
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao deletar lote: ${e.message}", e)
+            Toast.makeText(requireContext(), "Erro ao processar deleção: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun clearRemoveBatchFields() {
+        try {
+            val productInputRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
+            val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
+
+            productInputRemove.text?.clear()
+            numLoteRemove.text?.clear()
+
+            selectedProductIdForRemoval = null
+            resetBatchNumberDropdown()
+
+            Log.d("NavigationHome", "Campos de remoção limpos")
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao limpar campos de remoção: ${e.message}")
+        }
     }
 
     private fun loadProfileInfos() {

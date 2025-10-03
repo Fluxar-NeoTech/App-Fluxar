@@ -7,5 +7,6 @@ data class Profile(
     val profilePhoto: String,
     val sector: Sector,
     val unit: Unit,
-    val maxCapacity: Double
+    val maxCapacity: Double,
+    val plan: Plan
 )

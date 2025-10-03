@@ -198,6 +198,13 @@ class NavigationPerfil : Fragment() {
             binding.nomeGestor.text = "${employee.firstName ?: ""} ${employee.lastName ?: ""}"
             binding.nomeEmpresaGestor.text = employee.unit.industry.name ?: "Indisponível"
             binding.setorGestor.text = "Setor: ${employee.sector.name}" ?: "Indisponível"
+            binding.planoGestor.text = employee.plan.name ?: "Indisponível"
+            when (employee.plan.monthsDuration) {
+                12 -> binding.duracaoPlanoGestor.text = "Anual"
+                6 -> binding.duracaoPlanoGestor.text = "Semestral"
+                1 -> binding.duracaoPlanoGestor.text = "Mensal"
+                else -> "Indisponível"
+            }
             binding.cnpjEmpresaGestor.text = formatCNPJ(employee.unit.industry.cnpj) ?: "Indisponível"
             binding.unidadeGestor.text = employee.unit.name ?: "Indisponível"
             binding.enderecoUnidadeGestor.text = "${employee.unit.street}, ${employee.unit.number}" ?: "Indisponível"

@@ -31,7 +31,6 @@
                 android:id="@+id/numLoteRemove"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Número do lote"
                 android:paddingLeft="10dp"
                 android:paddingTop="18dp"
                 android:paddingEnd="18dp"

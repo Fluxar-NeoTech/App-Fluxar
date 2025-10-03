@@ -1,6 +1,7 @@
 package com.aula.app_fluxar.API.service
 
 import com.aula.app_fluxar.API.model.Batch
+import com.aula.app_fluxar.API.model.BatchRequest
 import com.aula.app_fluxar.API.model.CapacityStockRequest
 import com.aula.app_fluxar.API.model.CapacityStockResponse
 import com.aula.app_fluxar.API.model.Employee
@@ -13,6 +14,7 @@ import com.aula.app_fluxar.API.model.ProductResponse
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -31,6 +33,12 @@ interface APIService {
 
     @POST("/api/product/add")
     suspend fun addProduct(@Body productRequest: ProductRequest): Response<String>
+
+    @DELETE("/api/batch/delete/{batchCode}")
+    suspend fun deleteBatch(@Path("batchCode") batchCode: String): Response<String>
+
+    @POST("api/batch/add")
+    suspend fun addBatch(@Body batchRequest: BatchRequest): Response<String>
 
     @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
