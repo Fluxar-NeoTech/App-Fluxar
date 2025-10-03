@@ -15,7 +15,16 @@
     <fragment
         android:id="@+id/nav_unidades"
         android:name="com.aula.app_fluxar.ui.fragment.NavigationUnidades"
-        tools:layout="@layout/fragment_nav_unidades" />
+        tools:layout="@layout/fragment_nav_unidades" >
+        <action
+            android:id="@+id/action_navigationUnidades_to_unitDetails"
+            app:destination="@id/navigationUnitDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigationUnitDetails"
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationUnitDetails"
+        android:label="Detalhes da Unidade"
+        tools:layout="@layout/fragment_navigation_unit_details" />
     <fragment
         android:id="@+id/nav_perfil"
         android:name="com.aula.app_fluxar.ui.fragment.NavigationPerfil"
