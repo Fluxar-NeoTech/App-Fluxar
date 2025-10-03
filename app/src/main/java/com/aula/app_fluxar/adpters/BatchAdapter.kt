@@ -46,7 +46,7 @@ class BatchAdapter(private val batches: List<Batch>) : RecyclerView.Adapter<Batc
     private fun formatDate(dateString: String): String {
         return try {
             val localDate = LocalDate.parse(dateString)
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formatter = DateTimeFormatter.ofPattern("dd/MM/yy")
             localDate.format(formatter)
         } catch (e: DateTimeParseException) {
             try {
