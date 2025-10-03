@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <!-- Linha 1: Nome do Produto e Lote -->
             <TextView
                 android:id="@+id/produto_nome"
                 android:layout_width="0dp"
@@ -55,7 +54,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/produto_nome" />
 
-            <!-- Linha 2: Data de Validade -->
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
@@ -80,17 +78,14 @@
                 app:layout_constraintEnd_toStartOf="@+id/produto_medidas"
                 app:layout_constraintStart_toEndOf="@id/textView5" />
 
-            <!-- Linha 3: Medidas -->
-
-            <!-- Guideline para melhor responsividade -->
 
             <TextView
                 android:id="@+id/produto_medidas"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:gravity="end"
                 android:text="12 × 6 × 6 cm"
+                android:gravity="center_horizontal"
                 android:textAlignment="center"
                 android:textColor="@color/preto"
                 android:textSize="14sp"
