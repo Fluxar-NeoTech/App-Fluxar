@@ -6,8 +6,10 @@ import com.aula.app_fluxar.API.model.CapacityStockResponse
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.GeocodingResponse
 import com.aula.app_fluxar.API.model.LoginRequest
+import com.aula.app_fluxar.API.model.ProductRequest
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
+import com.aula.app_fluxar.API.model.ProductResponse
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -27,6 +29,9 @@ interface APIService {
     @POST("/api/capacityStock/add")
     suspend fun addCapacityStock(@Body capacityStockRequest: CapacityStockRequest): Response<CapacityStockResponse>
 
+    @POST("/api/product/add")
+    suspend fun addProduct(@Body productRequest: ProductRequest): Response<String>
+
     @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
 
@@ -38,6 +43,16 @@ interface APIService {
         @Query("unitId") unitID: Long,
         @Query("sectorId") sectorID: Long
     ): Response<List<Batch>>
+
+    @GET("/api/product/search/all/product/by/unit/{employeeId}")
+    suspend fun getProductsByEmployee(
+        @Path("employeeId") employeeId: Long
+    ): Response<List<ProductResponse>>
+
+    @GET("/api/product/search/batch/by/product/{productId}")
+    suspend fun getBatchesNamesByProduct(
+        @Path("productId") productId: Long
+    ): Response<List<String>>
 
     // MAPS- API
     @GET("geocode/json")
