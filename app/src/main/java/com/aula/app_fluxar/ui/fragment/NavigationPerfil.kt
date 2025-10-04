@@ -96,15 +96,12 @@ class NavigationPerfil : Fragment() {
         CloudnaryConfig.init(requireContext())
         binding = FragmentNavPerfilBinding.inflate(inflater, container, false)
 
-        // INICIALIZA OS VIEWMODELS
         updateFotoViewModel = ViewModelProvider(this).get(UpdateFotoViewModel::class.java)
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
-        // CONFIGURA OS OBSERVERS
         observeUpdatePhoto()
         observeProfileUpdates()
 
-        // CARREGA OS DADOS ATUALIZADOS
         loadCurrentProfile()
 
         defaultProfilePhoto = binding.fotoPerfilPadrao
@@ -118,7 +115,6 @@ class NavigationPerfil : Fragment() {
     private fun observeProfileUpdates() {
         profileViewModel.profileResult.observe(viewLifecycleOwner) { profile ->
             profile?.let {
-                // ATUALIZA O SESSION MANAGER E OS DADOS LOCAIS
                 com.aula.app_fluxar.sessionManager.SessionManager.saveProfile(it)
                 employee = it
                 profilePhotoUrl = it.profilePhoto
@@ -130,7 +126,6 @@ class NavigationPerfil : Fragment() {
         profileViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (error.isNotEmpty()) {
                 Log.e("NavigationPerfil", "❌ Erro ao carregar profile: $error")
-                // Fallback: usa dados do SessionManager se houver erro
                 employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
                 employee?.let {
                     updateUIWithUserData(it)

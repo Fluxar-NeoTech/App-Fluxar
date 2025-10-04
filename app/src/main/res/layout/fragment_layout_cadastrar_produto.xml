@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
                 android:hint="Número do lote"
-                android:inputType="numberDecimal"
+                android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingTop="18dp"
                 android:paddingEnd="12dp"
