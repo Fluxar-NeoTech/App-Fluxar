@@ -96,15 +96,12 @@ class NavigationPerfil : Fragment() {
         CloudnaryConfig.init(requireContext())
         binding = FragmentNavPerfilBinding.inflate(inflater, container, false)
 
-        // INICIALIZA OS VIEWMODELS
         updateFotoViewModel = ViewModelProvider(this).get(UpdateFotoViewModel::class.java)
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
 
-        // CONFIGURA OS OBSERVERS
         observeUpdatePhoto()
         observeProfileUpdates()
 
-        // CARREGA OS DADOS ATUALIZADOS
         loadCurrentProfile()
 
         defaultProfilePhoto = binding.fotoPerfilPadrao
@@ -118,7 +115,6 @@ class NavigationPerfil : Fragment() {
     private fun observeProfileUpdates() {
         profileViewModel.profileResult.observe(viewLifecycleOwner) { profile ->
             profile?.let {
-                // ATUALIZA O SESSION MANAGER E OS DADOS LOCAIS
                 com.aula.app_fluxar.sessionManager.SessionManager.saveProfile(it)
                 employee = it
                 profilePhotoUrl = it.profilePhoto
@@ -130,7 +126,6 @@ class NavigationPerfil : Fragment() {
         profileViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (error.isNotEmpty()) {
                 Log.e("NavigationPerfil", "❌ Erro ao carregar profile: $error")
-                // Fallback: usa dados do SessionManager se houver erro
                 employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
                 employee?.let {
                     updateUIWithUserData(it)
@@ -198,6 +193,13 @@ class NavigationPerfil : Fragment() {
             binding.nomeGestor.text = "${employee.firstName ?: ""} ${employee.lastName ?: ""}"
             binding.nomeEmpresaGestor.text = employee.unit.industry.name ?: "Indisponível"
             binding.setorGestor.text = "Setor: ${employee.sector.name}" ?: "Indisponível"
+            binding.planoGestor.text = employee.plan.name ?: "Indisponível"
+            when (employee.plan.monthsDuration) {
+                12 -> binding.duracaoPlanoGestor.text = "Anual"
+                6 -> binding.duracaoPlanoGestor.text = "Semestral"
+                1 -> binding.duracaoPlanoGestor.text = "Mensal"
+                else -> "Indisponível"
+            }
             binding.cnpjEmpresaGestor.text = formatCNPJ(employee.unit.industry.cnpj) ?: "Indisponível"
             binding.unidadeGestor.text = employee.unit.name ?: "Indisponível"
             binding.enderecoUnidadeGestor.text = "${employee.unit.street}, ${employee.unit.number}" ?: "Indisponível"

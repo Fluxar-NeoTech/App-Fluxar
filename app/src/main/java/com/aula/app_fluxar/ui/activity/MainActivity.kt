@@ -20,7 +20,7 @@ import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
-import androidx. activity.viewModels
+import androidx.activity.viewModels
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque -> {
+                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
                     backButton.visibility = View.VISIBLE
                     secondaryNavLogo.visibility = View.VISIBLE
                     backButton.setOnClickListener {
