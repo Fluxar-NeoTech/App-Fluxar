@@ -57,6 +57,7 @@ class NavigationHome : Fragment() {
     private var currentProducts: List<ProductResponse> = emptyList()
     private var selectedProductIdForBatch: Long? = null
     private var selectedProductIdForRemoval: Long? = null
+    private var currentBatchNumbers: List<String> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -424,6 +425,7 @@ class NavigationHome : Fragment() {
         try {
             val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
             val numLoteLayoutRemove = content.findViewById<TextInputLayout>(R.id.numLoteLayoutRemove)
+            currentBatchNumbers = batchesNames
 
             if (batchesNames.isNotEmpty()) {
                 val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, batchesNames)
@@ -451,6 +453,7 @@ class NavigationHome : Fragment() {
             numLoteRemove.text?.clear()
             numLoteRemove.isEnabled = false
             numLoteLayoutRemove.isEnabled = false
+            currentBatchNumbers = emptyList()
 
             val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf("Selecione um produto primeiro"))
             numLoteRemove.setAdapter(emptyAdapter)
@@ -817,6 +820,15 @@ class NavigationHome : Fragment() {
     }
 
     private fun openRemoveBatchPopUp() {
+        val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
+        val selectedBatchNumber = numLoteRemove.text.toString().trim()
+
+        if (!isBatchNumberValid(selectedBatchNumber)) {
+            Toast.makeText(requireContext(), "Número do lote não existe", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+
         val dialogRemoveBatch = layoutInflater.inflate(R.layout.pop_up_remover_produto, null)
         val positiveButton = dialogRemoveBatch.findViewById<Button>(R.id.removerProdutoS)
         val negativeButton = dialogRemoveBatch.findViewById<Button>(R.id.removerProdutoN)
@@ -841,6 +853,15 @@ class NavigationHome : Fragment() {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
+    }
+
+    private fun isBatchNumberValid(batchNumber: String): Boolean {
+        if (batchNumber.isEmpty() ||
+            batchNumber == "Nenhum lote encontrado" ||
+            batchNumber == "Selecione um produto primeiro") {
+            return false
+        }
+        return currentBatchNumbers.contains(batchNumber)
     }
 
     private fun validateRemoveBatchFields(selectedBatchNumber: String): Boolean {
@@ -878,6 +899,7 @@ class NavigationHome : Fragment() {
 
             productInputRemove.text?.clear()
             numLoteRemove.text?.clear()
+            currentBatchNumbers = emptyList()
 
             selectedProductIdForRemoval = null
             resetBatchNumberDropdown()
