@@ -18,6 +18,7 @@ import com.aula.app_fluxar.API.viewModel.LoginViewModel
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 
 class Login : AppCompatActivity() {
+    private val origin = "APP"
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
@@ -85,7 +86,7 @@ class Login : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            viewModel.login(email, senha)
+            viewModel.login(email, senha, origin)
         }
     }
 

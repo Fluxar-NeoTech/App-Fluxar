@@ -12,7 +12,8 @@ data class Employee(
 
 data class LoginRequest(
     val email: String,
-    val password: String
+    val password: String,
+    val origin: String
 )
 
 data class UpdatePhotoRequest(
