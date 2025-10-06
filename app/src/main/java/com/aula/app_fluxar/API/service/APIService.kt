@@ -11,7 +11,7 @@ import com.aula.app_fluxar.API.model.ProductRequest
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import com.aula.app_fluxar.API.model.ProductResponse
-import com.aula.app_fluxar.API.model.Unit as UnitModel
+import com.aula.app_fluxar.API.model.UnitInfos
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -41,7 +41,7 @@ interface APIService {
     suspend fun addBatch(@Body batchRequest: BatchRequest): Response<String>
 
     @GET("/api/unit/search/all/by/industry/{id}")
-    suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitModel>>
+    suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitInfos>>
 
     @GET("/api/employee/profile/{id}")
     suspend fun getProfileInfos(@Path("id") id: Long): Response<Profile>

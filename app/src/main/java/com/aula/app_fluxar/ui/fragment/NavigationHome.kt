@@ -79,6 +79,7 @@ class NavigationHome : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadProfileInfos()
+        loadHomeInfos()
 
         profileButton.setOnClickListener {
             findNavController().navigate(R.id.nav_perfil)
@@ -932,6 +933,23 @@ class NavigationHome : Fragment() {
             }
         } ?: run {
             profileButton.setImageResource(R.drawable.foto_de_perfil_padrao)
+        }
+    }
+
+    private fun loadHomeInfos() {
+        val employee = SessionManager.getCurrentProfile()
+        val inflater = LayoutInflater.from(requireContext())
+        val homeView = inflater.inflate(R.layout.fragment_layout_home, content, false)
+        val canReceiveText: TextView = homeView.findViewById(R.id.podeReceberTexto)
+
+        employee?.let {
+            if (it.unit.avaliability.toString().isNotEmpty()) {
+                canReceiveText.text = """
+            A unidade pode receber ${employee?.unit?.avaliability} m³ de insumos no seu estoque
+        """.trimIndent()
+            } else {
+                canReceiveText.text = "Informação indisponível!"
+            }
         }
     }
 }

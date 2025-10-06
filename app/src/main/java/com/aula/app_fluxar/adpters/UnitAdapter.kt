@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.aula.app_fluxar.API.model.UnitInfos
 import com.aula.app_fluxar.R
-import com.aula.app_fluxar.API.model.Unit as UnitModel
 
-class UnitAdapter(private val unidades: List<Triple<UnitModel, Float, Int>>) : RecyclerView.Adapter<UnitAdapter.UnitViewHolder>() {
+class UnitAdapter(private val unidades: List<Triple<UnitInfos, Float, Int>>) : RecyclerView.Adapter<UnitAdapter.UnitViewHolder>() {
 
-    private var filteredList: List<Triple<UnitModel, Float, Int>> = unidades.toList()
+    private var filteredList: List<Triple<UnitInfos, Float, Int>> = unidades.toList()
 
     inner class UnitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titulo: TextView = itemView.findViewById(R.id.txtTitulo)
@@ -30,7 +30,7 @@ class UnitAdapter(private val unidades: List<Triple<UnitModel, Float, Int>>) : R
             }
         }
 
-        private fun navigateToUnitDetails(unit: UnitModel, distance: Float) {
+        private fun navigateToUnitDetails(unit: UnitInfos, distance: Float) {
             val bundle = Bundle().apply {
                 putParcelable("unit", unit)
                 putFloat("distance", distance)

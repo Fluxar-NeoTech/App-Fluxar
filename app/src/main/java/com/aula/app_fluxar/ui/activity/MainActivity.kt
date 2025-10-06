@@ -11,12 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
@@ -27,8 +24,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private val _employeeLiveData = MutableLiveData<Employee?>()
-    val employeeLiveData: LiveData<Employee?> = _employeeLiveData
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {

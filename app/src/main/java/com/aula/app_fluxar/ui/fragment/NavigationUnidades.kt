@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.RetrofitClientMapsAPI
 import com.aula.app_fluxar.API.model.Profile
+import com.aula.app_fluxar.API.model.UnitInfos
 import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
 import com.aula.app_fluxar.R
@@ -106,14 +107,14 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         return@launch
                     }
 
-                    val listaComDistancias: List<Triple<UnitModel, LatLng, Float>> = unidades.mapNotNull { unidade ->
+                    val listaComDistancias: List<Triple<UnitInfos, LatLng, Float>> = unidades.mapNotNull { unidade ->
                         val latLng = getLatLngFromAddress(unidade.enderecoCompleto()) ?: return@mapNotNull null
                         val result = FloatArray(1)
                         Location.distanceBetween(
                             userLatLng.latitude, userLatLng.longitude,
                             latLng.latitude, latLng.longitude, result
                         )
-                        Triple<UnitModel, LatLng, Float>(
+                        Triple<UnitInfos, LatLng, Float>(
                             unidade,
                             latLng,
                             result[0] / 1000f
@@ -129,7 +130,7 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                     )
 
                     val listaFinal = listaComDistancias.map { triple ->
-                        Triple<UnitModel, Float, Int>(
+                        Triple<UnitInfos, Float, Int>(
                             triple.first,
                             triple.third,
                             disponibilidadesMock[triple.first.id] ?: 0
