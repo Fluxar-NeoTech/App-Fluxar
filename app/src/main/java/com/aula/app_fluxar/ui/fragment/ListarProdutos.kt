@@ -1,60 +1,70 @@
 package com.aula.app_fluxar.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.API.viewModel.GetBatchesViewModel
+import com.aula.app_fluxar.adpters.BatchAdapter
+import com.aula.app_fluxar.sessionManager.SessionManager
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ListarProdutos.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ListarProdutos : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var productListRV: RecyclerView
+    private val getBatchesViewModel: GetBatchesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_layout_listar_produtos, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ListarProdutos.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ListarProdutos().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView(view)
+        loadBatches()
+    }
+
+    private fun setupRecyclerView(view: View) {
+        productListRV = view.findViewById(R.id.product_list_RV)
+        productListRV.layoutManager = LinearLayoutManager(requireContext())
+        productListRV.adapter = BatchAdapter(emptyList())
+    }
+
+    private fun loadBatches() {
+        val employee = SessionManager.getCurrentProfile()
+
+        if (employee != null) {
+            val unitID = employee.unit.id
+            val sectorID = employee.sector.id
+
+            getBatchesViewModel.getBatches(unitID, sectorID)
+        } else {
+            Log.e("ListarProdutos", "Employee não encontrado na sessão")
+            return
+        }
+
+        getBatchesViewModel.getBatchesResult.observe(viewLifecycleOwner) { batches ->
+            if (batches != null && batches.isNotEmpty()) {
+                productListRV.adapter = BatchAdapter(batches)
+                Log.d("ListarProdutos", "${batches.size} lotes carregados com sucesso")
+            } else {
+                Log.d("ListarProdutos", "Nenhum lote encontrado para exibir")
             }
+        }
+
+        getBatchesViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (!error.isNullOrEmpty()) {
+                Log.e("ListarProdutos", "Erro ao carregar lotes: $error")
+            }
+        }
     }
 }
