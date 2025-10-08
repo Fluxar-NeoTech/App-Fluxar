@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.NavigationUnidades">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -19,8 +18,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
-
 
         <TextView
             android:id="@+id/textView4"
@@ -53,6 +50,39 @@
             app:layout_constraintStart_toEndOf="@+id/textView4"
             app:layout_constraintTop_toBottomOf="@+id/map" />
 
+        <LinearLayout
+            android:id="@+id/emptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro">
+
+            <TextView
+                android:id="@+id/emptyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nenhuma unidade disponível"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="@color/roxo_principal"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/emptySubtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Não há outras unidades disponíveis no momento."
+                android:textAlignment="center"
+                android:textSize="14sp"
+                android:textColor="@color/roxo_principal" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvUnidade"

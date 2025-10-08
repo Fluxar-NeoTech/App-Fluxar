@@ -38,6 +38,7 @@
     import com.google.android.material.textfield.TextInputEditText
     import com.google.android.material.textfield.TextInputLayout
     import com.aula.app_fluxar.API.model.ProductResponse
+    import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
     import java.util.Calendar
     
     class NavigationHome : Fragment() {
@@ -55,7 +56,9 @@
         private val addBatchViewModel: AddBatchViewModel by viewModels()
         private val deleteBatchViewModel: DeleteBatchViewModel by viewModels()
         private var currentProducts: List<ProductResponse> = emptyList()
+        private val getUnitsViewModel: GetUnitsViewModel by viewModels()
         private var selectedProductIdForBatch: Long? = null
+
         private var selectedProductIdForRemoval: Long? = null
         private var currentBatchNumbers: List<String> = emptyList()
     
@@ -956,5 +959,10 @@
                     canReceiveText.text = "Informação indisponível!"
                 }
             }
+        }
+
+        private fun getUnitAvailibility(unitID: Long) {
+            val unit = getUnitsViewModel.getUnits(unitID)
+
         }
     }
