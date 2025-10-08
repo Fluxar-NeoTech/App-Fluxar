@@ -4,6 +4,7 @@ import com.aula.app_fluxar.API.model.Batch
 import com.aula.app_fluxar.API.model.BatchRequest
 import com.aula.app_fluxar.API.model.CapacityStockRequest
 import com.aula.app_fluxar.API.model.CapacityStockResponse
+import com.aula.app_fluxar.API.model.Dimensions
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.GeocodingResponse
 import com.aula.app_fluxar.API.model.LoginRequest
@@ -35,13 +36,16 @@ interface APIService {
     suspend fun addProduct(@Body productRequest: ProductRequest): Response<String>
 
     @DELETE("/api/batch/delete/{batchCode}")
-    suspend fun deleteBatch(@Path("batchCode") batchCode: String): Response<String>
+    suspend fun deleteBatch(@Path("batchCode") batchCode: String): Response<Map<String, String>>
 
     @POST("api/batch/add")
-    suspend fun addBatch(@Body batchRequest: BatchRequest): Response<String>
+    suspend fun addBatch(@Body batchRequest: BatchRequest): Response<Map<String, String>>
 
     @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitInfos>>
+
+    @GET("/api/unit/dimensions")
+    suspend fun getDimensionsByUnitID(@Query("id") unitID: Long): Response<Dimensions>
 
     @GET("/api/employee/profile/{id}")
     suspend fun getProfileInfos(@Path("id") id: Long): Response<Profile>

@@ -9,8 +9,8 @@ import com.aula.app_fluxar.API.RetrofitClient
 import kotlinx.coroutines.launch
 
 class DeleteBatchViewModel : ViewModel() {
-    private val _deleteBatchResult = MutableLiveData<String>()
-    val deleteBatchResult: LiveData<String> = _deleteBatchResult
+    private val _deleteBatchResult = MutableLiveData<String?>()
+    val deleteBatchResult: LiveData<String?> = _deleteBatchResult
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -20,7 +20,7 @@ class DeleteBatchViewModel : ViewModel() {
 
     fun deleteBatch(batchCode: String) {
         _isLoading.value = true
-        _errorMessage.value = ""
+        _deleteBatchResult.value = null
 
         viewModelScope.launch {
             try {
@@ -30,12 +30,16 @@ class DeleteBatchViewModel : ViewModel() {
 
                 Log.d("DeleteBatch", "Response code: ${response.code()}")
                 Log.d("DeleteBatch", "Response message: ${response.message()}")
-                Log.d("DeleteBatch", "Response body: ${response.body()}")
 
                 if (response.isSuccessful) {
-                    _deleteBatchResult.value = "Lote deletado com sucesso!"
+                    val responseBody = response.body()
+                    Log.d("DeleteBatch", "Resposta da API: $responseBody")
+
+                    val message = responseBody?.get("message") ?: "Lote deletado com sucesso!"
+
+                    _deleteBatchResult.value = message
                     _errorMessage.value = ""
-                    Log.d("DeleteBatch", "Lote deletado com sucesso: ${response.body()}")
+                    Log.d("DeleteBatch", "Lote deletado com sucesso: $message")
                 } else {
                     val errorBody = response.errorBody()?.string() ?: "Sem detalhes"
                     val errorMessage = "Erro ao deletar lote: ${response.code()} - ${response.message()}\nDetalhes: $errorBody"
@@ -50,5 +54,10 @@ class DeleteBatchViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun clearResults() {
+        _deleteBatchResult.value = null
+        _errorMessage.value = ""
     }
 }

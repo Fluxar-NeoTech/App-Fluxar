@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.model.UnitInfos
 import com.aula.app_fluxar.R
 
-class UnitAdapter(private val unidades: List<Triple<UnitInfos, Float, Int>>) : RecyclerView.Adapter<UnitAdapter.UnitViewHolder>() {
+class UnitAdapter(private val unidades: List<Triple<UnitInfos, Float, Double>>) : RecyclerView.Adapter<UnitAdapter.UnitViewHolder>() {
 
-    private var filteredList: List<Triple<UnitInfos, Float, Int>> = unidades.toList()
+    private var filteredList: List<Triple<UnitInfos, Float, Double>> = unidades.toList()
 
     inner class UnitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val titulo: TextView = itemView.findViewById(R.id.txtTitulo)
@@ -24,16 +24,17 @@ class UnitAdapter(private val unidades: List<Triple<UnitInfos, Float, Int>>) : R
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val (unidade, distancia, disponibilidade) = filteredList[position]
-                    navigateToUnitDetails(unidade, distancia)
+                    val (unit, distance, disponibility) = filteredList[position]
+                    navigateToUnitDetails(unit, distance, disponibility)
                 }
             }
         }
 
-        private fun navigateToUnitDetails(unit: UnitInfos, distance: Float) {
+        private fun navigateToUnitDetails(unit: UnitInfos, distance: Float, disponibility: Double) {
             val bundle = Bundle().apply {
                 putParcelable("unit", unit)
                 putFloat("distance", distance)
+                putDouble("disponibility", disponibility)
             }
 
             try {

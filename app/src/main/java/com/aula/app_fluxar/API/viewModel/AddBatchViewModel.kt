@@ -10,8 +10,8 @@ import com.aula.app_fluxar.API.model.BatchRequest
 import kotlinx.coroutines.launch
 
 class AddBatchViewModel : ViewModel() {
-    private val _addBatchResult = MutableLiveData<String>()
-    val addBatchResult: LiveData<String> = _addBatchResult
+    private val _addBatchResult = MutableLiveData<String?>()
+    val addBatchResult: LiveData<String?> = _addBatchResult
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -22,19 +22,26 @@ class AddBatchViewModel : ViewModel() {
     fun addBatch(batchRequest: BatchRequest) {
         _isLoading.value = true
         _errorMessage.value = ""
+        _addBatchResult.value = null
 
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.instance.addBatch(batchRequest)
 
                 if (response.isSuccessful) {
-                    _addBatchResult.value = "Lote adicionado com sucesso!"
+                    val responseBody = response.body()
+                    val message = responseBody?.get("message") ?: "Lote adicionado com sucesso!"
+
+                    _addBatchResult.value = message
                     _errorMessage.value = ""
-                    Log.d("AddBatch", "Lote adicionado com sucesso: ${response.body()}")
+                    Log.d("AddBatch", "Lote adicionado com sucesso: $message")
                 } else {
                     val errorMessage = "Erro ao adicionar lote: ${response.code()} - ${response.message()}"
                     _errorMessage.value = errorMessage
                     Log.e("AddBatch", errorMessage)
+
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("AddBatch", "Error body: $errorBody")
                 }
             } catch (e: Exception) {
                 val errorMessage = "Erro de conexão: ${e.message ?: "Erro desconhecido"}"
@@ -44,5 +51,10 @@ class AddBatchViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun clearResults() {
+        _addBatchResult.value = null
+        _errorMessage.value = ""
     }
 }

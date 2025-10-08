@@ -63,7 +63,6 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -121,19 +120,11 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         )
                     }.sortedBy { it.third }
 
-                    // Mock de disponibilidades
-                    val disponibilidadesMock = mapOf(
-                        1L to 170,
-                        2L to 250,
-                        3L to 120,
-                        4L to 300
-                    )
-
                     val listaFinal = listaComDistancias.map { triple ->
-                        Triple<UnitInfos, Float, Int>(
+                        Triple<UnitInfos, Float, Double>(
                             triple.first,
                             triple.third,
-                            disponibilidadesMock[triple.first.id] ?: 0
+                            triple.first.availability
                         )
                     }
 
@@ -157,7 +148,7 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                                 MarkerOptions()
                                     .position(latLng)
                                     .title(unidade.name)
-                                    .snippet("Distância: %.2f km".format(distancia))
+                                    .snippet("Distância: %.2f km | Disponibilidade: %.1f m³".format(distancia, unidade.availability))
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                             )
                         }

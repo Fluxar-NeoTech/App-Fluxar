@@ -14,7 +14,7 @@ data class Unit(
     val number: String,
     val neighborhood: String,
     val email: String,
-    val avaliability: Double,
+    val availability: Double,
     val industry: Industry
 ) : Parcelable {
     fun enderecoCompleto(): String {
@@ -33,9 +33,15 @@ data class UnitInfos(
     val number: String,
     val neighborhood: String,
     val email: String,
-    val avaliability: Double
+    val availability: Double
 ) : Parcelable {
     fun enderecoCompleto(): String {
         return "$street, $number - $neighborhood, $city - $state, $postalCode, Brasil"
     }
 }
+
+data class Dimensions(
+    val widthDimension: Double,
+    val heightDimension: Double,
+    val lengthDimension: Double
+)
