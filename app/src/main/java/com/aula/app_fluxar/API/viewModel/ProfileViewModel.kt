@@ -20,7 +20,6 @@ class ProfileViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    // Estado para atualização de capacidade
     private val _capacityUpdateResult = MutableLiveData<Boolean>()
     val capacityUpdateResult: LiveData<Boolean> = _capacityUpdateResult
 

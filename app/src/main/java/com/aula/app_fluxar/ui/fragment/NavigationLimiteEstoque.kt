@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -92,7 +93,34 @@ class NavigationLimiteEstoque : Fragment() {
                 return@setOnClickListener
             }
 
-            viewModel.updateCapacityStock(largura, altura, comprimento, setorId, unidadeId)
+            openUpdateCapacityPopUp(altura, largura, comprimento, setorId, unidadeId)
         }
+    }
+
+    private fun openUpdateCapacityPopUp(altura: Double, largura: Double, comprimento: Double, setorID: Long, unidadeID: Long) {
+        val dialogAddProduct = layoutInflater.inflate(R.layout.pop_up_atualizar_capacidade, null)
+        val positiveButton = dialogAddProduct.findViewById<Button>(R.id.cadastrarCapacidadeS)
+        val negativeButton = dialogAddProduct.findViewById<Button>(R.id.cadastrarCapacidadeN)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogAddProduct)
+            .create()
+
+        positiveButton.setOnClickListener {
+            viewModel.updateCapacityStock(largura, altura, comprimento, setorID, unidadeID)
+
+            viewModel.updateSuccess.observe(viewLifecycleOwner) { success ->
+                if (success) {
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 }

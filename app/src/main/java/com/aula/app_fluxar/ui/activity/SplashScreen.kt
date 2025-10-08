@@ -32,7 +32,7 @@ class SplashScreen : AppCompatActivity() {
                 startActivity(Intent(this, ErroConexaoInternet::class.java))
             }
             finish()
-        }, 5000)
+        }, 3000)
     }
 
     private fun isConnectedToInternet(): Boolean {

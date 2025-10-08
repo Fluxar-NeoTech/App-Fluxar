@@ -17,7 +17,11 @@ class GetBatchesViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun getBatches(unitID: Long, sectorID: Long) {
+        _isLoading.value = true
         _errorMessage.value = ""
 
         viewModelScope.launch {
@@ -35,6 +39,8 @@ class GetBatchesViewModel : ViewModel() {
             } catch (e: Exception) {
                 _errorMessage.value = "Erro de conexão: ${e.message ?: "Erro desconhecido"}"
                 Log.e("GetBatches", "Exceção: ${e.message}", e)
+            } finally {
+                _isLoading.value = false
             }
         }
     }

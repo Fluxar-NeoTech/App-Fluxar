@@ -27,14 +27,15 @@ class LoginViewModel : ViewModel() {
     private val _userData = MutableLiveData<Employee?>()
     val userData: LiveData<Employee?> = _userData
 
-    fun login(email: String, senha: String) {
+    fun login(email: String, senha: String, origin: String) {
         _isLoading.value = true
         _errorMessage.value = ""
         _navigateToMain.value = false
 
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.instance.login(LoginRequest(email, senha))
+
+                val response = RetrofitClient.instance.login(LoginRequest(email, senha, origin))
 
                 if(response.isSuccessful) {
                     val employee = response.body()
