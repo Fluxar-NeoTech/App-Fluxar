@@ -2,6 +2,7 @@ package com.aula.app_fluxar.API.service
 
 import com.aula.app_fluxar.API.model.Batch
 import com.aula.app_fluxar.API.model.BatchRequest
+import com.aula.app_fluxar.API.model.CapacityHistory
 import com.aula.app_fluxar.API.model.CapacityStockRequest
 import com.aula.app_fluxar.API.model.CapacityStockResponse
 import com.aula.app_fluxar.API.model.Dimensions
@@ -12,6 +13,7 @@ import com.aula.app_fluxar.API.model.ProductRequest
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import com.aula.app_fluxar.API.model.ProductResponse
+import com.aula.app_fluxar.API.model.StockHistory
 import com.aula.app_fluxar.API.model.UnitInfos
 import retrofit2.Response
 import retrofit2.http.Body
@@ -44,8 +46,17 @@ interface APIService {
     @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitInfos>>
 
-    @GET("/api/unit/dimensions")
-    suspend fun getDimensionsByUnitID(@Query("id") unitID: Long): Response<Dimensions>
+    @GET("/api/stockHistory/search/by/unit/sector")
+    suspend fun getStockHistory(
+        @Query("unitId") unitID: Long,
+        @Query("sectorId") sectorID: Long
+    ): Response<StockHistory>
+
+    @GET("/api/capacityHistory/search/by/sector/unit")
+    suspend fun getCapacityHistory(
+        @Query("unitId") unitID: Long,
+        @Query("sectorId") sectorID: Long
+    ): Response<CapacityHistory>
 
     @GET("/api/employee/profile/{id}")
     suspend fun getProfileInfos(@Path("id") id: Long): Response<Profile>

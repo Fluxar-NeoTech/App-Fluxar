@@ -161,47 +161,13 @@
             app:layout_constraintTop_toBottomOf="@+id/distanceIcon" />
 
         <ImageView
-            android:id="@+id/measuresIcon"
-            android:layout_width="25dp"
-            android:layout_height="39dp"
-            android:layout_marginTop="15dp"
-            android:src="@drawable/measures_icon"
-            app:layout_constraintStart_toStartOf="@+id/distanceText"
-            app:layout_constraintTop_toBottomOf="@+id/distanceText" />
-
-        <TextView
-            android:id="@+id/measuresTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="Medidas"
-            android:textColor="@color/roxo_principal"
-            android:textSize="28dp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/measuresIcon"
-            app:layout_constraintTop_toTopOf="@+id/measuresIcon" />
-
-        <TextView
-            android:id="@+id/measuresText"
-            android:layout_width="290dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/roboto"
-            android:text="Esta unidade pode receber: 100m de comprimento, 50m de largura e 80m de altura."
-            android:textColor="@color/preto"
-            android:textSize="16dp"
-            app:layout_constraintStart_toStartOf="@+id/measuresIcon"
-            app:layout_constraintTop_toBottomOf="@+id/measuresIcon" />
-
-        <ImageView
             android:id="@+id/truckIcon"
             android:layout_width="25dp"
             android:layout_height="39dp"
             android:layout_marginTop="15dp"
             android:src="@drawable/truck_icon"
-            app:layout_constraintStart_toStartOf="@+id/measuresText"
-            app:layout_constraintTop_toBottomOf="@+id/measuresText" />
+            app:layout_constraintStart_toStartOf="@+id/distanceText"
+            app:layout_constraintTop_toBottomOf="@+id/distanceText" />
 
         <TextView
             android:id="@+id/truckTitle"

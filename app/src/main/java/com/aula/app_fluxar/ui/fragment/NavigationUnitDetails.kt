@@ -12,9 +12,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.API.model.UnitInfos
-import com.aula.app_fluxar.API.model.Dimensions
-import com.aula.app_fluxar.API.viewModel.GetDimensionsViewModel
-import androidx.fragment.app.viewModels
 
 class NavigationUnitDetails : Fragment() {
     private lateinit var unit: UnitInfos
@@ -29,24 +26,19 @@ class NavigationUnitDetails : Fragment() {
     private lateinit var unitName: TextView
     private lateinit var locationText: TextView
     private lateinit var distanceText: TextView
-    private lateinit var measuresText: TextView
     private lateinit var emailText: TextView
     private lateinit var btEnviarEmail: Button
-
-    private lateinit var locationIcon: View
-    private lateinit var locationTitle: View
-    private lateinit var quadradoUnidade: View
-    private lateinit var distanceIcon: View
-    private lateinit var distanceTitle: View
-    private lateinit var measuresIcon: View
-    private lateinit var measuresTitle: View
-    private lateinit var truckIcon: View
-    private lateinit var truckTitle: View
-    private lateinit var truckText: View
-    private lateinit var divider: View
-    private lateinit var emailTitle: View
-
-    private val getDimensionsViewModel: GetDimensionsViewModel by viewModels()
+    private var locationIcon: View? = null
+    private var locationTitle: View? = null
+    private var quadradoUnidade: View? = null
+    private var distanceIcon: View? = null
+    private var distanceTitle: View? = null
+    private var measuresTitle: View? = null
+    private var truckIcon: View? = null
+    private var truckTitle: View? = null
+    private var truckText: TextView? = null
+    private var divider: View? = null
+    private var emailTitle: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,9 +56,9 @@ class NavigationUnitDetails : Fragment() {
         val view = inflater.inflate(R.layout.fragment_navigation_unit_details, container, false)
         setupViews(view)
         setupClickListeners()
-        setupDimensionsObserver()
+
         showLoadingState()
-        getDimensionsViewModel.getDimensionsByUnitId(unit.id)
+        simulateDataLoading()
 
         return view
     }
@@ -81,7 +73,6 @@ class NavigationUnitDetails : Fragment() {
         unitName = view.findViewById(R.id.unitName)
         locationText = view.findViewById(R.id.locationText)
         distanceText = view.findViewById(R.id.distanceText)
-        measuresText = view.findViewById(R.id.measuresText)
         emailText = view.findViewById(R.id.emailText)
         btEnviarEmail = view.findViewById(R.id.btEnviarEmail)
 
@@ -90,8 +81,6 @@ class NavigationUnitDetails : Fragment() {
         quadradoUnidade = view.findViewById(R.id.quadradoUnidade)
         distanceIcon = view.findViewById(R.id.distanceIcon)
         distanceTitle = view.findViewById(R.id.distanceTitle)
-        measuresIcon = view.findViewById(R.id.measuresIcon)
-        measuresTitle = view.findViewById(R.id.measuresTitle)
         truckIcon = view.findViewById(R.id.truckIcon)
         truckTitle = view.findViewById(R.id.truckTitle)
         truckText = view.findViewById(R.id.truckText)
@@ -99,27 +88,15 @@ class NavigationUnitDetails : Fragment() {
         emailTitle = view.findViewById(R.id.emailTitle)
     }
 
-    private fun setupDimensionsObserver() {
-        getDimensionsViewModel.dimensionsResult.observe(viewLifecycleOwner) { dimensions ->
-            dimensions?.let { dim ->
-                updateDimensionsUI(dim)
+    private fun simulateDataLoading() {
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            try {
+                setupBasicUI()
                 showContentState()
-                Log.d("UnitDetails", "Dimensões carregadas: $dim")
+            } catch (e: Exception) {
+                showErrorState("Erro ao carregar dados: ${e.message}")
             }
-        }
-
-        getDimensionsViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            if (error.isNotEmpty()) {
-                showErrorState("Erro ao carregar dimensões: $error")
-                Log.e("UnitDetails", "Erro nas dimensões: $error")
-            }
-        }
-
-        getDimensionsViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                showLoadingState()
-            }
-        }
+        }, 1500)
     }
 
     private fun showLoadingState() {
@@ -127,6 +104,8 @@ class NavigationUnitDetails : Fragment() {
         loadingText.visibility = View.VISIBLE
         errorLayout.visibility = View.GONE
         hideContentViews()
+
+        Log.d("UnitDetails", "📱 Mostrando estado de loading")
     }
 
     private fun showContentState() {
@@ -134,7 +113,8 @@ class NavigationUnitDetails : Fragment() {
         loadingText.visibility = View.GONE
         errorLayout.visibility = View.GONE
         showContentViews()
-        setupBasicUI()
+
+        Log.d("UnitDetails", "✅ Mostrando conteúdo")
     }
 
     private fun showErrorState(errorMessage: String) {
@@ -143,42 +123,73 @@ class NavigationUnitDetails : Fragment() {
         errorLayout.visibility = View.VISIBLE
         errorText.text = errorMessage
         hideContentViews()
+
+        Log.e("UnitDetails", "❌ Erro: $errorMessage")
     }
 
     private fun hideContentViews() {
         val contentViews = arrayOf(
-            unitName, locationText, distanceText, measuresText,
+            unitName, locationText, distanceText,
             emailText, btEnviarEmail,
             locationIcon, locationTitle, quadradoUnidade,
-            distanceIcon, distanceTitle, measuresIcon, measuresTitle,
+            distanceIcon, distanceTitle, measuresTitle,
             truckIcon, truckTitle, truckText, divider, emailTitle
         )
 
-        contentViews.forEach { it.visibility = View.GONE }
+        contentViews.forEach { it?.visibility = View.GONE }
     }
 
     private fun showContentViews() {
         val contentViews = arrayOf(
-            unitName, locationText, distanceText, measuresText,
+            unitName, locationText, distanceText,
             emailText, btEnviarEmail,
             locationIcon, locationTitle, quadradoUnidade,
-            distanceIcon, distanceTitle, measuresIcon, measuresTitle,
+            distanceIcon, distanceTitle, measuresTitle,
             truckIcon, truckTitle, truckText, divider, emailTitle
         )
 
-        contentViews.forEach { it.visibility = View.VISIBLE }
+        contentViews.forEach { it?.visibility = View.VISIBLE }
     }
 
     private fun setupBasicUI() {
-        unitName.text = unit.name ?: "Indisponível"
-        locationText.text = unit.enderecoCompleto() ?: "Indisponível"
-        distanceText.text = "%.2f km da sua unidade".format(distance) ?: "Indisponível"
-        emailText.text = unit.email ?: "Indisponível"
+        try {
+            unitName.text = unit.name ?: "Indisponível"
+
+            val enderecoCompleto = buildEnderecoCompleto()
+            locationText.text = enderecoCompleto
+
+            distanceText.text = "%.2f km da sua unidade".format(distance)
+            emailText.text = unit.email ?: "Indisponível"
+
+            setupAdditionalInfo()
+
+            Log.d("UnitDetails", "✅ UI configurada - Nome: ${unit.name}, Email: ${unit.email}")
+        } catch (e: Exception) {
+            Log.e("UnitDetails", "❌ Erro ao configurar UI: ${e.message}")
+            throw e
+        }
     }
 
-    private fun updateDimensionsUI(dimensions: Dimensions) {
-        measuresText.text =
-            "Esta unidade pode receber: ${dimensions.widthDimension}m de comprimento, ${dimensions.heightDimension}m de largura e ${dimensions.lengthDimension}m de altura."
+    private fun buildEnderecoCompleto(): String {
+        return try {
+            val parts = mutableListOf<String>()
+
+            unit.street?.let { if (it.isNotEmpty()) parts.add(it) }
+            unit.number?.let { if (it.isNotEmpty()) parts.add(it) }
+            unit.neighborhood?.let { if (it.isNotEmpty()) parts.add(it) }
+            unit.city?.let { if (it.isNotEmpty()) parts.add(it) }
+            unit.state?.let { if (it.isNotEmpty()) parts.add(it) }
+            unit.postalCode?.let { if (it.isNotEmpty()) parts.add("CEP: $it") }
+
+            if (parts.isEmpty()) "Endereço indisponível" else parts.joinToString(", ")
+        } catch (e: Exception) {
+            Log.e("UnitDetails", "Erro ao construir endereço: ${e.message}")
+            "Endereço indisponível"
+        }
+    }
+
+    private fun setupAdditionalInfo() {
+        truckText?.text = "Como enviar Pesagem e documentação de tudo o que será enviado;\n\nAvisar previamente por e-mail;\n\nEntrega após a confirmação desta unidade para receber;\n\nPor caminhão, refrigerado se necessário."
     }
 
     private fun setupClickListeners() {
@@ -188,40 +199,56 @@ class NavigationUnitDetails : Fragment() {
 
         retryButton.setOnClickListener {
             showLoadingState()
-            getDimensionsViewModel.getDimensionsByUnitId(unit.id)
+            simulateDataLoading()
         }
     }
 
     private fun sendEmail() {
-        val email = emailText.text.toString()
-        val subject = "Contato - Unidade ${unit.name}"
-        val body = """
-            Olá! Tudo bem?
-            
-            Gostaria de entrar em contato sobre a unidade ${unit.name}.
-            
-            Endereço: ${unit.enderecoCompleto()}
-            Distância da minha unidade: ${"%.2f".format(distance)} km
-            
-            Dimensões disponíveis: ${measuresText.text}
-            
-            Atenciosamente,
-            [Seu Nome]
-        """.trimIndent()
-
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_TEXT, body)
-        }
-
         try {
-            startActivity(Intent.createChooser(intent, "Enviar email..."))
+            val email = unit.email ?: run {
+                android.widget.Toast.makeText(
+                    requireContext(),
+                    "Email não disponível",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+
+            val subject = "Contato - Unidade ${unit.name}"
+            val body = """
+                Olá! Tudo bem?
+                
+                Gostaria de entrar em contato sobre a unidade ${unit.name}.
+                
+                Endereço: ${buildEnderecoCompleto()}
+                
+                Distância da minha unidade: ${"%.2f".format(distance)} km
+                
+                Atenciosamente,
+                [Seu Nome]
+            """.trimIndent()
+
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "message/rfc822"
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_TEXT, body)
+            }
+
+            try {
+                startActivity(Intent.createChooser(intent, "Enviar email..."))
+            } catch (e: Exception) {
+                android.widget.Toast.makeText(
+                    requireContext(),
+                    "Nenhum app de email encontrado",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
         } catch (e: Exception) {
+            Log.e("UnitDetails", "Erro ao enviar email: ${e.message}")
             android.widget.Toast.makeText(
                 requireContext(),
-                "Nenhum app de email encontrado",
+                "Erro ao preparar email",
                 android.widget.Toast.LENGTH_SHORT
             ).show()
         }

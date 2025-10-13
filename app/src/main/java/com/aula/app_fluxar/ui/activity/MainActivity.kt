@@ -3,13 +3,19 @@ package com.aula.app_fluxar.ui.activity
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -24,6 +30,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+    private lateinit var mainLoadingLayout: LinearLayout
+    private lateinit var mainErrorLayout: LinearLayout
+    private lateinit var mainContentLayout: ConstraintLayout
+    private lateinit var mainErrorText: TextView
+    private lateinit var mainRetryButton: Button
+    private lateinit var mainLoadingProgress: ProgressBar
+    private lateinit var mainLoadingText: TextView
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,116 +45,243 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (SessionManager.getCurrentProfile() != null) {
-            loadProfile()
-        }
+        initStateViews()
+
+        showMainLoadingState("Carregando aplicação...")
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        val navView: BottomNavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        Handler(Looper.getMainLooper()).postDelayed({
+            initializeApp()
+        }, 800)
+    }
 
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home,
-                R.id.nav_relatorio,
-                R.id.nav_unidades,
-                R.id.nav_perfil
-            ),
-            binding.drawerLayout
-        )
-        navView.setupWithNavController(navController)
+    private fun initStateViews() {
+        mainLoadingLayout = findViewById(R.id.mainLoadingLayout)
+        mainErrorLayout = findViewById(R.id.mainErrorLayout)
+        mainContentLayout = findViewById(R.id.mainContentLayout)
+        mainErrorText = findViewById(R.id.mainErrorText)
+        mainRetryButton = findViewById(R.id.mainRetryButton)
 
-        navView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    navController.navigate(R.id.nav_home)
-                    true
-                }
-                R.id.nav_relatorio -> {
-                    navController.navigate(R.id.nav_relatorio)
-                    true
-                }
-                R.id.nav_unidades -> {
-                    navController.navigate(R.id.nav_unidades)
-                    true
-                }
-                R.id.nav_perfil -> {
-                    navController.navigate(R.id.nav_perfil)
-                    true
-                }
-                else -> false
+        try {
+            mainLoadingProgress = mainLoadingLayout.findViewById<ProgressBar>(R.id.mainLoadingProgress)
+            mainLoadingText = mainLoadingLayout.findViewById<TextView>(R.id.mainLoadingText)
+        } catch (e: Exception) {
+            Log.d("MainActivity", "Elementos de loading específicos não encontrados, usando layout padrão")
+        }
+
+        // Configurar botão de tentar novamente
+        mainRetryButton.setOnClickListener {
+            restartApp()
+        }
+    }
+
+    private fun initializeApp() {
+        try {
+            if (SessionManager.getCurrentProfile() != null) {
+                loadProfile()
+            } else {
+                setupNavigation()
+                showMainContentState()
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Erro ao inicializar aplicação: ${e.message}", e)
+            showMainErrorState("Erro ao carregar aplicação: ${e.message}")
+        }
+    }
+
+    private fun loadProfile() {
+        profileViewModel.loadProfile()
+
+        profileViewModel.profileResult.observe(this) { profile ->
+            if (profile != null) {
+                Log.d("MainActivity", "✅ Profile carregado: ${profile.firstName}")
+                SessionManager.saveProfile(profile)
+
+                // Configurar navegação após profile carregado
+                setupNavigation()
+                showMainContentState()
+
+            } else {
+                Log.e("MainActivity", "❌ Profile não carregado")
+                showMainErrorState("Erro ao carregar perfil do usuário")
             }
         }
 
-        val backButton = binding.iconVoltar
-        val secondaryNavLogo = binding.logoNavSecundaria
-
-        val navigationView = binding.navigationView
-        binding.root.post {
-            val toolbarHeight = binding.materialToolbar.height
-            val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
-            layoutParams.topMargin = toolbarHeight
-            navigationView.layoutParams = layoutParams
-        }
-
-        val drawerLayout = binding.drawerLayout
-        val menuIcon = binding.iconMenu
-
-        menuIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.END)
-        }
-
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_info -> {
-                    navController.navigate(R.id.nav_infos)
-                }
-                R.id.nav_sair -> {
-                    showDialogLogOut()
-                }
-                R.id.nav_tema -> {
-                    Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
-                }
-                R.id.nav_limite_estoque -> {
-                    navController.navigate(R.id.nav_limite_estoque)
-                }
-                R.id.nav_fabricas -> {
-                    navController.navigate(R.id.nav_unidades)
-                }
+        profileViewModel.errorMessage.observe(this) { error ->
+            if (error.isNotEmpty()) {
+                Log.e("MainActivity", "❌ Erro no profile: $error")
+                // Mesmo com erro, tentamos carregar a aplicação
+                setupNavigation()
+                showMainContentState()
             }
-            drawerLayout.closeDrawer(GravityCompat.END)
-            true
         }
 
-        val notificationIcon = binding.iconNotificacoes
-        notificationIcon.setOnClickListener {
-            navController.navigate(R.id.nav_notificacoes)
+        profileViewModel.isLoading.observe(this) { isLoading ->
+            if (isLoading) {
+                showMainLoadingState("Carregando perfil...")
+            }
         }
+    }
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
-                    backButton.visibility = View.VISIBLE
-                    secondaryNavLogo.visibility = View.VISIBLE
-                    backButton.setOnClickListener {
-                        navController.popBackStack()
+    private fun setupNavigation() {
+        try {
+            val navView: BottomNavigationView = binding.navView
+            val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
+            val appBarConfiguration = AppBarConfiguration(
+                setOf(
+                    R.id.nav_home,
+                    R.id.nav_relatorio,
+                    R.id.nav_unidades,
+                    R.id.nav_perfil
+                ),
+                binding.drawerLayout
+            )
+            navView.setupWithNavController(navController)
+
+            navView.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.nav_home -> {
+                        navController.navigate(R.id.nav_home)
+                        true
                     }
-                    binding.navView.visibility = View.GONE
-                    binding.logo.visibility = View.GONE
-                    binding.iconNotificacoes.visibility = View.GONE
-                    binding.iconMenu.visibility = View.GONE
-                }
-                else -> {
-                    backButton.visibility = View.GONE
-                    secondaryNavLogo.visibility = View.GONE
-                    binding.navView.visibility = View.VISIBLE
-                    binding.logo.visibility = View.VISIBLE
-                    binding.iconNotificacoes.visibility = View.VISIBLE
-                    binding.iconMenu.visibility = View.VISIBLE
+                    R.id.nav_relatorio -> {
+                        navController.navigate(R.id.nav_relatorio)
+                        true
+                    }
+                    R.id.nav_unidades -> {
+                        navController.navigate(R.id.nav_unidades)
+                        true
+                    }
+                    R.id.nav_perfil -> {
+                        navController.navigate(R.id.nav_perfil)
+                        true
+                    }
+                    else -> false
                 }
             }
+
+            val backButton = binding.iconVoltar
+            val secondaryNavLogo = binding.logoNavSecundaria
+
+            val navigationView = binding.navigationView
+            binding.root.post {
+                val toolbarHeight = binding.materialToolbar.height
+                val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
+                layoutParams.topMargin = toolbarHeight
+                navigationView.layoutParams = layoutParams
+            }
+
+            val drawerLayout = binding.drawerLayout
+            val menuIcon = binding.iconMenu
+
+            menuIcon.setOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.END)
+            }
+
+            navigationView.setNavigationItemSelectedListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.nav_info -> {
+                        navController.navigate(R.id.nav_infos)
+                    }
+                    R.id.nav_sair -> {
+                        showDialogLogOut()
+                    }
+                    R.id.nav_tema -> {
+                        Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
+                    }
+                    R.id.nav_limite_estoque -> {
+                        navController.navigate(R.id.nav_limite_estoque)
+                    }
+                    R.id.nav_fabricas -> {
+                        navController.navigate(R.id.nav_unidades)
+                    }
+                }
+                drawerLayout.closeDrawer(GravityCompat.END)
+                true
+            }
+
+            val notificationIcon = binding.iconNotificacoes
+            notificationIcon.setOnClickListener {
+                navController.navigate(R.id.nav_notificacoes)
+            }
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                when (destination.id) {
+                    R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
+                        backButton.visibility = View.VISIBLE
+                        secondaryNavLogo.visibility = View.VISIBLE
+                        backButton.setOnClickListener {
+                            navController.popBackStack()
+                        }
+                        binding.navView.visibility = View.GONE
+                        binding.logo.visibility = View.GONE
+                        binding.iconNotificacoes.visibility = View.GONE
+                        binding.iconMenu.visibility = View.GONE
+                    }
+                    else -> {
+                        backButton.visibility = View.GONE
+                        secondaryNavLogo.visibility = View.GONE
+                        binding.navView.visibility = View.VISIBLE
+                        binding.logo.visibility = View.VISIBLE
+                        binding.iconNotificacoes.visibility = View.VISIBLE
+                        binding.iconMenu.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            Log.d("MainActivity", "✅ Navegação configurada com sucesso")
+
+        } catch (e: Exception) {
+            Log.e("MainActivity", "❌ Erro ao configurar navegação: ${e.message}", e)
+            throw e // Re-lançar para ser capturado pelo bloco try-catch externo
         }
+    }
+
+    // Métodos para gerenciar estados da UI
+    private fun showMainLoadingState(message: String = "Carregando...") {
+        runOnUiThread {
+            mainLoadingLayout.visibility = View.VISIBLE
+            mainErrorLayout.visibility = View.GONE
+            mainContentLayout.visibility = View.GONE
+
+            // Atualizar texto de loading se disponível
+            try {
+                mainLoadingText.text = message
+            } catch (e: Exception) {
+                // Ignora se não encontrar o TextView específico
+            }
+        }
+    }
+
+    private fun showMainContentState() {
+        runOnUiThread {
+            mainLoadingLayout.visibility = View.GONE
+            mainErrorLayout.visibility = View.GONE
+            mainContentLayout.visibility = View.VISIBLE
+
+            Log.d("MainActivity", "✅ Conteúdo principal exibido")
+        }
+    }
+
+    private fun showMainErrorState(errorMessage: String) {
+        runOnUiThread {
+            mainLoadingLayout.visibility = View.GONE
+            mainErrorLayout.visibility = View.VISIBLE
+            mainContentLayout.visibility = View.GONE
+
+            mainErrorText.text = errorMessage
+            Log.e("MainActivity", "❌ Estado de erro: $errorMessage")
+        }
+    }
+
+    private fun restartApp() {
+        showMainLoadingState("Reiniciando aplicação...")
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            initializeApp()
+        }, 1000)
     }
 
     fun showDialogLogOut() {
@@ -166,12 +306,11 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun loadProfile() {
-        profileViewModel.loadProfile()
-        profileViewModel.profileResult.observe(this) { profile ->
-            if (profile != null) {
-                Log.d("MainActivity", "Profile carregado: ${profile.firstName}")
-            }
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.END)
+        } else {
+            super.onBackPressed()
         }
     }
 }

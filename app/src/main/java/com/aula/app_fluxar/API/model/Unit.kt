@@ -14,7 +14,7 @@ data class Unit(
     val number: String,
     val neighborhood: String,
     val email: String,
-    val availability: Double,
+    val availabilityUnit: Double,
     val industry: Industry
 ) : Parcelable {
     fun enderecoCompleto(): String {
