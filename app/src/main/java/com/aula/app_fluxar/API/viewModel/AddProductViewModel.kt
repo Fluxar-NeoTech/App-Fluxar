@@ -10,8 +10,8 @@ import com.aula.app_fluxar.API.model.ProductRequest
 import kotlinx.coroutines.launch
 
 class AddProductViewModel : ViewModel() {
-    private val _addProductResult = MutableLiveData<String>()
-    val addProductResult: LiveData<String> = _addProductResult
+    private val _addProductResult = MutableLiveData<String?>()
+    val addProductResult: LiveData<String?> = _addProductResult
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -28,11 +28,16 @@ class AddProductViewModel : ViewModel() {
                 val response = RetrofitClient.instance.addProduct(productRequest)
 
                 if (response.isSuccessful) {
-                    _addProductResult.value = response.body()
+                    val responseBody = response.body()
+                    Log.d("DeleteBatch", "Resposta da API: $responseBody")
+
+                    val message = responseBody?.get("message") ?: "Produto adicionado com sucesso"
+                    _addProductResult.value = message
                     _errorMessage.value = ""
-                    Log.d("AddProduct", "Produto adicionado com sucesso: ${response.body()}")
+                    Log.d("AddProduct", "Produto adicionado com sucesso: ${message}")
                 } else {
-                    val errorMessage = "Erro ao adicionar produto: ${response.code()} - ${response.message()}"
+                    val errorBody = response.errorBody()?.string() ?: "Sem detalhes"
+                    val errorMessage = "Erro ao adicionar produto: ${response.code()} - ${response.message()}\nDetalhes: $errorBody"
                     _errorMessage.value = errorMessage
                     Log.e("AddProduct", errorMessage)
                 }
@@ -44,5 +49,10 @@ class AddProductViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+    }
+
+    fun clearResults() {
+        _addProductResult.value = null
+        _errorMessage.value = ""
     }
 }

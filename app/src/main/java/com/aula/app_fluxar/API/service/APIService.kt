@@ -5,7 +5,6 @@ import com.aula.app_fluxar.API.model.BatchRequest
 import com.aula.app_fluxar.API.model.CapacityHistory
 import com.aula.app_fluxar.API.model.CapacityStockRequest
 import com.aula.app_fluxar.API.model.CapacityStockResponse
-import com.aula.app_fluxar.API.model.Dimensions
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.GeocodingResponse
 import com.aula.app_fluxar.API.model.LoginRequest
@@ -35,7 +34,7 @@ interface APIService {
     suspend fun addCapacityStock(@Body capacityStockRequest: CapacityStockRequest): Response<CapacityStockResponse>
 
     @POST("/api/product/add")
-    suspend fun addProduct(@Body productRequest: ProductRequest): Response<String>
+    suspend fun addProduct(@Body productRequest: ProductRequest): Response<Map<String, String>>
 
     @DELETE("/api/batch/delete/{batchCode}")
     suspend fun deleteBatch(@Path("batchCode") batchCode: String): Response<Map<String, String>>
@@ -45,6 +44,18 @@ interface APIService {
 
     @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitInfos>>
+
+    @GET("api/sector/search/volume/remaining/in/sector/employee")
+    suspend fun getRemainingVolumeBySector(
+        @Query("sectorId") sectorID: Long,
+        @Query("employeeId") employeeID: Long
+    ): Response<Double>
+
+    @GET("api/sector/search/volume/used/in/sector/employee")
+    suspend fun getUsedVolumeBySector(
+        @Query("sectorId") sectorID: Long,
+        @Query("employeeId") employeeID: Long
+    ): Response<Double>
 
     @GET("/api/stockHistory/search/by/unit/sector")
     suspend fun getStockHistory(

@@ -36,6 +36,7 @@ import com.aula.app_fluxar.API.viewModel.AddBatchViewModel
 import com.aula.app_fluxar.API.viewModel.DeleteBatchViewModel
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.API.model.BatchRequest
+import com.aula.app_fluxar.API.model.ProductRequest
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.adpters.BatchAdapter
 import com.aula.app_fluxar.sessionManager.SessionManager
@@ -50,6 +51,8 @@ import com.aula.app_fluxar.API.model.ProductResponse
 import com.aula.app_fluxar.API.model.StockHistory
 import com.aula.app_fluxar.API.viewModel.GetCapacityHistoryViewModel
 import com.aula.app_fluxar.API.viewModel.GetStockHistoryViewModel
+import com.aula.app_fluxar.API.viewModel.VolumeSectorViewModel
+import com.aula.app_fluxar.API.viewModel.VolumeUsedSectorViewModel
 import java.util.Calendar
 
 class NavigationHome : Fragment() {
@@ -85,11 +88,16 @@ class NavigationHome : Fragment() {
     private val deleteBatchViewModel: DeleteBatchViewModel by viewModels()
     private val getStockHistoryViewModel: GetStockHistoryViewModel by viewModels()
     private val getCapacityHistoryViewModel: GetCapacityHistoryViewModel by viewModels()
+    private val volumeSectorViewModel: VolumeSectorViewModel by viewModels()
+    private val volumeUsedSectorViewModel: VolumeUsedSectorViewModel by viewModels()
     private lateinit var profileViewModel: ProfileViewModel
+
     private var currentProducts: List<ProductResponse> = emptyList()
     private var selectedProductIdForBatch: Long? = null
     private var selectedProductIdForRemoval: Long? = null
     private var currentBatchNumbers: List<String> = emptyList()
+    private var productNameInput: TextInputEditText? = null
+    private var productTypeInput: TextInputEditText? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -122,7 +130,6 @@ class NavigationHome : Fragment() {
             reloadAllData()
         }
 
-        // Configurar observadores PRIMEIRO
         setupProfileObserver()
         setupStockHistoryObserver()
         setupCapacityHistoryObserver()
@@ -132,6 +139,8 @@ class NavigationHome : Fragment() {
         setupAddProductObserver()
         setupAddBatchObserver()
         setupDeleteBatchObserver()
+        setupVolumeSectorObserver()
+        setupVolumeUsedObserver()
 
         showHomeLoadingState("Carregando informações...")
 
@@ -195,6 +204,43 @@ class NavigationHome : Fragment() {
 
             content.post {
                 loadBatchesForListing()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        volumeUsedSectorViewModel.usedVolume.removeObservers(viewLifecycleOwner)
+        volumeUsedSectorViewModel.errorMessage.removeObservers(viewLifecycleOwner)
+        volumeSectorViewModel.remainingVolume.removeObservers(viewLifecycleOwner)
+        volumeSectorViewModel.errorMessage.removeObservers(viewLifecycleOwner)
+    }
+
+    private fun setupVolumeSectorObserver() {
+        volumeSectorViewModel.remainingVolume.observe(viewLifecycleOwner) { volume ->
+            volume?.let {
+                Log.d("NavigationHome", "✅ Volume restante obtido: $volume m³")
+            }
+        }
+
+        volumeSectorViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (error.isNotEmpty()) {
+                Log.e("NavigationHome", "❌ Erro ao obter volume restante: $error")
+            }
+        }
+    }
+
+    private fun setupVolumeUsedObserver() {
+        volumeUsedSectorViewModel.usedVolume.observe(viewLifecycleOwner) { volume ->
+            volume?.let {
+                Log.d("NavigationHome", "✅ Volume utilizado obtido: $volume m³")
+            }
+        }
+
+        volumeUsedSectorViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (error.isNotEmpty()) {
+                Log.e("NavigationHome", "❌ Erro ao obter volume utilizado: $error")
             }
         }
     }
@@ -398,7 +444,8 @@ class NavigationHome : Fragment() {
                 currentProducts = emptyList()
                 Handler(Looper.getMainLooper()).postDelayed({
                     checkAllDataLoaded()
-                }, 1000)            }
+                }, 1000)
+            }
         }
 
         getProductsViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
@@ -436,18 +483,61 @@ class NavigationHome : Fragment() {
     private fun updateStockHistoryUI(stockHistory: StockHistory) {
         try {
             val action = if (stockHistory.movement == "E") "Adicionou" else "Removeu"
+            val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
 
-            lastAction.text = "${action} ${stockHistory.volumeHandled} m³ ao estoque. Total de estoque utilizado: 8 toneladas"
+            lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+
+            loadUsedVolumeForStockHistory(stockHistory, action)
+
             Log.d("NavigationHome", "✅ UI do histórico de estoque atualizada")
         } catch (e: Exception) {
             Log.e("NavigationHome", "❌ Erro ao atualizar UI do histórico: ${e.message}")
         }
     }
 
+    private fun loadUsedVolumeForStockHistory(stockHistory: StockHistory, action: String) {
+        val employee = SessionManager.getCurrentProfile()
+        employee?.let {
+            val sectorId = it.sector.id
+            val employeeId = SessionManager.getEmployeeId()
+
+            volumeUsedSectorViewModel.usedVolume.removeObservers(viewLifecycleOwner)
+
+            volumeUsedSectorViewModel.usedVolume.observe(viewLifecycleOwner) { volumeUtilizado ->
+                volumeUtilizado?.let { volume ->
+                    val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
+                    val volumeUtilizadoFormatted = String.format("%.2f", volume)
+
+                    lastAction.text = Html.fromHtml(
+                        "${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque. Total de estoque utilizado: <b>${volumeUtilizadoFormatted} m³</b>",
+                        Html.FROM_HTML_MODE_LEGACY
+                    )
+                    Log.d("NavigationHome", "✅ Texto completo do histórico atualizado com volume utilizado: $volume m³")
+                }
+            }
+
+            volumeUsedSectorViewModel.errorMessage.removeObservers(viewLifecycleOwner)
+            volumeUsedSectorViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+                if (error.isNotEmpty()) {
+                    Log.e("NavigationHome", "❌ Erro ao carregar volume utilizado para histórico: $error")
+                    val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
+                    lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+                }
+            }
+
+            volumeUsedSectorViewModel.getUsedVolumeBySector(sectorId, employeeId)
+
+        } ?: run {
+            Log.e("NavigationHome", "❌ Employee não encontrado para carregar volume utilizado")
+            val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
+            lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+        }
+    }
+
     private fun updateCapacityHistoryUI(capacityHistory: CapacityHistory) {
         try {
             val employee = SessionManager.getCurrentProfile()
-            usedStock.text = "${capacityHistory.occupancyPercentage}% do estoque da ${employee?.unit?.name ?: "'unidade indisponível'"} se encontra ocupado!"
+            usedStock.text = Html.fromHtml("<b>${capacityHistory.occupancyPercentage}%</b> do estoque da ${employee?.unit?.name ?: "'unidade indisponível'"} se encontra ocupado!", Html.FROM_HTML_MODE_LEGACY)
             Log.d("NavigationHome", "✅ UI do histórico de capacidade atualizada")
         } catch (e: Exception) {
             Log.e("NavigationHome", "❌ Erro ao atualizar UI do histórico de capacidade: ${e.message}")
@@ -827,6 +917,7 @@ class NavigationHome : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 Log.d("NavigationHome", "Produto adicionado: $it")
                 loadProducts()
+                addProductViewModel.clearResults()
             }
         }
 
@@ -835,6 +926,7 @@ class NavigationHome : Fragment() {
                 if (it.isNotEmpty()) {
                     Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
                     Log.e("NavigationHome", "Erro ao adicionar produto: $error")
+                    addProductViewModel.clearResults()
                 }
             }
         }
@@ -912,7 +1004,105 @@ class NavigationHome : Fragment() {
     }
 
     private fun openAddProductDialog() {
-        // Implementação do dialog para adicionar produto
+        val dialogView = layoutInflater.inflate(R.layout.pop_up_cadastrar_produto, null)
+        productNameInput = dialogView.findViewById(R.id.inputNomeProduto)
+        productTypeInput = dialogView.findViewById(R.id.inputTipoProduto)
+        val positiveButton = dialogView.findViewById<Button>(R.id.cadastrarProdutoS)
+        val negativeButton = dialogView.findViewById<Button>(R.id.cadastrarProdutoN)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        positiveButton.setOnClickListener {
+            if (validateProductFields()) {
+                addProduct()
+                dialog.dismiss()
+            }
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+    }
+
+    private fun validateProductFields(): Boolean {
+        return try {
+            val name = productNameInput?.text?.toString()?.trim()
+            val type = productTypeInput?.text?.toString()?.trim()
+
+            if (name.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Informe o nome do produto", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (type.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Informe o tipo do produto", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (name.length < 2) {
+                Toast.makeText(requireContext(), "Nome do produto deve ter pelo menos 2 caracteres", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (type.length < 2) {
+                Toast.makeText(requireContext(), "Tipo do produto deve ter pelo menos 2 caracteres", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (currentProducts.any { it.name.equals(name, ignoreCase = true) }) {
+                Toast.makeText(requireContext(), "Já existe um produto com este nome", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            true
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro na validação do produto: ${e.message}")
+            Toast.makeText(requireContext(), "Erro ao validar campos", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
+
+    private fun addProduct() {
+        try {
+            val employee = SessionManager.getCurrentProfile()
+
+            if (employee == null) {
+                Toast.makeText(requireContext(), "Usuário não logado", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val name = productNameInput?.text?.toString()?.trim()
+            val type = productTypeInput?.text?.toString()?.trim()
+            val sectorId = employee.sector.id
+
+            if (name.isNullOrEmpty() || type.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if (sectorId == 0L) {
+                Toast.makeText(requireContext(), "Setor não configurado", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val productRequest = ProductRequest(
+                name = name,
+                type = type,
+                sectorId = sectorId
+            )
+
+            Log.d("NavigationHome", "Enviando ProductRequest: $productRequest")
+            addProductViewModel.addProduct(productRequest)
+
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao criar ProductRequest: ${e.message}", e)
+            Toast.makeText(requireContext(), "Erro ao processar dados: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun getProductIdByName(productName: String, products: List<ProductResponse>): Long? {
@@ -1077,6 +1267,7 @@ class NavigationHome : Fragment() {
     private fun addBatch() {
         try {
             val employee = SessionManager.getCurrentProfile()
+            val employeeId = SessionManager.getEmployeeId()
             val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
             val numLoteInput = content.findViewById<TextInputEditText>(R.id.numLoteInput)
             val alturaInput = content.findViewById<TextInputEditText>(R.id.alturaInput)
@@ -1100,23 +1291,98 @@ class NavigationHome : Fragment() {
                 return
             }
 
-            val batchRequest = BatchRequest(
-                batchCode = numLoteInput.text.toString().trim().ifEmpty { "LOTE-${System.currentTimeMillis()}" },
-                expirationDate = formatDateForAPI(dateInput.text.toString()),
-                height = alturaInput.text.toString().toDoubleOrNull() ?: 1.0,
-                width = larguraInput.text.toString().toDoubleOrNull() ?: 1.0,
-                length = comprimentoInput.text.toString().toDoubleOrNull() ?: 1.0,
-                unitId = unitId,
-                productId = productId
-            )
+            val altura = alturaInput.text.toString().toDoubleOrNull() ?: 0.0
+            val largura = larguraInput.text.toString().toDoubleOrNull() ?: 0.0
+            val comprimento = comprimentoInput.text.toString().toDoubleOrNull() ?: 0.0
+            val volumeLote = altura * largura * comprimento
 
-            Log.d("NavigationHome", "Enviando BatchRequest: $batchRequest")
-            addBatchViewModel.addBatch(batchRequest)
+            if (volumeLote <= 0) {
+                Toast.makeText(requireContext(), "Volume do lote deve ser maior que zero", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            Log.d("NavigationHome", "📦 Volume do lote calculado: $volumeLote m³")
+
+            checkVolumeAndAddBatch(employeeId, employee.sector.id, volumeLote, productId, unitId, dateInput, numLoteInput, altura, largura, comprimento)
 
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao criar BatchRequest: ${e.message}", e)
             Toast.makeText(requireContext(), "Erro ao processar dados: ${e.message}", Toast.LENGTH_LONG).show()
         }
+    }
+
+    private fun checkVolumeAndAddBatch(
+        employeeId: Long,
+        sectorId: Long,
+        volumeLote: Double,
+        productId: Long,
+        unitId: Long,
+        dateInput: TextInputEditText,
+        numLoteInput: TextInputEditText,
+        altura: Double,
+        largura: Double,
+        comprimento: Double
+    ) {
+        Log.d("NavigationHome", "🔍 Verificando volume disponível... EmployeeId: $employeeId, SectorId: $sectorId")
+
+        volumeSectorViewModel.remainingVolume.apply {
+            removeObservers(viewLifecycleOwner)
+            observe(viewLifecycleOwner) { volumeRestante ->
+                volumeRestante?.let {
+                    Log.d("NavigationHome", "📊 Volume restante recebido: $volumeRestante m³")
+
+                    if (volumeRestante >= volumeLote) {
+                        Log.d("NavigationHome", "✅ Volume suficiente! Restante: $volumeRestante m³, Lote: $volumeLote m³")
+                        proceedWithBatchCreation(
+                            productId, unitId, dateInput, numLoteInput,
+                            altura, largura, comprimento
+                        )
+                    } else {
+                        Log.w("NavigationHome", "❌ Volume insuficiente! Disponível: $volumeRestante m³, Necessário: $volumeLote m³")
+                        Toast.makeText(requireContext(), "Volume insuficiente! Disponível: ${String.format("%.2f", volumeRestante)} m³, Necessário: ${String.format("%.2f", volumeLote)} m³", Toast.LENGTH_LONG).show()
+                    }
+
+                    removeObservers(viewLifecycleOwner)
+                }
+            }
+        }
+
+        volumeSectorViewModel.errorMessage.apply {
+            removeObservers(viewLifecycleOwner)
+            observe(viewLifecycleOwner) { error ->
+                if (error.isNotEmpty()) {
+                    Log.e("NavigationHome", "❌ Erro ao verificar volume: $error")
+                    Toast.makeText(requireContext(), "Erro ao verificar volume disponível", Toast.LENGTH_SHORT).show()
+                    removeObservers(viewLifecycleOwner)
+                }
+            }
+        }
+
+        volumeSectorViewModel.getRemainingVolumeBySector(sectorId, employeeId)
+    }
+
+    private fun proceedWithBatchCreation(
+        productId: Long,
+        unitId: Long,
+        dateInput: TextInputEditText,
+        numLoteInput: TextInputEditText,
+        altura: Double,
+        largura: Double,
+        comprimento: Double
+    ) {
+        val batchRequest = BatchRequest(
+            batchCode = numLoteInput.text.toString().trim().ifEmpty { "LOTE-${System.currentTimeMillis()}" },
+            expirationDate = formatDateForAPI(dateInput.text.toString()),
+            height = altura,
+            width = largura,
+            length = comprimento,
+            unitId = unitId,
+            productId = productId
+        )
+
+        Log.d("NavigationHome", "✅ Criando lote")
+        Log.d("NavigationHome", "Enviando BatchRequest: $batchRequest")
+        addBatchViewModel.addBatch(batchRequest)
     }
 
     private fun formatDateForAPI(dateInput: String): String {
@@ -1160,9 +1426,9 @@ class NavigationHome : Fragment() {
     }
 
     private fun openAddBatchPopUp() {
-        val dialogAddBatch = layoutInflater.inflate(R.layout.pop_up_cadastrar_produto, null)
-        val positiveButton = dialogAddBatch.findViewById<Button>(R.id.cadastrarProdutoS)
-        val negativeButton = dialogAddBatch.findViewById<Button>(R.id.cadastrarProdutoN)
+        val dialogAddBatch = layoutInflater.inflate(R.layout.pop_up_cadastrar_lote, null)
+        val positiveButton = dialogAddBatch.findViewById<Button>(R.id.cadastrarLoteS)
+        val negativeButton = dialogAddBatch.findViewById<Button>(R.id.cadastrarLoteN)
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogAddBatch)
@@ -1190,7 +1456,7 @@ class NavigationHome : Fragment() {
             return
         }
 
-        val dialogRemoveBatch = layoutInflater.inflate(R.layout.pop_up_remover_produto, null)
+        val dialogRemoveBatch = layoutInflater.inflate(R.layout.pop_up_remover_lote, null)
         val positiveButton = dialogRemoveBatch.findViewById<Button>(R.id.removerProdutoS)
         val negativeButton = dialogRemoveBatch.findViewById<Button>(R.id.removerProdutoN)
 

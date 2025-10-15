@@ -39,9 +39,3 @@ data class UnitInfos(
         return "$street, $number - $neighborhood, $city - $state, $postalCode, Brasil"
     }
 }
-
-data class Dimensions(
-    val widthDimension: Double,
-    val heightDimension: Double,
-    val lengthDimension: Double
-)
