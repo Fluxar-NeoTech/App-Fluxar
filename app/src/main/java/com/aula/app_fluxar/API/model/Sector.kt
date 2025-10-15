@@ -6,6 +6,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Sector(
     val id: Long,
-    val nome: String,
-    val descricao: String
+    val name: String,
+    val description: String
 ) : Parcelable

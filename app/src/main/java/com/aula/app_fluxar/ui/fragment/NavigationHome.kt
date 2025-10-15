@@ -23,6 +23,7 @@ import com.aula.app_fluxar.R
 import com.aula.app_fluxar.ui.activity.MainActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.util.Calendar
@@ -114,7 +115,7 @@ class NavigationHome : Fragment() {
 
             content.post {
                 // add lógica de verificar se existe produto ou não
-                val exists = false
+                val exists = true
                 if (exists)
                     showContent(R.layout.fragment_layout_listar_produtos)
                 else
@@ -195,7 +196,6 @@ class NavigationHome : Fragment() {
             showDatePickerDialog(dateInput, calendar)
         }
 
-        // Também configure o ícone do calendário para abrir o date picker
         val dateInputLayout = content.findViewById<TextInputLayout>(R.id.dateInputLayout)
         dateInputLayout.setEndIconOnClickListener {
             showDatePickerDialog(dateInput, calendar)
@@ -210,11 +210,8 @@ class NavigationHome : Fragment() {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
-                // Formatando a data no padrão DD / MM / AAAA
                 val formattedDate = String.format("%02d / %02d / %04d", selectedDay, selectedMonth + 1, selectedYear)
                 dateInput.setText(formattedDate)
-
-                // Atualiza o calendário com a data selecionada
                 calendar.set(selectedYear, selectedMonth, selectedDay)
             },
             year, month, day
@@ -222,6 +219,7 @@ class NavigationHome : Fragment() {
 
         datePickerDialog.show()
     }
+
 
     private fun setupFieldDependenciesRemove() {
         val productInputRemove = content.findViewById<AutoCompleteTextView>(R.id.productInputRemove)
@@ -314,18 +312,18 @@ class NavigationHome : Fragment() {
     }
 
     private fun loadProfileInfos() {
-        val employee = (activity as? MainActivity)?.getEmployee()
+        val employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
 
         employee?.let {
-            if (it.nome.isNotEmpty()) {
-                greetingManager.text = "Olá, ${it.nome}!"
+            if (it.firstName.isNotEmpty()) {
+                greetingManager.text = "Olá, ${it.firstName}!"
             } else {
                 greetingManager.text = "Olá, usuário!"
             }
 
-            if (it.fotoPerfil.isNotEmpty()) {
+            if (it.profilePhoto.isNotEmpty()) {
                 Glide.with(requireContext())
-                    .load(it.fotoPerfil)
+                    .load(it.profilePhoto)
                     .placeholder(R.drawable.foto_de_perfil_padrao)
                     .error(R.drawable.foto_de_perfil_padrao)
                     .transform(CircleCrop())

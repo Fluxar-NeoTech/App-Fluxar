@@ -6,12 +6,16 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Unit(
     val id: Long,
-    val nome: String,
-    val cep: String,
-    val rua: String,
-    val cidade: String,
-    val estado: String,
-    val numero: String,
-    val bairro: String,
+    val name: String,
+    val postalCode: String,
+    val street: String,
+    val city: String,
+    val state: String,
+    val number: String,
+    val neighborhood: String,
     val industry: Industry
-) : Parcelable
+) : Parcelable {
+    fun enderecoCompleto(): String {
+        return "$street, $number - $neighborhood, $city - $state, $postalCode, Brasil"
+    }
+}

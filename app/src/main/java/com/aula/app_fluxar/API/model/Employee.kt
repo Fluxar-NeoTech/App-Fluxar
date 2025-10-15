@@ -5,23 +5,17 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Employee(
-    val id: Int,
-    val nome: String,
-    val sobrenome: String,
+    val id: Long,
     val email: String,
-    val cargo: Char,
-    val fotoPerfil: String,
-    val setor: Sector,
-    val unit: Unit,
-    val capacidadeMaxima: Double
+    val role: Char,
 ) : Parcelable
 
 data class LoginRequest(
     val email: String,
-    val senha: String
+    val password: String
 )
 
 data class UpdatePhotoRequest(
     val email: String,
-    val fotoPerfil: String
+    val profilePhoto: String
 )

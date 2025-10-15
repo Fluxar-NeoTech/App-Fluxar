@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.API.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.aula.app_fluxar.API.model.Employee
 import com.aula.app_fluxar.API.model.LoginRequest
 import com.aula.app_fluxar.API.RetrofitClient
+import com.aula.app_fluxar.sessionManager.SessionManager
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -36,13 +38,19 @@ class LoginViewModel : ViewModel() {
 
                 if(response.isSuccessful) {
                     val employee = response.body()
-                    _loginResult.value = employee
-                    _userData.value = employee
-                    _errorMessage.value = ""
-                    _navigateToMain.value = true
+                    employee?.let {
+                        SessionManager.saveLoginData(it)
+                        _loginResult.value = employee
+                        _userData.value = employee
+                        _errorMessage.value = ""
+                        _navigateToMain.value = true
+                        Log.d("LoginViewModel", "Login bem-sucedido para: ${it.email}")
+                    }
                 } else {
                     when (response.code()) {
-                        403 -> _errorMessage.value = "Email ou senha incorretos"
+                        400 -> _errorMessage.value = "Credenciais inválidas!"
+                        401 -> _errorMessage.value = "Email ou senha incorretos!"
+                        403 -> _errorMessage.value = "Não autorizado!"
                         404 -> _errorMessage.value = "Requisição não encontrada"
                         500 -> _errorMessage.value = "Erro interno do servidor"
                         504 -> _errorMessage.value = "Gateway Timeout"
@@ -51,7 +59,7 @@ class LoginViewModel : ViewModel() {
                     _navigateToMain.value = false
                 }
             } catch (e: java.net.SocketTimeoutException) {
-                _errorMessage.value = "Timeout: O servidor demorou muito para responderasync"
+                _errorMessage.value = "Timeout: O servidor demorou muito para responder"
                 _navigateToMain.value = false
             } catch (e: java.net.ConnectException) {
                 _errorMessage.value = "Não foi possível conectar ao servidor"

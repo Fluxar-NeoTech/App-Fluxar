@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Industry(
-    val nome: String,
+    val id: Long,
+    val name: String,
     val cnpj: String
 ) : Parcelable

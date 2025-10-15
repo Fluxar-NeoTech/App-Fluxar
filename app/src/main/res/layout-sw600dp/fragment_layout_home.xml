@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.NavigationHome">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/ultimaAtividade"
+            android:layout_width="588dp"
+            android:layout_height="290dp"
+            android:backgroundTint="#EAD7EF"
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="30dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/ultimaAtividadeTitulo"
+                    android:layout_width="477dp"
+                    android:layout_height="67dp"
+                    android:layout_marginTop="28dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Última Atividade"
+                    android:textAlignment="center"
+                    android:textColor="@color/roxo_principal"
+                    android:textSize="40sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.506"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/ultimaAtividadeTexto"
+                    android:layout_width="432dp"
+                    android:layout_height="124dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="Adicionou 4 toneladas ao estoque. Total de estoque utilizado: 8 toneladas"
+                    android:textAlignment="center"
+                    android:textColor="@color/preto"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ultimaAtividadeTitulo" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/podeReceber"
+            android:layout_width="588dp"
+            android:layout_height="290dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#FDEDDD"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/ultimaAtividade"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/podeReceberTitulo"
+                    android:layout_width="477dp"
+                    android:layout_height="67dp"
+                    android:layout_marginTop="28dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Pode Receber"
+                    android:textAlignment="center"
+                    android:textColor="#A36429"
+                    android:textSize="40sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/podeReceberTexto"
+                    android:layout_width="385dp"
+                    android:layout_height="108dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="A unidade pode receber 2,5 toneladas de insumos no seu estoque"
+                    android:textAlignment="center"
+                    android:textColor="@color/preto"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/podeReceberTitulo" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/estoqueOcupado"
+            android:layout_width="588dp"
+            android:layout_height="290dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#e0eafd"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            app:layout_constraintTop_toBottomOf="@id/podeReceber"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/estoqueOcupadoTitulo"
+                    android:layout_width="477dp"
+                    android:layout_height="67dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Estoque Ocupado"
+                    android:textAlignment="center"
+                    android:textColor="#548CF5"
+                    android:textSize="40sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/estoqueOcupadoTexto"
+                    android:layout_width="432dp"
+                    android:layout_height="124dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="85% do estoque da unidade Cajamar se encontra ocupado!"
+                    android:textAlignment="center"
+                    android:textColor="@color/preto"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/estoqueOcupadoTitulo" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
