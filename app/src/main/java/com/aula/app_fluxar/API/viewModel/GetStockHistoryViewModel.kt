@@ -19,13 +19,13 @@ class GetStockHistoryViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun getStockHistory(unitId: Long, sectorId: Long) {
+    fun getStockHistory(unitId: Long) {
         _errorMessage.value = ""
         _isLoading.value = true
 
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.instance.getStockHistory(unitId, sectorId)
+                val response = RetrofitClient.instance.getStockHistory(unitId)
 
                 if (response.isSuccessful) {
                     _getStockHistoryResult.value = response.body()

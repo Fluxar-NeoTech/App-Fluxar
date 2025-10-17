@@ -44,7 +44,6 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
     private lateinit var getUnitsViewModel: GetUnitsViewModel
     private lateinit var apiKey: String
 
-    // Views para empty state
     private lateinit var emptyLayout: LinearLayout
     private lateinit var emptyText: TextView
     private lateinit var emptySubtext: TextView

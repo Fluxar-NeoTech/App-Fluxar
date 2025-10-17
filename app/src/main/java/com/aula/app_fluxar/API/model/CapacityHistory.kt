@@ -5,3 +5,8 @@ data class CapacityHistory(
     val totalCapacity: Double,
     val occupancyPercentage: Double
 )
+
+data class CapacitySectorInfos(
+    val occupancyPercentage: Double,
+    val remainingVolume: Double
+)

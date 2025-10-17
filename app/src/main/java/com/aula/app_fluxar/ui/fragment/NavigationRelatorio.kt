@@ -1,60 +1,157 @@
 package com.aula.app_fluxar.ui.fragment
 
 import android.os.Bundle
+import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.aula.app_fluxar.API.model.CapacitySectorInfos
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.API.viewModel.CapacitySectorInfosViewModel
+import com.aula.app_fluxar.databinding.FragmentNavRelatorioBinding
+import com.aula.app_fluxar.sessionManager.SessionManager
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [NavigationRelatorio.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NavigationRelatorio : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentNavRelatorioBinding? = null
+    private val binding get() = _binding!!
+    private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nav_relatorio, container, false)
+    ): View {
+        _binding = FragmentNavRelatorioBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment navigation_relatorio.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NavigationRelatorio().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupObservers()
+        loadCapacitySectorInfos()
+    }
+
+    private fun setupObservers() {
+        capacitySectorInfosViewModel.capacitySectorInfosResult.observe(viewLifecycleOwner) { infos ->
+            infos?.let {
+                updateReportUI(it)
+                Log.d("NavigationRelatorio", "✅ Informações de capacidade carregadas: ${it.occupancyPercentage}% ocupado, ${it.remainingVolume}m³ restante")
             }
+        }
+
+        capacitySectorInfosViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (error.isNotEmpty()) {
+                Log.e("NavigationRelatorio", "❌ Erro ao carregar informações de capacidade: $error")
+                showErrorState(error)
+            }
+        }
+
+        capacitySectorInfosViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                Log.d("NavigationRelatorio", "🔄 Carregando informações de capacidade...")
+                showLoadingState()
+            } else {
+                hideLoadingState()
+            }
+        }
+    }
+
+    private fun loadCapacitySectorInfos() {
+        val employee = SessionManager.getCurrentProfile()
+        employee?.let {
+            val sectorId = it.sector.id
+            val employeeId = SessionManager.getEmployeeId()
+            capacitySectorInfosViewModel.getSectorCapacityInfos(sectorId, employeeId)
+        } ?: run {
+            Log.e("NavigationRelatorio", "❌ Não foi possível carregar informações: employee não encontrado")
+            showErrorState("Usuário não logado")
+        }
+    }
+
+    private fun updateReportUI(infos: CapacitySectorInfos) {
+        try {
+            binding.tvPorcentagem.text = "${infos.occupancyPercentage.toInt()}%"
+
+            binding.progressBarRelatorio.progress = infos.occupancyPercentage.toInt()
+
+            val totalCapacity = if (infos.occupancyPercentage > 0) {
+                infos.remainingVolume / (1 - infos.occupancyPercentage / 100)
+            } else {
+                infos.remainingVolume
+            }
+            val usedVolume = totalCapacity - infos.remainingVolume
+
+            binding.metrosCubicosOcupados.text = "${String.format("%.1f", usedVolume)}m³"
+
+            binding.metrosCubicosTotais.text = "${String.format("%.1f", totalCapacity)}m³"
+
+            binding.textoSetorPodeReceber.text =
+                Html.fromHtml("O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque", Html.FROM_HTML_MODE_LEGACY)
+
+            updateStatusMessage(infos.occupancyPercentage)
+
+            Log.d("NavigationRelatorio", "✅ UI do relatório atualizada - Ocupado: $usedVolume m³, Total: $totalCapacity m³")
+
+        } catch (e: Exception) {
+            Log.e("NavigationRelatorio", "❌ Erro ao atualizar UI do relatório: ${e.message}")
+        }
+    }
+
+    private fun updateStatusMessage(occupancyPercentage: Double) {
+        val titleMessage = when {
+            occupancyPercentage >= 90 -> "Estoque Quase Cheio"
+            occupancyPercentage >= 50 -> "Estoque Moderado"
+            occupancyPercentage >= 25 -> "Estoque Baixo"
+            else -> "Estoque Muito Baixo"
+        }
+
+        val statusMessage = when {
+            occupancyPercentage >= 90 -> "É recomendado tomar medidas contra a situação."
+            occupancyPercentage >= 50 -> "Espaço suficiente disponível no estoque."
+            occupancyPercentage >= 25 -> "É recomendado ter atenção com o nível de estoque."
+            else -> "Tome medidas urgentemente para não ficar sem produtos!"
+        }
+
+        binding.textoOcupacaoEstoqueSetor3.text = statusMessage
+        binding.tituloSituacaoExtoque.text = titleMessage
+    }
+
+    private fun showLoadingState() {
+        binding.homeLoadingLayout.visibility = View.VISIBLE
+        binding.homeContentLayout.visibility = View.GONE
+        binding.homeErrorLayout.visibility = View.GONE
+    }
+
+    private fun hideLoadingState() {
+        binding.homeLoadingLayout.visibility = View.GONE
+        binding.homeContentLayout.visibility = View.VISIBLE
+        binding.homeErrorLayout.visibility = View.GONE
+    }
+
+    private fun showErrorState(errorMessage: String) {
+        binding.homeLoadingLayout.visibility = View.GONE
+        binding.homeContentLayout.visibility = View.GONE
+        binding.homeErrorLayout.visibility = View.VISIBLE
+        binding.homeErrorText.text = errorMessage
+
+        android.widget.Toast.makeText(requireContext(), "Erro: $errorMessage", android.widget.Toast.LENGTH_LONG).show()
+
+        Log.e("NavigationRelatorio", "Erro na UI: $errorMessage")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadCapacitySectorInfos()
     }
 }

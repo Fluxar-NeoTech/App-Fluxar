@@ -462,8 +462,7 @@ class NavigationHome : Fragment() {
         val employee = SessionManager.getCurrentProfile()
         employee?.let {
             val unitId = it.unit.id
-            val sectorId = it.sector.id
-            getStockHistoryViewModel.getStockHistory(unitId, sectorId)
+            getStockHistoryViewModel.getStockHistory(unitId)
         } ?: run {
             Log.e("NavigationHome", "❌ Não foi possível carregar histórico do estoque: employee não encontrado")
         }
@@ -473,8 +472,7 @@ class NavigationHome : Fragment() {
         val employee = SessionManager.getCurrentProfile()
         employee?.let {
             val unitId = it.unit.id
-            val sectorId = it.sector.id
-            getCapacityHistoryViewModel.getCapacityHistory(unitId, sectorId)
+            getCapacityHistoryViewModel.getCapacityHistory(unitId)
         } ?: run {
             Log.e("NavigationHome", "❌ Não foi possível carregar histórico da capacidade: employee não encontrado")
         }

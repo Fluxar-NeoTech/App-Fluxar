@@ -3,6 +3,7 @@ package com.aula.app_fluxar.API.service
 import com.aula.app_fluxar.API.model.Batch
 import com.aula.app_fluxar.API.model.BatchRequest
 import com.aula.app_fluxar.API.model.CapacityHistory
+import com.aula.app_fluxar.API.model.CapacitySectorInfos
 import com.aula.app_fluxar.API.model.CapacityStockRequest
 import com.aula.app_fluxar.API.model.CapacityStockResponse
 import com.aula.app_fluxar.API.model.Employee
@@ -45,29 +46,23 @@ interface APIService {
     @GET("/api/unit/search/all/by/industry/{id}")
     suspend fun getUnitsByIndustryID(@Path("id") id: Long): Response<List<UnitInfos>>
 
-    @GET("api/sector/search/volume/remaining/in/sector/employee")
+    @GET("/api/sector/search/volume/remaining/in/sector/employee")
     suspend fun getRemainingVolumeBySector(
         @Query("sectorId") sectorID: Long,
         @Query("employeeId") employeeID: Long
     ): Response<Double>
 
-    @GET("api/sector/search/volume/used/in/sector/employee")
+    @GET("/api/sector/search/volume/used/in/sector/employee")
     suspend fun getUsedVolumeBySector(
         @Query("sectorId") sectorID: Long,
         @Query("employeeId") employeeID: Long
     ): Response<Double>
 
-    @GET("/api/stockHistory/search/by/unit/sector")
-    suspend fun getStockHistory(
-        @Query("unitId") unitID: Long,
-        @Query("sectorId") sectorID: Long
-    ): Response<StockHistory>
+    @GET("/api/capacityHistory/search/by/unit/{unitId}")
+    suspend fun getStockHistory(@Path("unitId") unitID: Long): Response<StockHistory>
 
-    @GET("/api/capacityHistory/search/by/sector/unit")
-    suspend fun getCapacityHistory(
-        @Query("unitId") unitID: Long,
-        @Query("sectorId") sectorID: Long
-    ): Response<CapacityHistory>
+    @GET("/api/capacityHistory/search/by/unit/{unitId}")
+    suspend fun getCapacityHistory(@Path("unitId") unitID: Long): Response<CapacityHistory>
 
     @GET("/api/employee/profile/{id}")
     suspend fun getProfileInfos(@Path("id") id: Long): Response<Profile>
@@ -77,6 +72,12 @@ interface APIService {
         @Query("unitId") unitID: Long,
         @Query("sectorId") sectorID: Long
     ): Response<List<Batch>>
+
+    @GET("/api/capacityHistory/search/occupation/by/sector")
+    suspend fun getSectorCapacityInfos(
+        @Query("sectorId") sectorID: Long,
+        @Query("employeeId") employeeID: Long
+    ): Response<CapacitySectorInfos>
 
     @GET("/api/product/search/all/product/by/unit/{employeeId}")
     suspend fun getProductsByEmployee(

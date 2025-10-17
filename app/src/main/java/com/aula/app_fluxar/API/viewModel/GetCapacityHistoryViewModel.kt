@@ -19,13 +19,13 @@ class GetCapacityHistoryViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    fun getCapacityHistory(unitId: Long, sectorId: Long) {
+    fun getCapacityHistory(unitId: Long) {
         _errorMessage.value = ""
         _isLoading.value = true
 
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.instance.getCapacityHistory(unitId, sectorId)
+                val response = RetrofitClient.instance.getCapacityHistory(unitId)
 
                 if (response.isSuccessful) {
                     _getCapacityHistoryResult.value = response.body()
