@@ -2,6 +2,7 @@ package com.aula.app_fluxar.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -294,7 +295,11 @@ class MainActivity : AppCompatActivity() {
             .create()
 
         positiveButton.setOnClickListener {
+            SessionManager.clear()
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@MainActivity, Login::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             finish()
         }
 

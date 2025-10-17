@@ -239,11 +239,26 @@
             android:layout_width="64dp"
             android:layout_height="62dp"
             android:layout_marginTop="25dp"
-            android:layout_marginBottom="20dp"
             android:src="@drawable/icone_estoque"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/imageView6"
             app:layout_constraintTop_toBottomOf="@+id/imageView6" />
+
+        <Button
+            android:id="@+id/btSairContaPerfil"
+            android:layout_width="355dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="44dp"
+            android:layout_marginBottom="15dp"
+            android:backgroundTint="@color/roxo_principal"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Sair da conta"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.507"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/estoqueGestor" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

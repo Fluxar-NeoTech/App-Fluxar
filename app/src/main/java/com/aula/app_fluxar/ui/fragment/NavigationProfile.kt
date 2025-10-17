@@ -2,6 +2,7 @@ package com.aula.app_fluxar.ui.fragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -12,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
@@ -26,6 +29,7 @@ import com.aula.app_fluxar.API.viewModel.UpdateFotoViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.cloudnary.CloudnaryConfig
 import com.aula.app_fluxar.databinding.FragmentNavPerfilBinding
+import com.aula.app_fluxar.sessionManager.SessionManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.cloudinary.android.MediaManager
@@ -34,6 +38,7 @@ import java.io.File
 
 class NavigationProfile : Fragment() {
     private lateinit var defaultProfilePhoto: ImageView
+    private lateinit var btLogout: Button
     private var photoUri: Uri? = null
     private lateinit var binding: FragmentNavPerfilBinding
     private var employee: Profile? = null
@@ -105,9 +110,13 @@ class NavigationProfile : Fragment() {
         loadCurrentProfile()
 
         defaultProfilePhoto = binding.fotoPerfilPadrao
+        btLogout = binding.btSairContaPerfil!!
+
         defaultProfilePhoto.setOnClickListener {
             verifyPermissions()
         }
+
+        btLogout.setOnClickListener(showDialogLogOut())
 
         return binding.root
     }
@@ -115,7 +124,7 @@ class NavigationProfile : Fragment() {
     private fun observeProfileUpdates() {
         profileViewModel.profileResult.observe(viewLifecycleOwner) { profile ->
             profile?.let {
-                com.aula.app_fluxar.sessionManager.SessionManager.saveProfile(it)
+                SessionManager.saveProfile(it)
                 employee = it
                 profilePhotoUrl = it.profilePhoto
                 updateUIWithUserData(it)
@@ -126,7 +135,7 @@ class NavigationProfile : Fragment() {
         profileViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (error.isNotEmpty()) {
                 Log.e("NavigationPerfil", "❌ Erro ao carregar profile: $error")
-                employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
+                employee = SessionManager.getCurrentProfile()
                 employee?.let {
                     updateUIWithUserData(it)
                 }
@@ -180,7 +189,7 @@ class NavigationProfile : Fragment() {
         Log.d("NavigationPerfil", "🔄 onResume() - Recarregando dados...")
         loadCurrentProfile()
 
-        employee = com.aula.app_fluxar.sessionManager.SessionManager.getCurrentProfile()
+        employee = SessionManager.getCurrentProfile()
         employee?.let {
             profilePhotoUrl = it.profilePhoto
             updateUIWithUserData(it)
@@ -348,10 +357,35 @@ class NavigationProfile : Fragment() {
         pickPhotoResult.launch(pickPhotoIntent)
     }
 
-    fun updateEmployeeData(newEmployee: Profile) {
-        employee = newEmployee
-        profilePhotoUrl = newEmployee.profilePhoto
-        updateUIWithUserData(newEmployee)
+    private fun showDialogLogOut(): View.OnClickListener {
+        return View.OnClickListener {
+            val dialogLogOut = layoutInflater.inflate(R.layout.sair_da_conta, null)
+            val positiveButton = dialogLogOut.findViewById<Button>(R.id.sairContaS)
+            val negativeButton = dialogLogOut.findViewById<Button>(R.id.sairContaN)
+
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogLogOut)
+                .create()
+
+            positiveButton.setOnClickListener {
+                SessionManager.clear()
+                Toast.makeText(requireContext(), "Você saiu da conta", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(requireContext(), com.aula.app_fluxar.ui.activity.Login::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                requireActivity().finish()
+
+                dialog.dismiss()
+            }
+
+            negativeButton.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.show()
+        }
     }
 
     fun formatCNPJ(cnpj: String?): String {
