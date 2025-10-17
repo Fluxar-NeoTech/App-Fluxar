@@ -105,6 +105,7 @@ class NavigationRelatorio : Fragment() {
 
     private fun updateStatusMessage(occupancyPercentage: Double) {
         val titleMessage = when {
+            occupancyPercentage >= 100 -> "Estoque Cheio"
             occupancyPercentage >= 90 -> "Estoque Quase Cheio"
             occupancyPercentage >= 50 -> "Estoque Moderado"
             occupancyPercentage >= 25 -> "Estoque Baixo"
@@ -112,6 +113,7 @@ class NavigationRelatorio : Fragment() {
         }
 
         val statusMessage = when {
+            occupancyPercentage >= 100 -> "Seu estoque está lotado!"
             occupancyPercentage >= 90 -> "É recomendado tomar medidas contra a situação."
             occupancyPercentage >= 50 -> "Espaço suficiente disponível no estoque."
             occupancyPercentage >= 25 -> "É recomendado ter atenção com o nível de estoque."
