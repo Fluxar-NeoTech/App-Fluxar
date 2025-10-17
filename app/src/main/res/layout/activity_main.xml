@@ -6,12 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- CONTAINER PRINCIPAL -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Loading State para a tela principal -->
         <LinearLayout
             android:id="@+id/mainLoadingLayout"
             android:layout_width="match_parent"
@@ -41,7 +39,6 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Error State para a tela principal -->
         <LinearLayout
             android:id="@+id/mainErrorLayout"
             android:layout_width="match_parent"
@@ -80,14 +77,12 @@
                 android:backgroundTint="@color/roxo_principal" />
         </LinearLayout>
 
-        <!-- Content State (seu layout atual) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/mainContentLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone">
 
-            <!-- Seu conteúdo original aqui (mantenha todo o conteúdo que você já tinha) -->
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/materialToolbar"
                 android:layout_width="0dp"
@@ -171,8 +166,8 @@
 
             <ImageView
                 android:id="@+id/iconVoltar"
-                android:layout_width="60dp"
-                android:layout_height="35dp"
+                android:layout_width="55dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="28dp"
                 android:layout_marginBottom="2dp"
                 android:visibility="gone"
