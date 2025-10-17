@@ -84,4 +84,8 @@ class LoginViewModel : ViewModel() {
     fun getUser(): Employee? {
         return _userData.value
     }
+
+    fun clearResults() {
+        _errorMessage.value = ""
+    }
 }

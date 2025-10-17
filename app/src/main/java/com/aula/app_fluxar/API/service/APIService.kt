@@ -15,6 +15,7 @@ import com.aula.app_fluxar.API.model.UpdatePhotoRequest
 import com.aula.app_fluxar.API.model.ProductResponse
 import com.aula.app_fluxar.API.model.StockHistory
 import com.aula.app_fluxar.API.model.UnitInfos
+import com.aula.app_fluxar.API.model.EmailRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -39,6 +40,9 @@ interface APIService {
 
     @DELETE("/api/batch/delete/{batchCode}")
     suspend fun deleteBatch(@Path("batchCode") batchCode: String): Response<Map<String, String>>
+
+    @POST("/api/email/send")
+    suspend fun redefinePassword(@Body email: EmailRequest): Response<Map<String, String>>
 
     @POST("api/batch/add")
     suspend fun addBatch(@Body batchRequest: BatchRequest): Response<Map<String, String>>

@@ -18,6 +18,7 @@ import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityLoginBinding
 import com.aula.app_fluxar.API.viewModel.LoginViewModel
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
+import com.aula.app_fluxar.API.viewModel.RedefinePasswordViewModel
 import com.google.android.material.textfield.TextInputEditText
 
 class Login : AppCompatActivity() {
@@ -25,6 +26,7 @@ class Login : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
+    private val redefinePasswordViewModel: RedefinePasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,7 @@ class Login : AppCompatActivity() {
     }
 
     private fun setupObservers() {
+        // Observers do Login
         viewModel.errorMessage.observe(this, Observer { error ->
             if (error.isNotEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show()
@@ -75,6 +78,27 @@ class Login : AppCompatActivity() {
             if (error.isNotEmpty()) {
                 Toast.makeText(this, "Erro ao carregar perfil: $error", Toast.LENGTH_SHORT).show()
                 navigateToMainActivity()
+            }
+        })
+
+        redefinePasswordViewModel.successMessage.observe(this, Observer { message ->
+            if (message.isNotEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                Log.d("Login", "Email de redefinição enviado: $message")
+                Toast.makeText(this, "Você receberá um e-mail com informações para a redefinição de senha.", Toast.LENGTH_LONG).show()
+            }
+        })
+
+        redefinePasswordViewModel.errorMessage.observe(this, Observer { error ->
+            if (error.isNotEmpty()) {
+                Toast.makeText(this, "Erro: $error", Toast.LENGTH_LONG).show()
+                Log.e("Login", "Erro ao enviar email: $error")
+            }
+        })
+
+        redefinePasswordViewModel.isLoading.observe(this, Observer { isLoading ->
+            if (isLoading) {
+                Log.d("Login", "Enviando email de redefinição...")
             }
         })
     }
@@ -108,12 +132,20 @@ class Login : AppCompatActivity() {
             .create()
 
         positiveButton.setOnClickListener {
-            if (emailInput.text!!.isEmpty()) {
+            val email = emailInput.text.toString().trim()
+
+            if (email.isEmpty()) {
                 Toast.makeText(this, "Preencha o campo de e-mail!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            if (!isValidEmail(email)) {
+                Toast.makeText(this, "Por favor, insira um email válido!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
+            redefinePasswordViewModel.redefinePassword(email)
+            dialog.dismiss()
         }
 
         negativeButton.setOnClickListener {
@@ -124,10 +156,13 @@ class Login : AppCompatActivity() {
         dialog.show()
     }
 
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
     private fun loadProfileAndNavigate() {
         binding.progressBar.visibility = View.VISIBLE
         binding.btEntrarLogin.isEnabled = false
-
         profileViewModel.loadProfile()
     }
 
@@ -150,5 +185,11 @@ class Login : AppCompatActivity() {
         }
 
         viewModel.onNavigationComplete()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        redefinePasswordViewModel.clearResults()
+        viewModel.clearResults()
     }
 }
