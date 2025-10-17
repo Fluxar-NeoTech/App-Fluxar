@@ -8,15 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.aula.app_fluxar.API.model.CapacitySectorInfos
-import com.aula.app_fluxar.R
 import com.aula.app_fluxar.API.viewModel.CapacitySectorInfosViewModel
 import com.aula.app_fluxar.databinding.FragmentNavRelatorioBinding
 import com.aula.app_fluxar.sessionManager.SessionManager
-import kotlinx.coroutines.launch
 
-class NavigationRelatorio : Fragment() {
+class NavigationReport : Fragment() {
 
     private var _binding: FragmentNavRelatorioBinding? = null
     private val binding get() = _binding!!

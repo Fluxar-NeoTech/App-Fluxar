@@ -49,7 +49,7 @@ class LoginViewModel : ViewModel() {
                     }
                 } else {
                     when (response.code()) {
-                        400 -> _errorMessage.value = "Credenciais inválidas!"
+                        400 -> _errorMessage.value = "Usuário não encontrado!"
                         401 -> _errorMessage.value = "Email ou senha incorretos!"
                         403 -> _errorMessage.value = "Não autorizado!"
                         404 -> _errorMessage.value = "Requisição não encontrada"

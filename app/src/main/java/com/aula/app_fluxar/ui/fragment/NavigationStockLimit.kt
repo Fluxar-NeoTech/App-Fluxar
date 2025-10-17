@@ -11,10 +11,9 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.aula.app_fluxar.API.viewModel.CapacityStockViewModel
 import com.aula.app_fluxar.R
-import com.aula.app_fluxar.ui.activity.MainActivity
 import com.google.android.material.textfield.TextInputEditText
 
-class NavigationLimiteEstoque : Fragment() {
+class NavigationStockLimit : Fragment() {
     private val viewModel: CapacityStockViewModel by viewModels()
     private lateinit var alturaEstoque: TextInputEditText
     private lateinit var larguraEstoque: TextInputEditText

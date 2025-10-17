@@ -10,8 +10,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/textoAuxiliarRedefinirSenha"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/roboto"
+            android:text="Informe o endereço de e-mail para redefinição da senha "
+            android:textAlignment="center"
+            android:textColor="@color/preto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textoRedefinirSenha" />
+
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/cadastrarProdutoN"
+            android:id="@+id/redefinirSenhaN"
             android:layout_width="120dp"
             android:layout_height="55dp"
             android:layout_marginTop="30dp"
@@ -24,41 +38,41 @@
             app:backgroundTint="@android:color/transparent"
             app:cornerRadius="7dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/cadastrarProdutoS"
+            app:layout_constraintEnd_toStartOf="@+id/redefinirSenhaS"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tipoProduto"
+            app:layout_constraintTop_toBottomOf="@+id/emailRedefinirSenha"
             app:layout_constraintVertical_bias="0.0"
             app:strokeColor="#538DF5"
             app:strokeWidth="1.1dp" />
 
         <Button
-            android:id="@+id/cadastrarProdutoS"
+            android:id="@+id/redefinirSenhaS"
             android:layout_width="120dp"
             android:layout_height="55dp"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="20dp"
             android:backgroundTint="#538DF5"
             android:fontFamily="@font/roboto"
-            android:text="Cadastrar"
+            android:text="Enviar"
             android:textAllCaps="false"
             android:textColor="#E4E4E4"
             app:cornerRadius="7dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/cadastrarProdutoN"
-            app:layout_constraintTop_toBottomOf="@+id/tipoProduto"
+            app:layout_constraintStart_toEndOf="@+id/redefinirSenhaN"
+            app:layout_constraintTop_toBottomOf="@+id/emailRedefinirSenha"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textoDesejaSairConta"
+            android:id="@+id/textoRedefinirSenha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
-            android:text="Cadastrar produto"
+            android:text="Redefinir senha"
             android:textAlignment="center"
             android:textColor="#2F2F2F"
             android:textSize="22dp"
@@ -68,40 +82,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/nomeProduto"
-            android:layout_width="250dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="30dp"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@color/azul_stroke"
-            app:boxStrokeWidth="1dp"
-            app:boxStrokeWidthFocused="2dp"
-            app:hintEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textoDesejaSairConta">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputNomeProduto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:hint="Nome"
-                android:inputType="text"
-                android:paddingStart="12dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="16dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@color/azul_principal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tipoProduto"
+            android:id="@+id/emailRedefinirSenha"
             android:layout_width="250dp"
             android:layout_height="70dp"
             android:layout_marginTop="20dp"
@@ -116,14 +97,14 @@
             app:hintEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nomeProduto">
+            app:layout_constraintTop_toBottomOf="@+id/textoAuxiliarRedefinirSenha">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputTipoProduto"
+                android:id="@+id/inputEmailRedefinirSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
-                android:hint="Tipo"
+                android:hint="E-mail"
                 android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingTop="20dp"

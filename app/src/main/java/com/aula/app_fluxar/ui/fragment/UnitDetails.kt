@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.aula.app_fluxar.API.model.UnitInfos
 import com.aula.app_fluxar.databinding.FragmentNavigationUnitDetailsBinding
 
-class NavigationUnitDetails : Fragment() {
+class UnitDetails : Fragment() {
 
     private var _binding: FragmentNavigationUnitDetailsBinding? = null
     private val binding get() = _binding!!

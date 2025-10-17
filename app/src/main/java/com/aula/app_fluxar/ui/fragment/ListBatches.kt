@@ -14,7 +14,7 @@ import com.aula.app_fluxar.API.viewModel.GetBatchesViewModel
 import com.aula.app_fluxar.adpters.BatchAdapter
 import com.aula.app_fluxar.sessionManager.SessionManager
 
-class ListarProdutos : Fragment() {
+class ListBatches : Fragment() {
 
     private lateinit var productListRV: RecyclerView
     private val getBatchesViewModel: GetBatchesViewModel by viewModels()

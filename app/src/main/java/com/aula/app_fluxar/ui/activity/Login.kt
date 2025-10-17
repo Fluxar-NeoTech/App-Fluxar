@@ -1,9 +1,11 @@
 package com.aula.app_fluxar.ui.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -16,6 +18,7 @@ import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityLoginBinding
 import com.aula.app_fluxar.API.viewModel.LoginViewModel
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
+import com.google.android.material.textfield.TextInputEditText
 
 class Login : AppCompatActivity() {
     private val origin = "APP"
@@ -88,6 +91,37 @@ class Login : AppCompatActivity() {
 
             viewModel.login(email, senha, origin)
         }
+
+        binding.redefinirSenha!!.setOnClickListener {
+            openRedefinePasswordDialog()
+        }
+    }
+
+    private fun openRedefinePasswordDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.pop_up_redefinir_senha, null)
+        val emailInput: TextInputEditText = dialogView.findViewById(R.id.inputEmailRedefinirSenha)
+        val positiveButton = dialogView.findViewById<Button>(R.id.redefinirSenhaS)
+        val negativeButton = dialogView.findViewById<Button>(R.id.redefinirSenhaN)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        positiveButton.setOnClickListener {
+            if (emailInput.text!!.isEmpty()) {
+                Toast.makeText(this, "Preencha o campo de e-mail!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
+        }
+
+        negativeButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     private fun loadProfileAndNavigate() {

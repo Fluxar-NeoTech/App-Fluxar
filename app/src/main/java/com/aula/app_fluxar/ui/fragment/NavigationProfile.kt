@@ -32,7 +32,7 @@ import com.cloudinary.android.MediaManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 
-class NavigationPerfil : Fragment() {
+class NavigationProfile : Fragment() {
     private lateinit var defaultProfilePhoto: ImageView
     private var photoUri: Uri? = null
     private lateinit var binding: FragmentNavPerfilBinding

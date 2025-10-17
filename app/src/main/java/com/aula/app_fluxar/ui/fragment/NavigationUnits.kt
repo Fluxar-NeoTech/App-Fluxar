@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.RetrofitClientMapsAPI
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UnitInfos
-import com.aula.app_fluxar.API.model.Unit as UnitModel
 import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.adpters.UnitAdapter
@@ -35,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.aula.app_fluxar.BuildConfig
 
-class NavigationUnidades : Fragment(), OnMapReadyCallback {
+class NavigationUnits : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private var employee: Profile? = null
