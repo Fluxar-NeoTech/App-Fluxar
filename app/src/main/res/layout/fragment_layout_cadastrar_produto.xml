@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.CadastrarProduto">
+    tools:context=".ui.fragment.RegisterProduct">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -75,7 +75,6 @@
                 android:id="@+id/typeInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Escolha um tipo"
                 android:paddingLeft="10dp"
                 android:paddingTop="18dp"
                 android:paddingEnd="18dp"
@@ -109,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
                 android:hint="Número do lote"
-                android:inputType="numberDecimal"
+                android:inputType="text"
                 android:paddingStart="12dp"
                 android:paddingTop="18dp"
                 android:paddingEnd="12dp"

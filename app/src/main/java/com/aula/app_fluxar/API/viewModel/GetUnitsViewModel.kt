@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aula.app_fluxar.API.RetrofitClient
-import com.aula.app_fluxar.API.model.Unit as UnitModel
+import com.aula.app_fluxar.API.model.UnitInfos
 import kotlinx.coroutines.launch
 
 
 class GetUnitsViewModel : ViewModel() {
-    private val _getUnitsResult = MutableLiveData<List<UnitModel>>()
-    val getUnitsResult: LiveData<List<UnitModel>> = _getUnitsResult
+    private val _getUnitsResult = MutableLiveData<List<UnitInfos>>()
+    val getUnitsResult: LiveData<List<UnitInfos>> = _getUnitsResult
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage

@@ -8,14 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.RetrofitClientMapsAPI
 import com.aula.app_fluxar.API.model.Profile
-import com.aula.app_fluxar.API.model.Unit as UnitModel
+import com.aula.app_fluxar.API.model.UnitInfos
 import com.aula.app_fluxar.API.viewModel.GetUnitsViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.adpters.UnitAdapter
@@ -32,7 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.aula.app_fluxar.BuildConfig
 
-class NavigationUnidades : Fragment(), OnMapReadyCallback {
+class NavigationUnits : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private var employee: Profile? = null
@@ -40,6 +42,11 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
     private lateinit var unitAdapter: UnitAdapter
     private lateinit var getUnitsViewModel: GetUnitsViewModel
     private lateinit var apiKey: String
+
+    private lateinit var emptyLayout: LinearLayout
+    private lateinit var emptyText: TextView
+    private lateinit var emptySubtext: TextView
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,19 +69,23 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        emptyLayout = view.findViewById(R.id.emptyLayout)
+        emptyText = view.findViewById(R.id.emptyText)
+        emptySubtext = view.findViewById(R.id.emptySubtext)
+        recyclerView = view.findViewById(R.id.rvUnidade)
+        filter = view.findViewById(R.id.spinnerFiltro)
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         getUnitsViewModel = ViewModelProvider(this).get(GetUnitsViewModel::class.java)
 
-        filter = view.findViewById(R.id.spinnerFiltro)
         val filtros = listOf("Sem Filtro", "Mais Próximas", "Maior Disponibilidade")
-        val filtroAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, filtros)
-        filtroAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val filtroAdapter = ArrayAdapter(requireContext(), R.layout.custom_spinner_item, filtros)
+        filtroAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         filter.adapter = filtroAdapter
         debugProfileStructure()
     }
@@ -106,33 +117,46 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                         return@launch
                     }
 
-                    val listaComDistancias: List<Triple<UnitModel, LatLng, Float>> = unidades.mapNotNull { unidade ->
+                    val outrasUnidades = unidades.filter { unidade ->
+                        unidade.id != employee!!.unit.id
+                    }
+
+                    // VERIFICA SE HÁ UNIDADES DISPONÍVEIS
+                    if (outrasUnidades.isEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            showEmptyState()
+                            // Ainda mostra o marcador da unidade do usuário
+                            mMap.addMarker(
+                                MarkerOptions()
+                                    .position(userLatLng)
+                                    .title("Minha Unidade")
+                                    .snippet(employee!!.unit.enderecoCompleto())
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                            )
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
+                        }
+                        return@launch
+                    }
+
+                    val listaComDistancias: List<Triple<UnitInfos, LatLng, Float>> = outrasUnidades.mapNotNull { unidade ->
                         val latLng = getLatLngFromAddress(unidade.enderecoCompleto()) ?: return@mapNotNull null
                         val result = FloatArray(1)
                         Location.distanceBetween(
                             userLatLng.latitude, userLatLng.longitude,
                             latLng.latitude, latLng.longitude, result
                         )
-                        Triple<UnitModel, LatLng, Float>(
+                        Triple<UnitInfos, LatLng, Float>(
                             unidade,
                             latLng,
                             result[0] / 1000f
                         )
                     }.sortedBy { it.third }
 
-                    // Mock de disponibilidades
-                    val disponibilidadesMock = mapOf(
-                        1L to 170,
-                        2L to 250,
-                        3L to 120,
-                        4L to 300
-                    )
-
                     val listaFinal = listaComDistancias.map { triple ->
-                        Triple<UnitModel, Float, Int>(
+                        Triple<UnitInfos, Float, Double>(
                             triple.first,
                             triple.third,
-                            disponibilidadesMock[triple.first.id] ?: 0
+                            triple.first.availability
                         )
                     }
 
@@ -156,27 +180,12 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
                                 MarkerOptions()
                                     .position(latLng)
                                     .title(unidade.name)
-                                    .snippet("Distância: %.2f km".format(distancia))
+                                    .snippet("Distância: %.2f km | Disponibilidade: %.1f m³".format(distancia, unidade.availability))
                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                             )
                         }
 
-                        val recyclerView = view?.findViewById<RecyclerView>(R.id.rvUnidade)
-                        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
-                        unitAdapter = UnitAdapter(listaFinal)
-                        recyclerView?.adapter = unitAdapter
-
-                        // Configura o filtro
-                        filter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                                when (position) {
-                                    0 -> unitAdapter.reset()
-                                    1 -> unitAdapter.sortByDistance()
-                                    2 -> unitAdapter.sortByDisponibilidade()
-                                }
-                            }
-                            override fun onNothingSelected(parent: AdapterView<*>) {}
-                        }
+                        showContentState(listaFinal)
                     }
                 }
             }
@@ -185,6 +194,38 @@ class NavigationUnidades : Fragment(), OnMapReadyCallback {
         getUnitsViewModel.errorMessage.observe(viewLifecycleOwner) { erro ->
             if (!erro.isNullOrEmpty()) Log.e("NavigationUnidades", erro)
         }
+    }
+
+    private fun showContentState(listaFinal: List<Triple<UnitInfos, Float, Double>>) {
+        // Mostra o RecyclerView e esconde o empty state
+        recyclerView.visibility = View.VISIBLE
+        emptyLayout.visibility = View.GONE
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        unitAdapter = UnitAdapter(listaFinal)
+        recyclerView.adapter = unitAdapter
+
+        // Configura o filtro
+        filter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                when (position) {
+                    0 -> unitAdapter.reset()
+                    1 -> unitAdapter.sortByDistance()
+                    2 -> unitAdapter.sortByDisponibilidade()
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+    private fun showEmptyState() {
+        recyclerView.visibility = View.GONE
+        emptyLayout.visibility = View.VISIBLE
+
+        emptyText.text = "Nenhuma unidade disponível"
+        emptySubtext.text = "Não há outras unidades disponíveis no momento."
+
+        filter.isEnabled = false
     }
 
     private suspend fun getLatLngFromAddress(address: String): LatLng? {

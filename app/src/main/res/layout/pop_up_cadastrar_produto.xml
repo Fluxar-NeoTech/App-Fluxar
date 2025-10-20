@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/popUpSairConta"
-    android:layout_width="300dp"
+    android:layout_width="350dp"
     android:layout_height="wrap_content"
     app:cardCornerRadius="5dp">
 
@@ -14,12 +13,12 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/cadastrarProdutoN"
             android:layout_width="120dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="56dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="20dp"
             android:fontFamily="@font/roboto"
             android:stateListAnimator="@null"
-            android:text="Não"
+            android:text="Cancelar"
             android:textAllCaps="false"
             android:textColor="#538DF5"
             app:backgroundTint="@android:color/transparent"
@@ -28,7 +27,7 @@
             app:layout_constraintEnd_toStartOf="@+id/cadastrarProdutoS"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tetxoDesejaSairConta"
+            app:layout_constraintTop_toBottomOf="@+id/tipoProduto"
             app:layout_constraintVertical_bias="0.0"
             app:strokeColor="#538DF5"
             app:strokeWidth="1.1dp" />
@@ -36,12 +35,12 @@
         <Button
             android:id="@+id/cadastrarProdutoS"
             android:layout_width="120dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="56dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="20dp"
             android:backgroundTint="#538DF5"
             android:fontFamily="@font/roboto"
-            android:text="Sim"
+            android:text="Cadastrar"
             android:textAllCaps="false"
             android:textColor="#E4E4E4"
             app:cornerRadius="7dp"
@@ -49,22 +48,89 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/cadastrarProdutoN"
-            app:layout_constraintTop_toBottomOf="@+id/tetxoDesejaSairConta"
+            app:layout_constraintTop_toBottomOf="@+id/tipoProduto"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/tetxoDesejaSairConta"
-            android:layout_width="254dp"
-            android:layout_height="51dp"
+            android:id="@+id/textoDesejaSairConta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Você deseja mesmo adicionar esse produto?"
+            android:gravity="center"
+            android:text="Cadastrar produto"
             android:textAlignment="center"
             android:textColor="#2F2F2F"
-            android:textSize="20dp"
+            android:textSize="22dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nomeProduto"
+            android:layout_width="250dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="30dp"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeColor="@color/azul_stroke"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textoDesejaSairConta">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputNomeProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="Nome"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@android:color/black"
+                android:textColorHint="@color/azul_principal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tipoProduto"
+            android:layout_width="250dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="20dp"
+            app:boxBackgroundMode="outline"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxStrokeColor="@color/azul_stroke"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintEnabled="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nomeProduto">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputTipoProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="Tipo"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp"
+                android:textColor="@android:color/black"
+                android:textColorHint="@color/azul_principal" />
+        </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

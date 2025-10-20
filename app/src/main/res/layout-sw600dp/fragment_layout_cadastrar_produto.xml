@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".ui.fragment.CadastrarProduto">
+    tools:context=".ui.fragment.RegisterProduct">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -81,7 +81,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:backgroundTint="@android:color/transparent"
-                android:hint="Escolha um tipo"
                 android:paddingStart="12dp"
                 android:paddingTop="20dp"
                 android:paddingEnd="12dp"
