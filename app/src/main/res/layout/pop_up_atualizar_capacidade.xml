@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popUpSairConta"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="5dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cadastrarCapacidadeN"
+            android:layout_width="120dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/roboto"
+            android:stateListAnimator="@null"
+            android:text="Não"
+            android:textAllCaps="false"
+            android:textColor="#538DF5"
+            app:backgroundTint="@android:color/transparent"
+            app:cornerRadius="7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cadastrarCapacidadeS"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textoDesejaCadastrarCapacidade"
+            app:layout_constraintVertical_bias="0.0"
+            app:strokeColor="#538DF5"
+            app:strokeWidth="1.1dp" />
+
+        <Button
+            android:id="@+id/cadastrarCapacidadeS"
+            android:layout_width="120dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#538DF5"
+            android:fontFamily="@font/roboto"
+            android:text="Sim"
+            android:textAllCaps="false"
+            android:textColor="#E4E4E4"
+            app:cornerRadius="7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cadastrarCapacidadeN"
+            app:layout_constraintTop_toBottomOf="@+id/textoDesejaCadastrarCapacidade"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/textoDesejaCadastrarCapacidade"
+            android:layout_width="256dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Você deseja registrar essa capacidade?"
+            android:textAlignment="center"
+            android:textColor="#2F2F2F"
+            android:textSize="22dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

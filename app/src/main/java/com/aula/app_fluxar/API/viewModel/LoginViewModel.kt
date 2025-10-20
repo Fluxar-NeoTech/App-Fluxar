@@ -27,19 +27,26 @@ class LoginViewModel : ViewModel() {
     private val _userData = MutableLiveData<Employee?>()
     val userData: LiveData<Employee?> = _userData
 
-    fun login(email: String, senha: String) {
+    fun login(email: String, senha: String, origin: String) {
         _isLoading.value = true
         _errorMessage.value = ""
         _navigateToMain.value = false
 
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.instance.login(LoginRequest(email, senha))
+
+                val response = RetrofitClient.instance.login(LoginRequest(email, senha, origin))
 
                 if(response.isSuccessful) {
                     val employee = response.body()
                     employee?.let {
                         SessionManager.saveLoginData(it)
+
+                        it.token?.let { token ->
+                            RetrofitClient.setAuthToken("Bearer $token")
+                            Log.d("LoginViewModel", "Token salvo no RetrofitClient: ${token.take(20)}...")
+                        }
+
                         _loginResult.value = employee
                         _userData.value = employee
                         _errorMessage.value = ""
@@ -48,7 +55,7 @@ class LoginViewModel : ViewModel() {
                     }
                 } else {
                     when (response.code()) {
-                        400 -> _errorMessage.value = "Credenciais inválidas!"
+                        400 -> _errorMessage.value = "Usuário não encontrado!"
                         401 -> _errorMessage.value = "Email ou senha incorretos!"
                         403 -> _errorMessage.value = "Não autorizado!"
                         404 -> _errorMessage.value = "Requisição não encontrada"
@@ -82,5 +89,9 @@ class LoginViewModel : ViewModel() {
 
     fun getUser(): Employee? {
         return _userData.value
+    }
+
+    fun clearResults() {
+        _errorMessage.value = ""
     }
 }

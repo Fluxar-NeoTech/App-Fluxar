@@ -10,19 +10,28 @@
         tools:layout="@layout/fragment_nav_home" />
     <fragment
         android:id="@+id/nav_relatorio"
-        android:name="com.aula.app_fluxar.ui.fragment.NavigationRelatorio"
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationReport"
         tools:layout="@layout/fragment_nav_relatorio" />
     <fragment
         android:id="@+id/nav_unidades"
-        android:name="com.aula.app_fluxar.ui.fragment.NavigationUnidades"
-        tools:layout="@layout/fragment_nav_unidades" />
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationUnits"
+        tools:layout="@layout/fragment_nav_unidades" >
+        <action
+            android:id="@+id/action_navigationUnidades_to_unitDetails"
+            app:destination="@id/navigationUnitDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigationUnitDetails"
+        android:name="com.aula.app_fluxar.ui.fragment.UnitDetails"
+        android:label="Detalhes da Unidade"
+        tools:layout="@layout/fragment_navigation_unit_details" />
     <fragment
         android:id="@+id/nav_perfil"
-        android:name="com.aula.app_fluxar.ui.fragment.NavigationPerfil"
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationProfile"
         tools:layout="@layout/fragment_nav_perfil" />
     <fragment
         android:id="@+id/nav_notificacoes"
-        android:name="com.aula.app_fluxar.ui.fragment.NavigationNotificacoes"
+        android:name="com.aula.app_fluxar.ui.fragment.Notifications"
         tools:layout="@layout/fragment_nav_notificacoes" />
     <fragment
         android:id="@+id/nav_infos"
@@ -36,22 +45,21 @@
         tools:layout="@layout/fragment_layout_home" />
     <fragment
         android:id="@+id/layout_cadastrar_produto"
-        android:name="com.aula.app_fluxar.ui.fragment.CadastrarProduto"
+        android:name="com.aula.app_fluxar.ui.fragment.RegisterProduct"
         android:label="fragment_layout_cadastrar_produto"
         tools:layout="@layout/fragment_layout_cadastrar_produto" />
     <fragment
         android:id="@+id/layout_remover_produto"
-        android:name="com.aula.app_fluxar.ui.fragment.RemoverProduto"
         android:label="fragment_layout_remover_produto"
         tools:layout="@layout/fragment_layout_remover_produto" />
     <fragment
         android:id="@+id/layout_listar_produto"
-        android:name="com.aula.app_fluxar.ui.fragment.ListarProdutos"
+        android:name="com.aula.app_fluxar.ui.fragment.ListBatches"
         android:label="fragment_listar_produtos"
         tools:layout="@layout/fragment_layout_listar_produtos" />
     <fragment
         android:id="@+id/nav_limite_estoque"
-        android:name="com.aula.app_fluxar.ui.fragment.NavigationLimiteEstoque"
+        android:name="com.aula.app_fluxar.ui.fragment.NavigationStockLimit"
         android:label="fragment_layout_nav_limite_estoque"
         tools:layout="@layout/fragment_layout_nav_limite_estoque"/>
 </navigation>

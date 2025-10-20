@@ -4,8 +4,9 @@ data class Profile(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val profilePhoto: String,
+    val profilePhoto: String?,
     val sector: Sector,
     val unit: Unit,
-    val maxCapacity: Double
+    val maxCapacity: Double,
+    val plan: Plan
 )

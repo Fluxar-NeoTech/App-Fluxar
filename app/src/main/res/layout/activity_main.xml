@@ -6,121 +6,192 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- CONTAINER PRINCIPAL -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--   Ícones da navbar principal     -->
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/materialToolbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@android:color/transparent"
-            android:elevation="0dp"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="153dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="28dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.346"
-            app:srcCompat="@drawable/logo" />
-
-        <View
-            android:id="@+id/toolbar_divider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/laranja_principal"
-            app:layout_constraintTop_toBottomOf="@id/materialToolbar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageView
-            android:id="@+id/iconNotificacoes"
-            android:layout_width="33dp"
-            android:layout_height="31dp"
-            android:layout_marginStart="50dp"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
-            app:layout_constraintEnd_toStartOf="@+id/iconMenu"
-            app:layout_constraintStart_toEndOf="@id/logo"
-            app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.346"
-            app:srcCompat="@drawable/notificacoes" />
-
-        <ImageView
-            android:id="@+id/iconMenu"
-            android:layout_width="33dp"
-            android:layout_height="31dp"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.461"
-            app:layout_constraintStart_toEndOf="@id/iconNotificacoes"
-            app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.346"
-            app:srcCompat="@drawable/menu" />
-
-        <fragment
-            android:id="@+id/nav_host_fragment_activity_main"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/mobile_navigation"
-            app:layout_constraintTop_toBottomOf="@id/toolbar_divider"
-            app:layout_constraintBottom_toTopOf="@id/nav_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/windowBackground"
-            app:menu="@menu/bottom_nav_menu"
+        <LinearLayout
+            android:id="@+id/mainLoadingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!--   Ícones da navbar secundária     -->
-
-        <ImageView
-            android:id="@+id/iconVoltar"
-            android:layout_width="60dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="28dp"
-            android:layout_marginBottom="2dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.25"
-            app:srcCompat="@drawable/voltar_bt" />
-
-        <ImageView
-            android:id="@+id/logoNavSecundaria"
-            android:layout_width="152dp"
-            android:layout_height="46dp"
-            android:layout_marginBottom="2dp"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.933"
-            app:layout_constraintStart_toEndOf="@id/iconVoltar"
-            app:layout_constraintTop_toTopOf="@id/materialToolbar"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:id="@+id/mainLoadingProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/roxo_principal" />
+
+            <TextView
+                android:id="@+id/mainLoadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Carregando aplicação..."
+                android:textColor="@color/roxo_principal"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/mainErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
             android:visibility="gone"
-            app:srcCompat="@drawable/logo" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❌"
+                android:textSize="48sp" />
+
+            <TextView
+                android:id="@+id/mainErrorText"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Erro ao carregar aplicação"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/mainRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tentar Novamente"
+                android:backgroundTint="@color/roxo_principal" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mainContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/materialToolbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="153dp"
+                android:layout_height="31dp"
+                android:layout_marginStart="28dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/materialToolbar"
+                app:layout_constraintVertical_bias="0.346"
+                app:srcCompat="@drawable/logo" />
+
+            <View
+                android:id="@+id/toolbar_divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/laranja_principal"
+                app:layout_constraintTop_toBottomOf="@id/materialToolbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/iconNotificacoes"
+                android:layout_width="33dp"
+                android:layout_height="31dp"
+                android:layout_marginStart="50dp"
+                app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+                app:layout_constraintEnd_toStartOf="@+id/iconMenu"
+                app:layout_constraintStart_toEndOf="@id/logo"
+                app:layout_constraintTop_toTopOf="@id/materialToolbar"
+                app:layout_constraintVertical_bias="0.346"
+                app:srcCompat="@drawable/notificacoes" />
+
+            <ImageView
+                android:id="@+id/iconMenu"
+                android:layout_width="33dp"
+                android:layout_height="31dp"
+                app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.461"
+                app:layout_constraintStart_toEndOf="@id/iconNotificacoes"
+                app:layout_constraintTop_toTopOf="@id/materialToolbar"
+                app:layout_constraintVertical_bias="0.346"
+                app:srcCompat="@drawable/menu" />
+
+            <fragment
+                android:id="@+id/nav_host_fragment_activity_main"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/mobile_navigation"
+                app:layout_constraintTop_toBottomOf="@id/toolbar_divider"
+                app:layout_constraintBottom_toTopOf="@id/nav_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/nav_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/windowBackground"
+                app:menu="@menu/bottom_nav_menu"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/iconVoltar"
+                android:layout_width="55dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginBottom="2dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/materialToolbar"
+                app:layout_constraintVertical_bias="0.25"
+                app:srcCompat="@drawable/voltar_bt" />
+
+            <ImageView
+                android:id="@+id/logoNavSecundaria"
+                android:layout_width="152dp"
+                android:layout_height="46dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.933"
+                app:layout_constraintStart_toEndOf="@id/iconVoltar"
+                app:layout_constraintTop_toTopOf="@id/materialToolbar"
+                app:layout_constraintVertical_bias="0.0"
+                android:visibility="gone"
+                app:srcCompat="@drawable/logo" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
