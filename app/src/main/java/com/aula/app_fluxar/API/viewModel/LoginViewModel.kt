@@ -41,6 +41,12 @@ class LoginViewModel : ViewModel() {
                     val employee = response.body()
                     employee?.let {
                         SessionManager.saveLoginData(it)
+
+                        it.token?.let { token ->
+                            RetrofitClient.setAuthToken("Bearer $token")
+                            Log.d("LoginViewModel", "Token salvo no RetrofitClient: ${token.take(20)}...")
+                        }
+
                         _loginResult.value = employee
                         _userData.value = employee
                         _errorMessage.value = ""
