@@ -9,8 +9,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import com.aula.app_fluxar.API.model.UserLogRequest
+import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.API.viewModel.CapacityStockViewModel
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.sessionManager.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 
 class NavigationStockLimit : Fragment() {
@@ -19,6 +22,7 @@ class NavigationStockLimit : Fragment() {
     private lateinit var larguraEstoque: TextInputEditText
     private lateinit var comprimentoEstoque: TextInputEditText
     private lateinit var concluirBt: Button
+    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -107,6 +111,9 @@ class NavigationStockLimit : Fragment() {
 
         positiveButton.setOnClickListener {
             viewModel.updateCapacityStock(largura, altura, comprimento, setorID, unidadeID)
+
+            val action = "Usuário adicionou a capacidade do estoque do seu setor e unidade"
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
 
             viewModel.updateSuccess.observe(viewLifecycleOwner) { success ->
                 if (success) {
