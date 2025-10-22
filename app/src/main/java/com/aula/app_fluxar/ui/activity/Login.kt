@@ -14,11 +14,15 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
+import androidx.lifecycle.withStarted
+import com.aula.app_fluxar.API.model.UserLogRequest
+import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityLoginBinding
 import com.aula.app_fluxar.API.viewModel.LoginViewModel
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.API.viewModel.RedefinePasswordViewModel
+import com.aula.app_fluxar.sessionManager.SessionManager
 import com.google.android.material.textfield.TextInputEditText
 
 class Login : AppCompatActivity() {
@@ -27,6 +31,7 @@ class Login : AppCompatActivity() {
     private val viewModel: LoginViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val redefinePasswordViewModel: RedefinePasswordViewModel by viewModels()
+    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +75,10 @@ class Login : AppCompatActivity() {
         profileViewModel.profileResult.observe(this, Observer { profile ->
             if (profile != null) {
                 Log.d("Login", "Profile carregado com sucesso: ${profile.firstName}")
+
+                val action = "Usuário realizou login"
+                addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
+
                 navigateToMainActivity()
             }
         })
@@ -107,6 +116,7 @@ class Login : AppCompatActivity() {
         binding.btEntrarLogin.setOnClickListener {
             val email = binding.inputEmailGestor.text.toString().trim()
             val senha = binding.inputSenhaGestor.text.toString().trim()
+            val action = "Usuário realizou login"
 
             if (email.isEmpty() || senha.isEmpty()) {
                 Toast.makeText(this, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()

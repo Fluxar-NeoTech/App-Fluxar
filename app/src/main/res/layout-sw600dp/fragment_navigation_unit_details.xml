@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragment.UnitDetails"
+    android:padding="32dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:id="@+id/unitLoadingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/unitLoadingProgress"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:indeterminateTint="@color/roxo_principal" />
+
+        <TextView
+            android:id="@+id/unitLoadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Carregando informações da unidade..."
+            android:textColor="@color/roxo_principal"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/unitErrorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❌"
+            android:textSize="64sp" />
+
+        <TextView
+            android:id="@+id/unitErrorText"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Erro ao carregar informações da unidade"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/unitRetryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Tentar novamente"
+            android:backgroundTint="@color/roxo_principal" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/unitContentLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="800dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/quadradoUnidade"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:backgroundTint="@color/roxo_principal"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:shapeAppearanceOverlay="@style/TopRoundedCard" />
+
+            <TextView
+                android:id="@+id/unitName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Unidade aqui"
+                android:textColor="@color/cinza_claro"
+                android:textSize="48sp"
+                app:layout_constraintBottom_toBottomOf="@id/quadradoUnidade"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/quadradoUnidade" />
+
+            <ImageView
+                android:id="@+id/locationIcon"
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/location_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/quadradoUnidade"
+                android:layout_marginStart="60dp"/>
+
+            <TextView
+                android:id="@+id/locationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Localização"
+                android:textColor="@color/roxo_principal"
+                android:textSize="40sp"
+                app:layout_constraintStart_toEndOf="@+id/locationIcon"
+                app:layout_constraintTop_toTopOf="@+id/locationIcon" />
+
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Av. Visconde de Nova Granada, 1378"
+                android:textColor="@color/preto"
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="@+id/locationTitle"
+                app:layout_constraintTop_toBottomOf="@+id/locationTitle" />
+
+            <ImageView
+                android:id="@+id/distanceIcon"
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/distance_icon"
+                app:layout_constraintStart_toStartOf="@+id/locationIcon"
+                app:layout_constraintTop_toBottomOf="@+id/locationText" />
+
+            <TextView
+                android:id="@+id/distanceTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Distância"
+                android:textColor="@color/roxo_principal"
+                android:textSize="40sp"
+                app:layout_constraintStart_toEndOf="@+id/distanceIcon"
+                app:layout_constraintTop_toTopOf="@+id/distanceIcon" />
+
+            <TextView
+                android:id="@+id/distanceText"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="30km da Unidade de Cajamar à Osasco"
+                android:textColor="@color/preto"
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="@+id/distanceTitle"
+                app:layout_constraintTop_toBottomOf="@+id/distanceTitle" />
+
+            <ImageView
+                android:id="@+id/truckIcon"
+                android:layout_width="40dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/truck_icon"
+                app:layout_constraintStart_toStartOf="@+id/distanceIcon"
+                app:layout_constraintTop_toBottomOf="@+id/distanceText" />
+
+            <TextView
+                android:id="@+id/truckTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Como enviar"
+                android:textColor="@color/roxo_principal"
+                android:textSize="40sp"
+                app:layout_constraintStart_toEndOf="@+id/truckIcon"
+                app:layout_constraintTop_toTopOf="@+id/truckIcon" />
+
+            <TextView
+                android:id="@+id/truckText"
+                android:layout_width="600dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Pesagem e documentação de tudo o que será enviado;
+                                \n\nAvisar previamente por e-mail;
+                                \n\nEntrega após a confirmação desta unidade;
+                                \n\nPor caminhão, refrigerado se necessário."
+                android:textColor="@color/preto"
+                android:textSize="30sp"
+                app:layout_constraintStart_toStartOf="@+id/truckTitle"
+                app:layout_constraintTop_toBottomOf="@+id/truckTitle" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="32dp"
+                android:background="@color/laranja_principal"
+                app:layout_constraintTop_toBottomOf="@id/truckText" />
+
+            <TextView
+                android:id="@+id/emailTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="E-mail da unidade"
+                android:textColor="@color/roxo_principal"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+            <TextView
+                android:id="@+id/emailText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="email@dominio.org.br"
+                android:textAlignment="center"
+                android:textColor="@color/preto"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailTitle" />
+
+            <Button
+                android:id="@+id/btEnviarEmail"
+                android:layout_width="414dp"
+                android:layout_height="72dp"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/roxo_principal"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Enviar e-mail"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                app:cornerRadius="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

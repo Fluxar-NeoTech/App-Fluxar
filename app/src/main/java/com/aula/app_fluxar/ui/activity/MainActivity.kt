@@ -25,6 +25,8 @@ import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
 import androidx.activity.viewModels
+import com.aula.app_fluxar.API.model.UserLogRequest
+import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainRetryButton: Button
     private lateinit var mainLoadingProgress: ProgressBar
     private lateinit var mainLoadingText: TextView
+    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -295,8 +298,12 @@ class MainActivity : AppCompatActivity() {
             .create()
 
         positiveButton.setOnClickListener {
+            val action = "Usuário realizou logout"
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
+
             SessionManager.clear()
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
+
             val intent = Intent(this@MainActivity, Login::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

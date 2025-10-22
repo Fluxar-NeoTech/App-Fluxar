@@ -23,6 +23,7 @@ import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -49,6 +50,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.aula.app_fluxar.API.model.ProductResponse
 import com.aula.app_fluxar.API.model.StockHistory
+import com.aula.app_fluxar.API.model.UserLogRequest
+import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.API.viewModel.GetCapacityHistoryViewModel
 import com.aula.app_fluxar.API.viewModel.GetStockHistoryViewModel
 import com.aula.app_fluxar.API.viewModel.VolumeSectorViewModel
@@ -98,6 +101,8 @@ class NavigationHome : Fragment() {
     private var currentBatchNumbers: List<String> = emptyList()
     private var productNameInput: TextInputEditText? = null
     private var productTypeInput: TextInputEditText? = null
+
+    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -1097,6 +1102,9 @@ class NavigationHome : Fragment() {
             Log.d("NavigationHome", "Enviando ProductRequest: $productRequest")
             addProductViewModel.addProduct(productRequest)
 
+            val action = "Usuário cadastrou um novo produto ao dropdown - Produto: ${productRequest.name}"
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
+
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao criar ProductRequest: ${e.message}", e)
             Toast.makeText(requireContext(), "Erro ao processar dados: ${e.message}", Toast.LENGTH_LONG).show()
@@ -1381,6 +1389,9 @@ class NavigationHome : Fragment() {
         Log.d("NavigationHome", "✅ Criando lote")
         Log.d("NavigationHome", "Enviando BatchRequest: $batchRequest")
         addBatchViewModel.addBatch(batchRequest)
+
+        val action = "Usuário adicionou um nove lote de produtos - SKU: ${batchRequest.batchCode}"
+        addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
     }
 
     private fun formatDateForAPI(dateInput: String): String {
@@ -1511,6 +1522,10 @@ class NavigationHome : Fragment() {
             Log.d("NavigationHome", "Produto ID relacionado: $selectedProductIdForRemoval")
 
             deleteBatchViewModel.deleteBatch(batchCode)
+
+            val action = "Usuário removeu o lote de SKU ${batchCode}"
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
+
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao deletar lote: ${e.message}", e)
             Toast.makeText(requireContext(), "Erro ao processar deleção: ${e.message}", Toast.LENGTH_LONG).show()
