@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object NotificationsRetrofitClient {
 
-    private const val BASE_URL = "http://SEU_IP:5000/" //url do render
+    private const val BASE_URL = "https://modelo-stockout-fluxar.onrender.com"
 
     val instance: NotificationAPIService by lazy {
         Retrofit.Builder()
