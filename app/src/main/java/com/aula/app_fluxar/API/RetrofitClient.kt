@@ -30,23 +30,11 @@ object RetrofitClient {
         override fun intercept(chain: Interceptor.Chain): Response {
             val originalRequest = chain.request()
 
-            val publicEndpoints = listOf(
-                "/api/email/send"
-            )
-
-            val isPublicEndpoint = publicEndpoints.any { endpoint ->
-                originalRequest.url.encodedPath.contains(endpoint)
-            }
-
-            if (isPublicEndpoint) {
-                return chain.proceed(originalRequest)
-            }
-
             val token = RetrofitClient.authToken
             Log.d("AuthInterceptor", "Token para requisição: ${token?.take(20)}...")
 
             if (token == null) {
-                Log.d("AuthInterceptor", "Sem token para endpoint privado, prosseguindo sem header Authorization")
+                Log.d("AuthInterceptor", "Sem token, prosseguindo sem header Authorization")
                 return chain.proceed(originalRequest)
             }
 
@@ -54,7 +42,7 @@ object RetrofitClient {
                 .header("Authorization", token)
                 .build()
 
-            Log.d("AuthInterceptor", "Header Authorization adicionado para endpoint privado")
+            Log.d("AuthInterceptor", "Header Authorization adicionado")
             return chain.proceed(requestWithToken)
         }
     }

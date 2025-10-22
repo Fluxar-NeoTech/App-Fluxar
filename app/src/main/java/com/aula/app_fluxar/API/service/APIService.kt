@@ -62,8 +62,11 @@ interface APIService {
         @Query("employeeId") employeeID: Long
     ): Response<Double>
 
-    @GET("/api/capacityHistory/search/by/unit/{unitId}")
-    suspend fun getStockHistory(@Path("unitId") unitID: Long): Response<StockHistory>
+    @GET("/api/stockHistory/search/by/unit/sector")
+    suspend fun getStockHistory(
+        @Query("unitId") unitID: Long,
+        @Query("sectorId") sectorID: Long)
+    : Response<StockHistory>
 
     @GET("/api/capacityHistory/search/by/unit/{unitId}")
     suspend fun getCapacityHistory(@Path("unitId") unitID: Long): Response<CapacityHistory>

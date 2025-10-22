@@ -20,10 +20,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UpdatePhotoRequest
+import com.aula.app_fluxar.API.model.UserLogRequest
+import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.API.viewModel.UpdateFotoViewModel
 import com.aula.app_fluxar.R
@@ -45,6 +48,7 @@ class NavigationProfile : Fragment() {
     private lateinit var updateFotoViewModel: UpdateFotoViewModel
     private lateinit var profileViewModel: ProfileViewModel
     private var profilePhotoUrl: String? = null
+    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -202,8 +206,8 @@ class NavigationProfile : Fragment() {
             binding.nomeGestor.text = "${employee.firstName ?: ""} ${employee.lastName ?: ""}"
             binding.nomeEmpresaGestor.text = employee.unit.industry.name ?: "Indisponível"
             binding.setorGestor.text = "Setor: ${employee.sector.name}" ?: "Indisponível"
-            binding.planoGestor.text = employee.plan.name ?: "Indisponível"
-            when (employee.plan.monthsDuration) {
+            binding.planoGestor.text = employee.plan?.name ?: "Indisponível"
+            when (employee.plan?.monthsDuration) {
                 12 -> binding.duracaoPlanoGestor.text = "Anual"
                 6 -> binding.duracaoPlanoGestor.text = "Semestral"
                 1 -> binding.duracaoPlanoGestor.text = "Mensal"
@@ -370,6 +374,9 @@ class NavigationProfile : Fragment() {
             positiveButton.setOnClickListener {
                 SessionManager.clear()
                 Toast.makeText(requireContext(), "Você saiu da conta", Toast.LENGTH_SHORT).show()
+
+                val action = "Usuário realizou logout"
+                addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
 
                 val intent = Intent(requireContext(), com.aula.app_fluxar.ui.activity.Login::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
