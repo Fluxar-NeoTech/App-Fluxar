@@ -1,60 +1,139 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.aula.app_fluxar.API.model.NotificationRequest
+import com.aula.app_fluxar.API.model.NotificationResponse
+import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
 import com.aula.app_fluxar.R
+import com.aula.app_fluxar.adapters.NotificationsAdapter
+import com.aula.app_fluxar.sessionManager.SessionManager
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [Notifications.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Notifications : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: NotificationsAdapter
+    private val notificationsList = mutableListOf<NotificationResponse>()
+
+    private val viewModel: NotificationsViewModel by viewModels()
+
+    // Solicitação de permissão de notificações
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d("Notification", "✅ Permissão concedida para notificações.")
+        } else {
+            Log.w("Notification", "❌ Permissão negada para notificações.")
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nav_notificacoes, container, false)
-    }
+    // Verifica e solicita permissão de notificações
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Log.d("Notification", "🔔 Permissão já concedida.")
+                }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Navigation_notificacoes.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Notifications().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                else -> {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        checkAndRequestNotificationPermission()
+
+        // Configura RecyclerView
+        recyclerView = view.findViewById(R.id.notificacoes_RV)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        adapter = NotificationsAdapter(notificationsList)
+        recyclerView.adapter = adapter
+
+        // Observa LiveData da ViewModel
+        viewModel.notification.observe(viewLifecycleOwner) { notification ->
+            notification?.let {
+                // Adiciona à lista e atualiza o RecyclerView
+                notificationsList.add(it)
+                adapter.notifyItemInserted(notificationsList.size - 1)
+
+                // Mostra notificação do Android
+                showNotification(
+                    requireContext(),
+                    "ATENÇÃO!",
+                    "Seu estoque está ficando cheio! Restam apenas ${it.days_to_stockout_pred} dias para o estoque encher!"
+                )
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            if (!error.isNullOrEmpty()) {
+                Log.e("NotificationsFragment", error)
+            }
+        }
+
+        // Chama a api de notificações
+        val sessionManager = SessionManager.getCurrentProfile()
+        viewModel.fetchNotification(
+            NotificationRequest(
+                sessionManager!!.unit.industry.id,
+                sessionManager.sector.id
+            )
+        )
+    }
+
+    // Função para mostrar notificação
+    fun showNotification(context: Context, title: String, message: String) {
+        val channelId = "fluxar_channel"
+        val notificationId = System.currentTimeMillis().toInt()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Notificações do Fluxar",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = context.getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                notify(notificationId, builder.build())
+            }
+        }
     }
 }
