@@ -75,16 +75,18 @@ class Notifications : Fragment() {
         // Observa LiveData da ViewModel
         viewModel.notification.observe(viewLifecycleOwner) { notification ->
             notification?.let {
-                // Adiciona à lista e atualiza o RecyclerView
-                notificationsList.add(it)
-                adapter.notifyItemInserted(notificationsList.size - 1)
+                if (it.days_to_stockout_pred <= 7){
+                    // Adiciona à lista e atualiza o RecyclerView
+                    notificationsList.add(it)
+                    adapter.notifyItemInserted(notificationsList.size - 1)
 
-                // Mostra notificação do Android
-                showNotification(
-                    requireContext(),
-                    "ATENÇÃO!",
-                    "Seu estoque está ficando cheio! Restam apenas ${it.days_to_stockout_pred} dias para o estoque encher!"
-                )
+                    // Mostra notificação do Android
+                    showNotification(
+                        requireContext(),
+                        "ATENÇÃO!",
+                        "Seu estoque está ficando cheio! Restam apenas ${it.days_to_stockout_pred} dias para o estoque encher!"
+                    )
+                }
             }
         }
 
