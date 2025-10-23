@@ -74,7 +74,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "Elementos de loading específicos não encontrados, usando layout padrão")
         }
 
-        // Configurar botão de tentar novamente
         mainRetryButton.setOnClickListener {
             restartApp()
         }
@@ -102,7 +101,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d("MainActivity", "✅ Profile carregado: ${profile.firstName}")
                 SessionManager.saveProfile(profile)
 
-                // Configurar navegação após profile carregado
                 setupNavigation()
                 showMainContentState()
 
@@ -115,7 +113,6 @@ class MainActivity : AppCompatActivity() {
         profileViewModel.errorMessage.observe(this) { error ->
             if (error.isNotEmpty()) {
                 Log.e("MainActivity", "❌ Erro no profile: $error")
-                // Mesmo com erro, tentamos carregar a aplicação
                 setupNavigation()
                 showMainContentState()
             }
@@ -239,22 +236,19 @@ class MainActivity : AppCompatActivity() {
 
         } catch (e: Exception) {
             Log.e("MainActivity", "❌ Erro ao configurar navegação: ${e.message}", e)
-            throw e // Re-lançar para ser capturado pelo bloco try-catch externo
+            throw e
         }
     }
 
-    // Métodos para gerenciar estados da UI
     private fun showMainLoadingState(message: String = "Carregando...") {
         runOnUiThread {
             mainLoadingLayout.visibility = View.VISIBLE
             mainErrorLayout.visibility = View.GONE
             mainContentLayout.visibility = View.GONE
 
-            // Atualizar texto de loading se disponível
             try {
                 mainLoadingText.text = message
             } catch (e: Exception) {
-                // Ignora se não encontrar o TextView específico
             }
         }
     }
@@ -298,11 +292,11 @@ class MainActivity : AppCompatActivity() {
             .create()
 
         positiveButton.setOnClickListener {
-            val action = "Usuário realizou logout"
-            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
-
             SessionManager.clear()
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
+
+            val action = "Usuário realizou logout"
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
 
             val intent = Intent(this@MainActivity, Login::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

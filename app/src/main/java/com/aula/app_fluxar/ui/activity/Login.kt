@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.withStarted
 import com.aula.app_fluxar.API.model.UserLogRequest
 import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.R
