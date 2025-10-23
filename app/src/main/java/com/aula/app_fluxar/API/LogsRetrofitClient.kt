@@ -1,6 +1,5 @@
 package com.aula.app_fluxar.API
 
-import com.aula.app_fluxar.API.service.APIService
 import com.aula.app_fluxar.API.service.LogsAPIService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

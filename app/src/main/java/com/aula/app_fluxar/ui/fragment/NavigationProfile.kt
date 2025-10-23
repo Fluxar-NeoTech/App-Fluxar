@@ -206,8 +206,8 @@ class NavigationProfile : Fragment() {
             binding.nomeGestor.text = "${employee.firstName ?: ""} ${employee.lastName ?: ""}"
             binding.nomeEmpresaGestor.text = employee.unit.industry.name ?: "Indisponível"
             binding.setorGestor.text = "Setor: ${employee.sector.name}" ?: "Indisponível"
-            binding.planoGestor.text = employee.plan.name ?: "Indisponível"
-            when (employee.plan.monthsDuration) {
+            binding.planoGestor.text = employee.plan?.name ?: "Indisponível"
+            when (employee.plan?.monthsDuration) {
                 12 -> binding.duracaoPlanoGestor.text = "Anual"
                 6 -> binding.duracaoPlanoGestor.text = "Semestral"
                 1 -> binding.duracaoPlanoGestor.text = "Mensal"
@@ -372,11 +372,11 @@ class NavigationProfile : Fragment() {
                 .create()
 
             positiveButton.setOnClickListener {
-                val action = "Usuário realizou logout"
-                addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
-
                 SessionManager.clear()
                 Toast.makeText(requireContext(), "Você saiu da conta", Toast.LENGTH_SHORT).show()
+
+                val action = "Usuário realizou logout"
+                addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
 
                 val intent = Intent(requireContext(), com.aula.app_fluxar.ui.activity.Login::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

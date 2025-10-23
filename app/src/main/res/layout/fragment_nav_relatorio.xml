@@ -240,8 +240,8 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/quadradoPerfil"
-                android:layout_width="353dp"
-                android:layout_height="166dp"
+                android:layout_width="325dp"
+                android:layout_height="168dp"
                 android:layout_margin="16dp"
                 android:layout_marginTop="28dp"
                 android:backgroundTint="#FDEDDD"
@@ -269,13 +269,13 @@
 
             <TextView
                 android:id="@+id/textoSetorPodeReceber"
-                android:layout_width="314dp"
-                android:layout_height="78dp"
+                android:layout_width="302dp"
+                android:layout_height="77dp"
                 android:layout_marginTop="15dp"
                 android:text="O setor pode receber 5m³ de insumos no seu estoque"
                 android:textAlignment="center"
                 android:textColor="@color/preto"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="@+id/quadradoPerfil"
                 app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
                 app:layout_constraintTop_toBottomOf="@+id/tituloDisponibilidade" />

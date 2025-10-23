@@ -23,15 +23,13 @@ object RetrofitClient {
     private fun loadSavedToken() {
         val savedToken = SessionManager.getAuthToken()
         authToken = savedToken?.let { "Bearer $it" }
-        Log.d("RetrofitClient", "Token carregado na inicialização: ${authToken?.take(20)}...")
     }
 
     private class AuthInterceptor : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val originalRequest = chain.request()
 
-            val token = RetrofitClient.authToken
-            Log.d("AuthInterceptor", "Token para requisição: ${token?.take(20)}...")
+            val token = authToken
 
             if (token == null) {
                 Log.d("AuthInterceptor", "Sem token, prosseguindo sem header Authorization")

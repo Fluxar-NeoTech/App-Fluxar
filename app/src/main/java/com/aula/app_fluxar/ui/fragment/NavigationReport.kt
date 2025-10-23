@@ -77,16 +77,19 @@ class NavigationReport : Fragment() {
 
             binding.progressBarRelatorio.progress = infos.occupancyPercentage.toInt()
 
-            val totalCapacity = if (infos.occupancyPercentage > 0) {
-                infos.remainingVolume / (1 - infos.occupancyPercentage / 100)
-            } else {
-                infos.remainingVolume
+            var totalCapacity = "Indisponível"
+            var usedVolume = "Indisponível"
+
+            if (SessionManager.getCurrentProfile()?.maxCapacity != null) {
+                val totalCapacityNum = SessionManager.getCurrentProfile()!!.maxCapacity
+                val usedVolumeNum = totalCapacityNum - infos.remainingVolume
+                totalCapacity = totalCapacityNum.toString()
+                usedVolume = usedVolumeNum.toString()
             }
-            val usedVolume = totalCapacity - infos.remainingVolume
 
-            binding.metrosCubicosOcupados.text = "${String.format("%.1f", usedVolume)}m³"
+            binding.metrosCubicosOcupados.text = "${usedVolume}m³"
 
-            binding.metrosCubicosTotais.text = "${String.format("%.1f", totalCapacity)}m³"
+            binding.metrosCubicosTotais.text = "${totalCapacity}m³"
 
             binding.textoSetorPodeReceber.text =
                 Html.fromHtml("O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque", Html.FROM_HTML_MODE_LEGACY)

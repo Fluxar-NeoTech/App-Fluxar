@@ -23,7 +23,6 @@ import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -80,6 +79,9 @@ class NavigationHome : Fragment() {
 
     private var isFirstLoad = true
     private var isDataLoaded = false
+    private var volumeUsedLoaded = false
+    private var stockHistoryLoaded = false
+    private var capacityHistoryLoaded = false
     private var dataLoadAttempts = 0
     private val maxLoadAttempts = 3
 
@@ -101,7 +103,6 @@ class NavigationHome : Fragment() {
     private var currentBatchNumbers: List<String> = emptyList()
     private var productNameInput: TextInputEditText? = null
     private var productTypeInput: TextInputEditText? = null
-
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
     override fun onCreateView(
@@ -304,6 +305,9 @@ class NavigationHome : Fragment() {
         showHomeLoadingState("Recarregando informações...")
         isDataLoaded = false
         dataLoadAttempts++
+        stockHistoryLoaded = false
+        capacityHistoryLoaded = false
+        volumeUsedLoaded = false
 
         Log.d("NavigationHome", "🔄 Recarregando todos os dados - Tentativa $dataLoadAttempts")
 
@@ -350,9 +354,14 @@ class NavigationHome : Fragment() {
         val productsLoaded = currentProducts.isNotEmpty()
         val homeInfosLoaded = ::unitCanReceive.isInitialized && unitCanReceive.text.isNotEmpty()
 
-        Log.d("NavigationHome", "📊 Status - Profile: $profileLoaded, Products: $productsLoaded, HomeInfos: $homeInfosLoaded")
+        val allDataLoaded = profileLoaded && productsLoaded && homeInfosLoaded &&
+                stockHistoryLoaded && capacityHistoryLoaded && volumeUsedLoaded
 
-        if (profileLoaded && productsLoaded && homeInfosLoaded) {
+        Log.d("NavigationHome", "📊 Status - Profile: $profileLoaded, Products: $productsLoaded, " +
+                "HomeInfos: $homeInfosLoaded, StockHistory: $stockHistoryLoaded, " +
+                "CapacityHistory: $capacityHistoryLoaded, VolumeUsed: $volumeUsedLoaded")
+
+        if (allDataLoaded) {
             Handler(Looper.getMainLooper()).postDelayed({
                 showHomeContentState()
                 isDataLoaded = true
@@ -360,7 +369,17 @@ class NavigationHome : Fragment() {
                 Log.d("NavigationHome", "🎉 Todos os dados carregados - UI liberada")
             }, 500)
         } else if (dataLoadAttempts >= maxLoadAttempts) {
-            showHomeErrorState("Não foi possível carregar os dados. Verifique sua conexão.")
+            val criticalDataLoaded = profileLoaded && productsLoaded && homeInfosLoaded
+            if (!criticalDataLoaded) {
+                showHomeErrorState("Não foi possível carregar os dados. Verifique sua conexão.")
+            } else {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    showHomeContentState()
+                    isDataLoaded = true
+                    isFirstLoad = false
+                    Log.w("NavigationHome", "⚠️ Dados críticos carregados, mas alguns secundários falharam")
+                }, 500)
+            }
         }
     }
 
@@ -392,15 +411,17 @@ class NavigationHome : Fragment() {
     private fun setupStockHistoryObserver() {
         getStockHistoryViewModel.getStockHistoryResult.observe(viewLifecycleOwner) { stockHistory ->
             stockHistory?.let {
+                stockHistoryLoaded = true
                 updateStockHistoryUI(it)
                 Log.d("NavigationHome", "✅ Stock history carregado")
-                checkAllDataLoaded()
             }
         }
 
         getStockHistoryViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 Log.e("NavigationHome", "❌ Erro no stock history: $error")
+                stockHistoryLoaded = true
+                volumeUsedLoaded = true
                 checkAllDataLoaded()
             }
         }
@@ -415,6 +436,7 @@ class NavigationHome : Fragment() {
     private fun setupCapacityHistoryObserver() {
         getCapacityHistoryViewModel.getCapacityHistoryResult.observe(viewLifecycleOwner) { capacityHistory ->
             capacityHistory?.let {
+                capacityHistoryLoaded = true
                 updateCapacityHistoryUI(it)
                 Log.d("NavigationHome", "✅ Capacity history carregado")
                 checkAllDataLoaded()
@@ -424,6 +446,7 @@ class NavigationHome : Fragment() {
         getCapacityHistoryViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 Log.e("NavigationHome", "❌ Erro no capacity history: $error")
+                capacityHistoryLoaded = true
                 checkAllDataLoaded()
             }
         }
@@ -466,8 +489,9 @@ class NavigationHome : Fragment() {
     private fun loadStockHistory() {
         val employee = SessionManager.getCurrentProfile()
         employee?.let {
-            val unitId = it.unit.id
-            getStockHistoryViewModel.getStockHistory(unitId)
+            val unitID = it.unit.id
+            val sectorID = it.sector.id
+            getStockHistoryViewModel.getStockHistory(unitID, sectorID)
         } ?: run {
             Log.e("NavigationHome", "❌ Não foi possível carregar histórico do estoque: employee não encontrado")
         }
@@ -476,8 +500,8 @@ class NavigationHome : Fragment() {
     private fun loadCapacityHistory() {
         val employee = SessionManager.getCurrentProfile()
         employee?.let {
-            val unitId = it.unit.id
-            getCapacityHistoryViewModel.getCapacityHistory(unitId)
+            val unitID = it.unit.id
+            getCapacityHistoryViewModel.getCapacityHistory(unitID)
         } ?: run {
             Log.e("NavigationHome", "❌ Não foi possível carregar histórico da capacidade: employee não encontrado")
         }
@@ -485,6 +509,8 @@ class NavigationHome : Fragment() {
 
     private fun updateStockHistoryUI(stockHistory: StockHistory) {
         try {
+            volumeUsedLoaded = false
+
             val action = if (stockHistory.movement == "E") "Adicionou" else "Removeu"
             val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
 
@@ -495,6 +521,8 @@ class NavigationHome : Fragment() {
             Log.d("NavigationHome", "✅ UI do histórico de estoque atualizada")
         } catch (e: Exception) {
             Log.e("NavigationHome", "❌ Erro ao atualizar UI do histórico: ${e.message}")
+            volumeUsedLoaded = true
+            checkAllDataLoaded()
         }
     }
 
@@ -515,6 +543,10 @@ class NavigationHome : Fragment() {
                         "${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque. Total de estoque utilizado: <b>${volumeUtilizadoFormatted} m³</b>",
                         Html.FROM_HTML_MODE_LEGACY
                     )
+
+                    volumeUsedLoaded = true
+                    checkAllDataLoaded()
+
                     Log.d("NavigationHome", "✅ Texto completo do histórico atualizado com volume utilizado: $volume m³")
                 }
             }
@@ -525,8 +557,19 @@ class NavigationHome : Fragment() {
                     Log.e("NavigationHome", "❌ Erro ao carregar volume utilizado para histórico: $error")
                     val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
                     lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+
+                    volumeUsedLoaded = true
+                    checkAllDataLoaded()
                 }
             }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!volumeUsedLoaded) {
+                    Log.w("NavigationHome", "⏰ Timeout do volume utilizado - continuando sem essa informação")
+                    volumeUsedLoaded = true
+                    checkAllDataLoaded()
+                }
+            }, 10000)
 
             volumeUsedSectorViewModel.getUsedVolumeBySector(sectorId, employeeId)
 
@@ -534,6 +577,9 @@ class NavigationHome : Fragment() {
             Log.e("NavigationHome", "❌ Employee não encontrado para carregar volume utilizado")
             val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
             lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+
+            volumeUsedLoaded = true
+            checkAllDataLoaded()
         }
     }
 
@@ -1104,7 +1150,6 @@ class NavigationHome : Fragment() {
 
             val action = "Usuário cadastrou um novo produto ao dropdown - Produto: ${productRequest.name}"
             addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
-
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao criar ProductRequest: ${e.message}", e)
             Toast.makeText(requireContext(), "Erro ao processar dados: ${e.message}", Toast.LENGTH_LONG).show()
@@ -1525,7 +1570,6 @@ class NavigationHome : Fragment() {
 
             val action = "Usuário removeu o lote de SKU ${batchCode}"
             addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
-
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao deletar lote: ${e.message}", e)
             Toast.makeText(requireContext(), "Erro ao processar deleção: ${e.message}", Toast.LENGTH_LONG).show()
