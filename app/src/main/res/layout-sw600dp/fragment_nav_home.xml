@@ -1,132 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    tools:context=".ui.fragment.NavigationHome">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:id="@+id/homeLoadingLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".ui.fragment.NavigationHome">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Cumprimento do Gestor + Foto -->
-        <LinearLayout
-            android:id="@+id/layoutSuperior"
-            android:layout_width="0dp"
+        <ProgressBar
+            android:id="@+id/homeLoadingProgress"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:indeterminateTint="@color/roxo_principal" />
 
-            <TextView
-                android:id="@+id/cumprimentoGestor"
-                android:layout_width="647dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Olá, nome!"
-                android:textColor="@color/preto"
-                android:textSize="40sp" />
-
-            <ImageView
-                android:id="@+id/fotoPerfilGestor"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:contentDescription="Foto do perfil"
-                android:src="@drawable/foto_de_perfil_padrao" />
-        </LinearLayout>
-
-        <!-- Scroll horizontal para os botões -->
-        <HorizontalScrollView
-            android:id="@+id/scroll_bt"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/homeLoadingText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@+id/layoutSuperior"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:layout_marginTop="16dp"
+            android:text="Carregando informações..."
+            android:textColor="@color/roxo_principal"
+            android:textSize="16sp" />
+    </LinearLayout>
 
+    <!-- Error State (FORA do ScrollView) -->
+    <LinearLayout
+        android:id="@+id/homeErrorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❌"
+            android:textSize="48sp" />
+
+        <TextView
+            android:id="@+id/homeErrorText"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Erro ao carregar informações"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/homeRetryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Tentar Novamente"
+            android:backgroundTint="@color/roxo_principal" />
+    </LinearLayout>
+
+    <!-- Content State (SEU LAYOUT ATUAL) -->
+    <ScrollView
+        android:id="@+id/homeContentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Cumprimento do Gestor + Foto -->
             <LinearLayout
-                android:id="@+id/layout_bt"
-                android:layout_width="wrap_content"
+                android:id="@+id/layoutSuperior"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:gravity="center_vertical"
+                android:padding="16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <Button
-                    android:id="@+id/bt_info_gerais"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/cumprimentoGestor"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Olá, nome!"
+                    android:textColor="@color/preto"
+                    android:textSize="25sp" />
+
+                <ImageView
+                    android:id="@+id/fotoPerfilGestor"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/bt_inativo"
-                    android:fontFamily="@font/roboto"
-                    android:text="Informações Gerais"
-                    android:textAllCaps="false"
-                    android:textColor="#4A0072"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/bt_adicionar_estoque"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/bt_inativo"
-                    android:fontFamily="@font/roboto"
-                    android:text="Adicionar Produtos"
-                    android:textAllCaps="false"
-                    android:textColor="#4A0072"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/bt_remover_estoque"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/bt_inativo"
-                    android:fontFamily="@font/roboto"
-                    android:text="Remover Produtos"
-                    android:textAllCaps="false"
-                    android:textColor="#4A0072"
-                    android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/bt_listar_produtos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/bt_inativo"
-                    android:fontFamily="@font/roboto"
-                    android:text="Produtos Cadastrados"
-                    android:textAllCaps="false"
-                    android:textColor="#4A0072"
-                    android:textSize="16sp" />
-
+                    android:src="@drawable/foto_de_perfil_padrao"
+                    android:contentDescription="Foto do perfil" />
             </LinearLayout>
-        </HorizontalScrollView>
 
-        <!-- Container para conteúdo dinâmico -->
-        <FrameLayout
-            android:id="@+id/container_conteudo"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/scroll_bt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            <!-- Scroll horizontal para os botões -->
+            <HorizontalScrollView
+                android:id="@+id/scroll_bt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@+id/layoutSuperior"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/layout_bt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <Button
+                        android:id="@+id/bt_info_gerais"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Informações Gerais"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/bt_adicionar_estoque"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Adicionar Lotes"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/bt_remover_estoque"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Remover Lotes"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
+
+                    <Button
+                        android:id="@+id/bt_listar_produtos"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Lotes Cadastrados"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- Container para conteúdo dinâmico -->
+            <FrameLayout
+                android:id="@+id/container_conteudo"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/scroll_bt"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

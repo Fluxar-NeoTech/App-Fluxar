@@ -74,29 +74,45 @@ class NavigationReport : Fragment() {
     private fun updateReportUI(infos: CapacitySectorInfos) {
         try {
             binding.tvPorcentagem.text = "${infos.occupancyPercentage.toInt()}%"
-
             binding.progressBarRelatorio.progress = infos.occupancyPercentage.toInt()
 
-            var totalCapacity = "Indisponível"
-            var usedVolume = "Indisponível"
+            val profile = SessionManager.getCurrentProfile()
+            val maxCapacityValue = profile?.maxCapacity
 
-            if (SessionManager.getCurrentProfile()?.maxCapacity != null) {
-                val totalCapacityNum = SessionManager.getCurrentProfile()!!.maxCapacity
-                val usedVolumeNum = totalCapacityNum - infos.remainingVolume
-                totalCapacity = totalCapacityNum.toString()
-                usedVolume = usedVolumeNum.toString()
+            Log.d("RelatorioDiagnostico", "Ocupação (%): ${infos.occupancyPercentage.toInt()}%")
+            Log.d("RelatorioDiagnostico", "MaxCapacity (Profile): $maxCapacityValue")
+            Log.d("RelatorioDiagnostico", "RemainingVolume (API): ${infos.remainingVolume}")
+
+
+            if (maxCapacityValue == null || maxCapacityValue <= 0) {
+                val unavailableText = "Indisponível"
+                binding.metrosCubicosOcupados.text = "${unavailableText}m³"
+                binding.metrosCubicosTotais.text = "${unavailableText}m³"
+
+                Log.w("RelatorioDiagnostico", "Capacidade Máxima (maxCapacity) é nula ou zero. Exibindo 'Indisponível'.")
+            } else {
+                val totalCapacityNum = maxCapacityValue.toDouble()
+                var usedVolumeNum = totalCapacityNum - infos.remainingVolume
+
+                if (infos.occupancyPercentage < 0.1) {
+                    usedVolumeNum = 0.0
+                    Log.d("RelatorioDiagnostico", "Ajuste de 0%: UsedVolume forçado para 0.0m³")
+                }
+
+                val totalCapacity = String.format("%.1f", totalCapacityNum)
+                val usedVolume = String.format("%.1f", usedVolumeNum)
+
+                binding.metrosCubicosOcupados.text = "${usedVolume}m³"
+                binding.metrosCubicosTotais.text = "${totalCapacity}m³"
+
+                Log.d("RelatorioDiagnostico", "Cálculo: Total=$totalCapacity, Ocupado=$usedVolume")
+
+                // Restante do código
+                binding.textoSetorPodeReceber.text =
+                    Html.fromHtml("O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque", Html.FROM_HTML_MODE_LEGACY)
             }
 
-            binding.metrosCubicosOcupados.text = "${usedVolume}m³"
-
-            binding.metrosCubicosTotais.text = "${totalCapacity}m³"
-
-            binding.textoSetorPodeReceber.text =
-                Html.fromHtml("O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque", Html.FROM_HTML_MODE_LEGACY)
-
             updateStatusMessage(infos.occupancyPercentage)
-
-            Log.d("NavigationRelatorio", "✅ UI do relatório atualizada - Ocupado: $usedVolume m³, Total: $totalCapacity m³")
 
         } catch (e: Exception) {
             Log.e("NavigationRelatorio", "❌ Erro ao atualizar UI do relatório: ${e.message}")

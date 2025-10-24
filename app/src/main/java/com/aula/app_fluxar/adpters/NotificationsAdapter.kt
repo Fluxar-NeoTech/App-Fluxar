@@ -9,7 +9,7 @@ import com.aula.app_fluxar.R
 import com.aula.app_fluxar.API.model.NotificationResponse
 
 class NotificationsAdapter(
-    private val notifications: List<NotificationResponse>
+    private val notifications: MutableList<NotificationResponse>
 ) : RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder>() {
 
     inner class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -19,13 +19,15 @@ class NotificationsAdapter(
         private val timeText: TextView = itemView.findViewById(R.id.tempo_notificacao)
 
         fun bind(notification: NotificationResponse) {
-            titleText.text = "ATENÇÃO!"
-            messageText.text =
-                "Seu estoque está ficando cheio! " +
-                        "Restam apenas ${notification.days_to_stockout_pred} dias para o estoque encher!"
+            titleText.text = "ALERTA DE ESTOQUE BAIXO!"
+            messageText.text = "Ruptura de estoque iminente! Restam apenas ${notification.days_to_stockout_pred} dias de suprimento!"
 
             markRead.setOnClickListener {
                 itemView.visibility = View.GONE
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    removeItem(position)
+                }
             }
 
             timeText.text = notification.data
@@ -43,4 +45,12 @@ class NotificationsAdapter(
     }
 
     override fun getItemCount(): Int = notifications.size
+
+    fun removeItem(position: Int) {
+        if (position in 0 until notifications.size) {
+            notifications.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, notifications.size)
+        }
+    }
 }

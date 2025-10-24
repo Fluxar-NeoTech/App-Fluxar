@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/roboto"
-                android:text="Seu estoque está ficando cheio! O limite é de 50 (unidade) e 40 (unidades) já estão sendo ocupadas."
+                android:text="Ruptura de estoque iminente! Restam apenas ... dias de suprimento!"
                 android:textColor="@color/preto"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/textView2"

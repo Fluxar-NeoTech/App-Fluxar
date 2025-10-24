@@ -1,3 +1,5 @@
+package com.aula.app_fluxar.ui.fragment
+
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,7 +8,9 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -22,13 +26,18 @@ import com.aula.app_fluxar.adapters.NotificationsAdapter
 import com.aula.app_fluxar.sessionManager.SessionManager
 import com.aula.app_fluxar.ui.activity.MainActivity
 
-class Notifications : Fragment(R.layout.fragment_nav_notificacoes) {
+class Notifications : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NotificationsAdapter
     private val notificationsList = mutableListOf<NotificationResponse>()
 
     private val viewModel: NotificationsViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_nav_notificacoes, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,16 +70,19 @@ class Notifications : Fragment(R.layout.fragment_nav_notificacoes) {
                 notificationsList.add(it)
                 adapter.notifyItemInserted(notificationsList.size - 1)
 
-                if (it.days_to_stockout_pred <= 7) {
-                    context?.let { ctx ->
-                        showNotification(
-                            ctx,
-                            "ATENÇÃO!",
-                            "Seu estoque está ficando cheio! Restam apenas ${it.days_to_stockout_pred} dias!"
-                        )
-                        Log.d("NotificationsFragment", "Tentando notificação")
-                    }
+                Log.d("Notifications", "Notificação recebida. Dias para ruptura: ${it.days_to_stockout_pred}")
+
+                Log.d("Notifications", "Condição de <= 7 dias atendida.")
+
+                context?.let { ctx ->
+                    showNotification(
+                        ctx,
+                        "ALERTA DE ESTOQUE BAIXO!",
+                        "Ruptura de estoque iminente! Restam apenas ${it.days_to_stockout_pred} dias de suprimento!"
+                    )
+                    Log.d("Notifications", "Tentando notificação de estoque baixo")
                 }
+
             }
         }
 

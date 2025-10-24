@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.NavigationUnits">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,7 +19,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
@@ -28,43 +26,73 @@
             android:layout_marginTop="12dp"
             android:text="Unidades Disponíveis"
             android:textColor="@color/roxo_principal"
-            android:textSize="40sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintEnd_toStartOf="@+id/spinnerFiltro"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/map" />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="250dp"
-            android:layout_height="70dp"
+        <Spinner
+            android:id="@+id/spinnerFiltro"
+            android:layout_width="153dp"
+            android:layout_height="41dp"
             android:layout_marginTop="7dp"
             android:background="@drawable/bt_inativo"
-            android:gravity="center|center_horizontal|center_vertical"
-            android:text="Filtrar"
-            android:textAllCaps="false"
-            android:textColor="@color/roxo_principal"
-            android:textSize="24sp"
-            app:icon="@drawable/filtro_icon"
-            app:iconSize="30dp"
-            app:iconTint="@color/roxo_principal"
+            android:dropDownWidth="wrap_content"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:popupBackground="@color/ic_launcher_background"
+            android:spinnerMode="dropdown"
+            android:textAlignment="center"
+            android:textDirection="locale"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/textView4"
             app:layout_constraintTop_toBottomOf="@+id/map" />
+
+        <LinearLayout
+            android:id="@+id/emptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro">
+
+            <TextView
+                android:id="@+id/emptyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nenhuma unidade disponível"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textColor="@color/roxo_principal"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/emptySubtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Não há outras unidades disponíveis no momento."
+                android:textAlignment="center"
+                android:textSize="14sp"
+                android:textColor="@color/roxo_principal" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvUnidade"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro"
             tools:listitem="@layout/unidade_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
