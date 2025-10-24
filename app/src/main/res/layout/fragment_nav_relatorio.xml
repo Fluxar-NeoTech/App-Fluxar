@@ -251,7 +251,8 @@
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textoOcupacaoEstoqueSetor3"></com.google.android.material.card.MaterialCardView>
+                app:layout_constraintTop_toBottomOf="@+id/textoOcupacaoEstoqueSetor3">
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/tituloDisponibilidade"

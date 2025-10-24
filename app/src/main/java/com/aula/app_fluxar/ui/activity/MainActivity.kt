@@ -1,8 +1,14 @@
 package com.aula.app_fluxar.ui.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +20,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,8 +32,14 @@ import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
 import androidx.activity.viewModels
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
+import com.aula.app_fluxar.API.model.NotificationRequest
 import com.aula.app_fluxar.API.model.UserLogRequest
 import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
+import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -41,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainLoadingProgress: ProgressBar
     private lateinit var mainLoadingText: TextView
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
+    private val notificationsViewModel: NotificationsViewModel by viewModels()
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             initializeApp()
         }, 800)
+
+        checkAndRequestNotificationPermission()
     }
 
     private fun initStateViews() {
@@ -317,6 +333,30 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else {
             super.onBackPressed()
+        }
+    }
+
+    // Solicitação de permissão de notificações
+    val requestNotificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d("Notification", "✅ Permissão concedida!")
+            } else {
+                Log.w("Notification", "❌ Permissão negada!")
+            }
+        }
+
+
+    // Verifica e solicita permissão de notificações
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                Log.d("MainActivity", "Permissão já concedida")
+            }
         }
     }
 }
