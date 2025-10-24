@@ -17,8 +17,12 @@ class GetUnitsViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun getUnits(industryID: Long) {
         _errorMessage.value = ""
+        _isLoading.value = true
 
         viewModelScope.launch {
             try {
@@ -35,6 +39,8 @@ class GetUnitsViewModel : ViewModel() {
             } catch (e: Exception) {
                 _errorMessage.value = "Erro de conexão: ${e.message ?: "Erro desconhecido"}"
                 Log.e("GetUnits", "Exceção: ${e.message}", e)
+            } finally {
+                _isLoading.value = false
             }
         }
     }
