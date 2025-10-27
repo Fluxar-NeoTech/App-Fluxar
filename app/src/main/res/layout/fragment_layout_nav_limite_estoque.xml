@@ -10,140 +10,216 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/alturaCapacidade"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="70dp"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@color/laranja_principal_selector"
-            app:hintEnabled="true"
+        <LinearLayout
+            android:id="@+id/stockLimitLoadingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cadastrarLimiteEstoqueTexto">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputAlturaCapacidade"
-                android:layout_width="match_parent"
+            <ProgressBar
+                android:id="@+id/stockLimitLoadingProgress"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:hint="Altura"
-                android:inputType="number|numberSigned"
-                android:paddingStart="12dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="16dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray" />
+                android:indeterminateTint="@color/roxo_principal" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/larguraCapacidade"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="17dp"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@color/laranja_principal_selector"
-            app:hintEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/alturaCapacidade">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputlarguraCapacidade"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/stockLimitLoadingText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:hint="Largura"
-                android:inputType="number|numberDecimal"
-                android:paddingStart="12dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="16dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="16dp"
+                android:text="Carregando..."
+                android:textColor="@color/roxo_principal"
+                android:textSize="16sp" />
+        </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/profundidadeCapacidade"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="17dp"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@color/laranja_principal_selector"
-            app:hintEnabled="true"
+        <LinearLayout
+            android:id="@+id/stockLimitErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/larguraCapacidade">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputComprimentoCapacidade"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:hint="Comprimento"
-                android:inputType="number|numberDecimal"
-                android:paddingStart="12dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="16dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="❌"
+                android:textSize="48sp" />
 
-        <TextView
-            android:id="@+id/capacidadeEstoqueTitulo"
-            android:layout_width="304dp"
-            android:layout_height="68dp"
-            android:layout_marginTop="36dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="Capacidade Máxima do Estoque"
-            android:textAlignment="center"
-            android:textColor="@color/laranja_principal"
-            android:textSize="25dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/stockLimitErrorText"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Erro ao carregar"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/cadastrarLimiteEstoqueTexto"
-            android:layout_width="291dp"
-            android:layout_height="39dp"
-            android:layout_marginTop="12dp"
-            android:fontFamily="@font/roboto"
-            android:text="Cadastre o limite em altura, largura e profundidade (em metros)"
-            android:textAlignment="center"
-            android:textColor="@color/preto"
-            android:textSize="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/capacidadeEstoqueTitulo" />
+            <Button
+                android:id="@+id/stockLimitRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tentar Novamente"
+                android:backgroundTint="@color/roxo_principal" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/concluirBt"
-            android:layout_width="220dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="40dp"
-            android:backgroundTint="@color/roxo_principal"
-            android:fontFamily="@font/roboto_bold"
-            android:text="CONCLUIR"
-            android:textColor="#FFFFFF"
-            app:cornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profundidadeCapacidade" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/stockLimitContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/alturaCapacidade"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="70dp"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxStrokeColor="@color/laranja_principal_selector"
+                app:hintEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cadastrarLimiteEstoqueTexto">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputAlturaCapacidade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:hint="Altura"
+                    android:inputType="number|numberSigned"
+                    android:paddingStart="12dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/darker_gray" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/larguraCapacidade"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxStrokeColor="@color/laranja_principal_selector"
+                app:hintEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/alturaCapacidade">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputlarguraCapacidade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:hint="Largura"
+                    android:inputType="number|numberDecimal"
+                    android:paddingStart="12dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/darker_gray" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/profundidadeCapacidade"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxStrokeColor="@color/laranja_principal_selector"
+                app:hintEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/larguraCapacidade">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputComprimentoCapacidade"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:hint="Comprimento"
+                    android:inputType="number|numberDecimal"
+                    android:paddingStart="12dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/darker_gray" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/capacidadeEstoqueTitulo"
+                android:layout_width="304dp"
+                android:layout_height="68dp"
+                android:layout_marginTop="36dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Capacidade Máxima do Estoque"
+                android:textAlignment="center"
+                android:textColor="@color/laranja_principal"
+                android:textSize="25dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/cadastrarLimiteEstoqueTexto"
+                android:layout_width="291dp"
+                android:layout_height="39dp"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto"
+                android:text="Cadastre o limite em altura, largura e profundidade (em metros)"
+                android:textAlignment="center"
+                android:textColor="@color/preto"
+                android:textSize="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/capacidadeEstoqueTitulo" />
+
+            <Button
+                android:id="@+id/concluirBt"
+                android:layout_width="220dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:backgroundTint="@color/roxo_principal"
+                android:fontFamily="@font/roboto_bold"
+                android:text="CONCLUIR"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profundidadeCapacidade" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

@@ -23,6 +23,7 @@ import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -84,6 +85,14 @@ class NavigationHome : Fragment() {
     private var capacityHistoryLoaded = false
     private var dataLoadAttempts = 0
     private val maxLoadAttempts = 3
+    private lateinit var batchesLoadingLayout: LinearLayout
+    private lateinit var batchesErrorLayout: LinearLayout
+    private lateinit var batchesContentLayout: ConstraintLayout
+    private lateinit var batchesErrorText: TextView
+    private lateinit var batchesRetryButton: Button
+    private lateinit var batchesLoadingProgress: ProgressBar
+    private lateinit var batchesLoadingText: TextView
+    private var batchesLoaded = false
 
     private val getBatchesViewModel: GetBatchesViewModel by viewModels()
     private val getProductsViewModel: GetProductsViewModel by viewModels()
@@ -154,19 +163,26 @@ class NavigationHome : Fragment() {
             findNavController().navigate(R.id.nav_perfil)
         }
 
-        showContent(R.layout.fragment_layout_home)
-        updateSelectedButtons(homeScreenButton)
-
-        initializeHomeViews()
-
-        loadInitialData()
+        content.post {
+            showContent(R.layout.fragment_layout_home)
+            updateSelectedButtons(homeScreenButton)
+            initializeHomeViewsSafely()
+            loadInitialData()
+        }
 
         homeScreenButton.setOnClickListener {
             showContent(R.layout.fragment_layout_home)
-            initializeHomeViews()
-            showHomeLoadingState("Carregando...")
-            loadHomeInfos()
             updateSelectedButtons(homeScreenButton)
+
+            content.post {
+                initializeHomeViewsSafely()
+                if (::unitCanReceive.isInitialized && ::lastAction.isInitialized && ::usedStock.isInitialized) {
+                    showHomeLoadingState("Carregando...")
+                    loadHomeInfos()
+                } else {
+                    Log.e("NavigationHome", "❌ Falha ao inicializar views da home após mostrar conteúdo")
+                }
+            }
         }
 
         registerButton.setOnClickListener {
@@ -209,6 +225,7 @@ class NavigationHome : Fragment() {
             updateSelectedButtons(listProductsButton)
 
             content.post {
+                initializeBatchesViewsSafely()
                 loadBatchesForListing()
             }
         }
@@ -223,10 +240,71 @@ class NavigationHome : Fragment() {
         volumeSectorViewModel.errorMessage.removeObservers(viewLifecycleOwner)
     }
 
+    private fun initializeBatchesViewsSafely() {
+        try {
+            batchesLoadingLayout = content.findViewById(R.id.batchesLoadingLayout)
+            batchesErrorLayout = content.findViewById(R.id.batchesErrorLayout)
+            batchesContentLayout = content.findViewById(R.id.batchesContentLayout)
+            batchesErrorText = content.findViewById(R.id.batchesErrorText)
+            batchesRetryButton = content.findViewById(R.id.batchesRetryButton)
+            batchesLoadingProgress = content.findViewById(R.id.batchesLoadingProgress)
+            batchesLoadingText = content.findViewById(R.id.batchesLoadingText)
+
+            batchesRetryButton.setOnClickListener {
+                loadBatchesForListing()
+            }
+
+            Log.d("NavigationHome", "✅ Views do batches inicializadas com segurança")
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "❌ Erro ao inicializar views do batches: ${e.message}")
+        }
+    }
+
+    private fun showBatchesLoadingState(message: String = "Carregando produtos...") {
+        if (::batchesLoadingLayout.isInitialized) {
+            batchesLoadingLayout.visibility = View.VISIBLE
+            batchesErrorLayout.visibility = View.GONE
+            batchesContentLayout.visibility = View.GONE
+            batchesLoadingText.text = message
+            Log.d("NavigationHome", "📱 Mostrando estado de loading dos batches: $message")
+        }
+    }
+
+    private fun showBatchesContentState() {
+        if (::batchesLoadingLayout.isInitialized) {
+            batchesLoadingLayout.visibility = View.GONE
+            batchesErrorLayout.visibility = View.GONE
+            batchesContentLayout.visibility = View.VISIBLE
+            Log.d("NavigationHome", "✅ Mostrando conteúdo dos batches")
+        }
+    }
+
+    private fun showBatchesErrorState(errorMessage: String) {
+        if (::batchesLoadingLayout.isInitialized) {
+            batchesLoadingLayout.visibility = View.GONE
+            batchesErrorLayout.visibility = View.VISIBLE
+            batchesContentLayout.visibility = View.GONE
+            batchesErrorText.text = errorMessage
+            Log.e("NavigationHome", "❌ Mostrando estado de erro dos batches: $errorMessage")
+        }
+    }
+
+    private fun isHomeLayoutVisible(): Boolean {
+        return try {
+            val podeReceber = content.findViewById<TextView>(R.id.podeReceberTexto)
+            val ultimaAtividade = content.findViewById<TextView>(R.id.ultimaAtividadeTexto)
+            val estoqueOcupado = content.findViewById<TextView>(R.id.estoqueOcupadoTexto)
+
+            podeReceber != null && ultimaAtividade != null && estoqueOcupado != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun setupVolumeSectorObserver() {
         volumeSectorViewModel.remainingVolume.observe(viewLifecycleOwner) { volume ->
             volume?.let {
-                Log.d("NavigationHome", "✅ Volume restante obtido: $volume m³")
+                Log.d("NavigationHome", "✅ Volume restante obtido: ${volume}m³")
             }
         }
 
@@ -240,7 +318,7 @@ class NavigationHome : Fragment() {
     private fun setupVolumeUsedObserver() {
         volumeUsedSectorViewModel.usedVolume.observe(viewLifecycleOwner) { volume ->
             volume?.let {
-                Log.d("NavigationHome", "✅ Volume utilizado obtido: $volume m³")
+                Log.d("NavigationHome", "✅ Volume utilizado obtido: ${volume}m³")
             }
         }
 
@@ -251,14 +329,22 @@ class NavigationHome : Fragment() {
         }
     }
 
-    private fun initializeHomeViews() {
+    private fun initializeHomeViewsSafely() {
         try {
-            unitCanReceive = content.findViewById(R.id.podeReceberTexto)
-            lastAction = content.findViewById(R.id.ultimaAtividadeTexto)
-            usedStock = content.findViewById(R.id.estoqueOcupadoTexto)
-            Log.d("NavigationHome", "✅ Views da home inicializadas")
+            val podeReceber = content.findViewById<TextView>(R.id.podeReceberTexto)
+            val ultimaAtividade = content.findViewById<TextView>(R.id.ultimaAtividadeTexto)
+            val estoqueOcupado = content.findViewById<TextView>(R.id.estoqueOcupadoTexto)
+
+            if (podeReceber != null && ultimaAtividade != null && estoqueOcupado != null) {
+                unitCanReceive = podeReceber
+                lastAction = ultimaAtividade
+                usedStock = estoqueOcupado
+                Log.d("NavigationHome", "✅ Views da home inicializadas com segurança")
+            } else {
+                Log.w("NavigationHome", "⚠️ Views da home não encontradas no content atual")
+            }
         } catch (e: Exception) {
-            Log.e("NavigationHome", "❌ Erro ao inicializar views da home: ${e.message}")
+            Log.e("NavigationHome", "❌ Erro seguro ao inicializar views da home: ${e.message}")
         }
     }
 
@@ -271,9 +357,12 @@ class NavigationHome : Fragment() {
 
         val employee = SessionManager.getCurrentProfile()
         employee?.let {
-            val availability = it.unit.availabilityUnit ?: 0.0
-            if (::unitCanReceive.isInitialized) {
-                unitCanReceive.text = Html.fromHtml("A unidade pode receber <b>${String.format("%.2f", availability)} m³</b> de insumos no seu estoque.")
+            var availability = it.unit.availabilityUnit ?: 0.0
+            if (availability < 0) {
+                availability = 0.00
+            }
+            if (::unitCanReceive.isInitialized && isHomeLayoutVisible()) {
+                unitCanReceive.text = Html.fromHtml("A unidade pode receber <b>${String.format("%.2f", availability)}m³</b> de insumos no seu estoque.")
             }
         }
     }
@@ -514,7 +603,7 @@ class NavigationHome : Fragment() {
             val action = if (stockHistory.movement == "E") "Adicionou" else "Removeu"
             val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
 
-            lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+            lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted}m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
 
             loadUsedVolumeForStockHistory(stockHistory, action)
 
@@ -540,7 +629,7 @@ class NavigationHome : Fragment() {
                     val volumeUtilizadoFormatted = String.format("%.2f", volume)
 
                     lastAction.text = Html.fromHtml(
-                        "${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque. Total de estoque utilizado: <b>${volumeUtilizadoFormatted} m³</b>",
+                        "${action} <b>${volumeFormatted}m³</b> ${if (action == "E") "ao" else "do"} estoque. Total de estoque utilizado: <b>${volumeUtilizadoFormatted}m³</b>",
                         Html.FROM_HTML_MODE_LEGACY
                     )
 
@@ -556,7 +645,7 @@ class NavigationHome : Fragment() {
                 if (error.isNotEmpty()) {
                     Log.e("NavigationHome", "❌ Erro ao carregar volume utilizado para histórico: $error")
                     val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
-                    lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+                    lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted}m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
 
                     volumeUsedLoaded = true
                     checkAllDataLoaded()
@@ -576,7 +665,7 @@ class NavigationHome : Fragment() {
         } ?: run {
             Log.e("NavigationHome", "❌ Employee não encontrado para carregar volume utilizado")
             val volumeFormatted = String.format("%.2f", stockHistory.volumeHandled)
-            lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted} m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
+            lastAction.text = Html.fromHtml("${action} <b>${volumeFormatted}m³</b> ${if (action == "E") "ao" else "do"} estoque.", Html.FROM_HTML_MODE_LEGACY)
 
             volumeUsedLoaded = true
             checkAllDataLoaded()
@@ -640,9 +729,12 @@ class NavigationHome : Fragment() {
 
     private fun updateStockInfo(employee: com.aula.app_fluxar.API.model.Profile) {
         try {
-            if (::unitCanReceive.isInitialized) {
-                val availability = employee.unit.availabilityUnit ?: 0.0
-                unitCanReceive.text = Html.fromHtml("A unidade pode receber <b>${String.format("%.2f", availability)} m³</b> de insumos no seu estoque.")
+            if (::unitCanReceive.isInitialized && isHomeLayoutVisible()) {
+                var availability = employee.unit.availabilityUnit ?: 0.0
+                if (availability < 0) {
+                    availability = 0.00
+                }
+                unitCanReceive.text = Html.fromHtml("A unidade pode receber <b>${String.format("%.2f", availability)}m³</b> de insumos no seu estoque.")
                 loadStockHistory()
                 loadCapacityHistory()
             }
@@ -654,27 +746,36 @@ class NavigationHome : Fragment() {
     private fun loadHomeInfos() {
         Log.d("NavigationHome", "🔄 Carregando informações da home")
 
-        if (!::unitCanReceive.isInitialized) {
-            Log.e("NavigationHome", "❌ unitCanReceive não inicializado - tentando inicializar")
-            try {
-                unitCanReceive = requireView().findViewById(R.id.podeReceberTexto)
-                lastAction = requireView().findViewById(R.id.ultimaAtividadeTexto)
-                usedStock = requireView().findViewById(R.id.estoqueOcupadoTexto)
-            } catch (e: Exception) {
-                Log.e("NavigationHome", "❌ Não foi possível inicializar as views: ${e.message}")
-                return
-            }
+        if (!isHomeLayoutVisible()) {
+            Log.d("NavigationHome", "⚠️ Não está no layout da home, pulando carregamento")
+            return
+        }
+
+        if (!::unitCanReceive.isInitialized || !::lastAction.isInitialized || !::usedStock.isInitialized) {
+            Log.w("NavigationHome", "⚠️ Views não inicializadas, tentando inicializar...")
+            initializeHomeViewsSafely()
+        }
+
+        if (!::unitCanReceive.isInitialized || !::lastAction.isInitialized || !::usedStock.isInitialized) {
+            Log.e("NavigationHome", "❌ Não foi possível inicializar as views da home")
+            return
         }
 
         val employee = SessionManager.getCurrentProfile()
         employee?.let {
-            val availability = it.unit.availabilityUnit ?: 0.0
-            unitCanReceive.text = Html.fromHtml("A unidade pode receber <b>${String.format("%.2f", availability)} m³</b> de insumos no seu estoque.", Html.FROM_HTML_MODE_LEGACY)
+            var availability = it.unit.availabilityUnit ?: 0.0
+
+            if (availability < 0) {
+                Log.w("NavigationHome", "⚠️ Disponibilidade negativa detectada: $availability, corrigindo para 0")
+                availability = 0.0
+            }
+
+            unitCanReceive.text = Html.fromHtml("A unidade pode receber <b>${String.format("%.2f", availability)}m³</b> de insumos no seu estoque.", Html.FROM_HTML_MODE_LEGACY)
 
             loadCapacityHistory()
             loadStockHistory()
 
-            Log.d("NavigationHome", "✅ Informações da home carregadas - Disponibilidade: $availability m³")
+            Log.d("NavigationHome", "✅ Informações da home carregadas - Disponibilidade: ${availability}m³")
         } ?: run {
             Log.e("NavigationHome", "❌ Employee não encontrado")
             unitCanReceive.text = "Carregando..."
@@ -683,6 +784,9 @@ class NavigationHome : Fragment() {
     }
 
     private fun loadBatchesForListing() {
+        showBatchesLoadingState("Carregando lotes...")
+        batchesLoaded = false
+
         val employee = SessionManager.getCurrentProfile()
 
         if (employee != null) {
@@ -691,9 +795,16 @@ class NavigationHome : Fragment() {
 
             Log.d("NavigationHome", "Carregando lotes para listagem - unitID: $unitID, sectorID: $sectorID")
             getBatchesViewModel.getBatches(unitID, sectorID)
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!batchesLoaded) {
+                    Log.w("NavigationHome", "⏰ Timeout no carregamento de batches")
+                    showBatchesErrorState("Tempo limite excedido ao carregar produtos")
+                }
+            }, 15000)
         } else {
             Log.e("NavigationHome", "Employee não encontrado na sessão")
-            showEmptyState()
+            showBatchesErrorState("Usuário não autenticado")
         }
     }
 
@@ -701,17 +812,28 @@ class NavigationHome : Fragment() {
         getBatchesViewModel.getBatchesResult.observe(viewLifecycleOwner) { batches ->
             Log.d("NavigationHome", "Lotes recebidos para listagem: ${batches?.size ?: 0}")
 
+            batchesLoaded = true
+
             if (batches != null && batches.isNotEmpty()) {
                 setupBatchesRecyclerView(batches)
+                showBatchesContentState()
             } else {
                 showEmptyState()
+                showBatchesContentState()
             }
         }
 
         getBatchesViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 Log.e("NavigationHome", "Erro ao carregar lotes: $error")
-                showEmptyState()
+                batchesLoaded = true
+                showBatchesErrorState("Erro ao carregar produtos: $error")
+            }
+        }
+
+        getBatchesViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading && !batchesLoaded) {
+                showBatchesLoadingState("Carregando produtos...")
             }
         }
     }
@@ -1356,7 +1478,7 @@ class NavigationHome : Fragment() {
                 return
             }
 
-            Log.d("NavigationHome", "📦 Volume do lote calculado: $volumeLote m³")
+            Log.d("NavigationHome", "📦 Volume do lote calculado: ${volumeLote}m³")
 
             checkVolumeAndAddBatch(employeeId, employee.sector.id, volumeLote, productId, unitId, dateInput, numLoteInput, altura, largura, comprimento)
 
@@ -1384,17 +1506,17 @@ class NavigationHome : Fragment() {
             removeObservers(viewLifecycleOwner)
             observe(viewLifecycleOwner) { volumeRestante ->
                 volumeRestante?.let {
-                    Log.d("NavigationHome", "📊 Volume restante recebido: $volumeRestante m³")
+                    Log.d("NavigationHome", "📊 Volume restante recebido: ${volumeRestante}m³")
 
                     if (volumeRestante >= volumeLote) {
-                        Log.d("NavigationHome", "✅ Volume suficiente! Restante: $volumeRestante m³, Lote: $volumeLote m³")
+                        Log.d("NavigationHome", "✅ Volume suficiente! Restante: $volumeRestante m³, Lote: ${volumeLote}m³")
                         proceedWithBatchCreation(
                             productId, unitId, dateInput, numLoteInput,
                             altura, largura, comprimento
                         )
                     } else {
                         Log.w("NavigationHome", "❌ Volume insuficiente! Disponível: $volumeRestante m³, Necessário: $volumeLote m³")
-                        Toast.makeText(requireContext(), "Volume insuficiente! Disponível: ${String.format("%.2f", volumeRestante)} m³, Necessário: ${String.format("%.2f", volumeLote)} m³", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Volume insuficiente! Disponível: ${String.format("%.2f", volumeRestante)} m³, Necessário: ${String.format("%.2f", volumeLote)}m³", Toast.LENGTH_LONG).show()
                     }
 
                     removeObservers(viewLifecycleOwner)

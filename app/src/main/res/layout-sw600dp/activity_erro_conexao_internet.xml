@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/imageView8"
-        android:layout_width="320dp"
-        android:layout_height="340dp"
+        android:layout_width="291dp"
+        android:layout_height="307dp"
         android:layout_marginTop="250dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,7 +27,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:text="Sem Conexão"
         android:textColor="#B3B1B1"
-        android:textSize="60sp"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
