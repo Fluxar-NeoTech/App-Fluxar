@@ -27,8 +27,7 @@
                 android:id="@+id/mainLoadingProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminateTint="@color/roxo_principal"
-                android:visibility="gone" />
+                android:indeterminateTint="@color/roxo_principal" />
 
             <TextView
                 android:id="@+id/mainLoadingText"
@@ -205,6 +204,7 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         app:itemTextColor="#FFF5F5"
+        app:itemIconTint="#FFF5F5"
         app:menu="@menu/menu_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

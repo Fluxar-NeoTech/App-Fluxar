@@ -32,11 +32,7 @@ import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
 import androidx.activity.viewModels
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import com.aula.app_fluxar.API.model.NotificationRequest
 import com.aula.app_fluxar.API.model.UserLogRequest
 import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
@@ -184,10 +180,20 @@ class MainActivity : AppCompatActivity() {
 
             val navigationView = binding.navigationView
             binding.root.post {
-                val toolbarHeight = binding.materialToolbar.height
-                val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
-                layoutParams.topMargin = toolbarHeight
-                navigationView.layoutParams = layoutParams
+                try {
+                    val toolbar = binding.materialToolbar
+                    val statusBarHeight = getStatusBarHeight()
+                    val toolbarHeight = toolbar.height
+                    val totalTopMargin = statusBarHeight + toolbarHeight
+
+                    val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
+                    layoutParams.topMargin = totalTopMargin
+                    navigationView.layoutParams = layoutParams
+
+                    Log.d("MainActivity", "📐 NavigationView margin - StatusBar: ${statusBarHeight}px, Toolbar: ${toolbarHeight}px, Total: ${totalTopMargin}px")
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "❌ Erro ao configurar margem da NavigationView: ${e.message}")
+                }
             }
 
             val drawerLayout = binding.drawerLayout
@@ -358,5 +364,24 @@ class MainActivity : AppCompatActivity() {
                 Log.d("MainActivity", "Permissão já concedida")
             }
         }
+    }
+
+    private fun getStatusBarHeight(): Int {
+        return try {
+            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                resources.getDimensionPixelSize(resourceId)
+            } else {
+                // Fallback para uma altura aproximada
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) 24.dpToPx() else 25.dpToPx()
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Erro ao obter altura da status bar: ${e.message}")
+            24.dpToPx() // Fallback
+        }
+    }
+
+    private fun Int.dpToPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 }
