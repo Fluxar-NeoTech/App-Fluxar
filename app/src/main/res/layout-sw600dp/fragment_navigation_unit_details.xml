@@ -82,13 +82,13 @@
 
             <TextView
                 android:id="@+id/locationText"
-                android:layout_width="291dp"
-                android:layout_height="40dp"
+                android:layout_width="482dp"
+                android:layout_height="65dp"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/roboto"
                 android:text="Av. Visconde de Nova Granada, 1378"
                 android:textColor="@color/preto"
-                android:textSize="16dp"
+                android:textSize="25dp"
                 app:layout_constraintStart_toStartOf="@+id/locationIcon"
                 app:layout_constraintTop_toBottomOf="@+id/locationIcon" />
 
@@ -100,16 +100,16 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Localização"
                 android:textColor="@color/roxo_principal"
-                android:textSize="28dp"
+                android:textSize="35dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/locationIcon"
                 app:layout_constraintTop_toTopOf="@+id/locationIcon" />
 
             <ImageView
                 android:id="@+id/locationIcon"
-                android:layout_width="25dp"
-                android:layout_height="39dp"
-                android:layout_marginStart="40dp"
+                android:layout_width="50dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="60dp"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/location_icon"
                 app:layout_constraintStart_toStartOf="@+id/quadradoUnidade"
@@ -117,12 +117,12 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/quadradoUnidade"
-                android:layout_width="356dp"
-                android:layout_height="106dp"
+                android:layout_width="553dp"
+                android:layout_height="116dp"
                 android:layout_margin="16dp"
                 android:layout_marginTop="36dp"
                 android:backgroundTint="@color/roxo_principal"
-                app:cardCornerRadius="0dp"
+                app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:cardPreventCornerOverlap="false"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -138,7 +138,7 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Unidade aqui"
                 android:textColor="@color/cinza_claro"
-                android:textSize="28dp"
+                android:textSize="40dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="@+id/quadradoUnidade"
                 app:layout_constraintStart_toStartOf="@+id/quadradoUnidade"
@@ -146,8 +146,8 @@
 
             <ImageView
                 android:id="@+id/distanceIcon"
-                android:layout_width="25dp"
-                android:layout_height="39dp"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="15dp"
                 android:src="@drawable/distance_icon"
                 app:layout_constraintStart_toStartOf="@+id/locationText"
@@ -161,27 +161,27 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Distância"
                 android:textColor="@color/roxo_principal"
-                android:textSize="28dp"
+                android:textSize="35dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/distanceIcon"
                 app:layout_constraintTop_toTopOf="@+id/distanceIcon" />
 
             <TextView
                 android:id="@+id/distanceText"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
+                android:layout_width="480dp"
+                android:layout_height="47dp"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/roboto"
                 android:text="30km da Unidade de Cajamar à Osasco"
                 android:textColor="@color/preto"
-                android:textSize="16dp"
+                android:textSize="25dp"
                 app:layout_constraintStart_toStartOf="@+id/distanceIcon"
                 app:layout_constraintTop_toBottomOf="@+id/distanceIcon" />
 
             <ImageView
                 android:id="@+id/truckIcon"
-                android:layout_width="25dp"
-                android:layout_height="39dp"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="15dp"
                 android:src="@drawable/truck_icon"
                 app:layout_constraintStart_toStartOf="@+id/distanceText"
@@ -195,15 +195,15 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="Como enviar"
                 android:textColor="@color/roxo_principal"
-                android:textSize="28dp"
+                android:textSize="35dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/truckIcon"
                 app:layout_constraintTop_toTopOf="@+id/truckIcon" />
 
             <TextView
                 android:id="@+id/truckText"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
+                android:layout_width="471dp"
+                android:layout_height="303dp"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/roboto"
                 android:text="Como enviar Pesagem e documentação de tudo o que será enviado;
@@ -211,7 +211,7 @@
                 \n\nEntrega após a confirmação desta unidade para receber;
                 \n\nPor caminhão, refrigerado se necessário."
                 android:textColor="@color/preto"
-                android:textSize="16dp"
+                android:textSize="25dp"
                 app:layout_constraintStart_toStartOf="@+id/truckIcon"
                 app:layout_constraintTop_toBottomOf="@+id/truckIcon" />
 
@@ -219,9 +219,9 @@
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="20dp"
                 android:background="@color/laranja_principal"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/truckText" />
 
@@ -233,7 +233,7 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:text="E-mail da unidade"
                 android:textColor="@color/roxo_principal"
-                android:textSize="28dp"
+                android:textSize="40dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.497"
@@ -242,22 +242,22 @@
 
             <TextView
                 android:id="@+id/emailText"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
+                android:layout_width="368dp"
+                android:layout_height="34dp"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/roboto"
                 android:text="email@dominio.org.br"
                 android:textAlignment="center"
                 android:textColor="@color/preto"
-                android:textSize="16dp"
+                android:textSize="25dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/emailTitle" />
 
             <Button
                 android:id="@+id/btEnviarEmail"
-                android:layout_width="315dp"
-                android:layout_height="60dp"
+                android:layout_width="388dp"
+                android:layout_height="68dp"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/roxo_principal"
                 android:fontFamily="@font/roboto_bold"

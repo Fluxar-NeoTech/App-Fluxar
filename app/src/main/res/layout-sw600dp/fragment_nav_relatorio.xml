@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="48dp"
     android:background="@android:color/white"
     tools:context=".ui.fragment.NavigationReport">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="20dp">
 
     <!-- Layout de carregamento -->
     <LinearLayout
@@ -71,42 +76,32 @@
             android:paddingVertical="12dp" />
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/homeContentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:visibility="visible">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp">
+            android:layout_marginTop="35dp"
+            android:text="Relatório de hoje"
+            android:textColor="#3B302A"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tvTitulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Relatório de hoje"
-                android:textColor="#3B302A"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvPorcentagem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="50%"
-                android:textColor="@color/preto"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/textoOcupacaoEstoqueSetor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitulo" />
+        <TextView
+            android:id="@+id/tvPorcentagem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="32dp"
+            android:text="50%"
+            android:textColor="@color/preto"
+            android:textSize="50sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/textoOcupacaoEstoqueSetor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitulo" />
 
             <TextView
                 android:id="@+id/textoOcupacaoEstoqueSetor"
@@ -120,19 +115,20 @@
                 app:layout_constraintStart_toEndOf="@id/tvPorcentagem"
                 app:layout_constraintTop_toTopOf="@id/tvPorcentagem" />
 
-            <ProgressBar
-                android:id="@+id/progressBarRelatorio"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="40dp"
-                android:max="100"
-                android:progress="50"
-                android:progressBackgroundTint="#FFE3C8"
-                android:progressDrawable="@drawable/progress_bar_laranja"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvPorcentagem" />
+        <ProgressBar
+            android:id="@+id/progressBarRelatorio"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="40dp"
+            android:max="100"
+            android:progress="50"
+            android:progressBackgroundTint="#FFE3C8"
+            android:progressDrawable="@drawable/progress_bar_laranja"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvPorcentagem"
+            app:layout_constraintStart_toStartOf="@+id/tvPorcentagem"
+            app:layout_constraintTop_toBottomOf="@id/tvPorcentagem" />
 
             <ImageView
                 android:id="@+id/imageView10"
@@ -145,14 +141,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/progressBarRelatorio"
                 app:srcCompat="@drawable/caixa_estoque_ocupado_icon" />
 
-            <ImageView
-                android:id="@+id/imageView11"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="23dp"
-                app:layout_constraintStart_toStartOf="@+id/imageView10"
-                app:layout_constraintTop_toBottomOf="@+id/imageView10"
-                app:srcCompat="@drawable/caixa_estoque_total_icon" />
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="23dp"
+            app:layout_constraintStart_toStartOf="@+id/imageView10"
+            app:layout_constraintTop_toBottomOf="@+id/imageView10"
+            app:srcCompat="@drawable/caixa_estoque_total_icon" />
 
             <TextView
                 android:id="@+id/textoOcupado"
@@ -191,17 +187,17 @@
                 app:layout_constraintEnd_toEndOf="@+id/progressBarRelatorio"
                 app:layout_constraintTop_toBottomOf="@+id/progressBarRelatorio" />
 
-            <TextView
-                android:id="@+id/metrosCubicosTotais"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="0000m³"
-                android:textColor="@color/preto"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/metrosCubicosOcupados"
-                app:layout_constraintTop_toBottomOf="@+id/metrosCubicosOcupados" />
+        <TextView
+            android:id="@+id/metrosCubicosTotais"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="0000m³"
+            android:textColor="@color/preto"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/metrosCubicosOcupados"
+            app:layout_constraintTop_toBottomOf="@+id/metrosCubicosOcupados" />
 
             <TextView
                 android:id="@+id/tituloSituacaoExtoque"
@@ -230,16 +226,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tituloSituacaoExtoque" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/quadradoPerfil"
-                android:layout_width="0dp"
-                android:layout_height="240dp"
-                android:layout_marginTop="56dp"
-                android:backgroundTint="#FDEDDD"
-                app:cardCornerRadius="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textoOcupacaoEstoqueSetor3" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/quadradoPerfil"
+            android:layout_width="0dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="56dp"
+            android:backgroundTint="#FDEDDD"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="@+id/metrosCubicosTotais"
+            app:layout_constraintStart_toStartOf="@+id/imageView11"
+            app:layout_constraintTop_toBottomOf="@id/textoOcupacaoEstoqueSetor3" />
 
             <TextView
                 android:id="@+id/tituloDisponibilidade"
@@ -255,22 +251,18 @@
                 app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
                 app:layout_constraintTop_toTopOf="@id/quadradoPerfil" />
 
-            <TextView
-                android:id="@+id/textoSetorPodeReceber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:elevation="4dp"
-                android:text="O setor pode receber 5m³ de insumos no seu estoque"
-                android:textAlignment="center"
-                android:textColor="@color/preto"
-                android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@id/quadradoPerfil"
-                app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
-                app:layout_constraintTop_toBottomOf="@id/tituloDisponibilidade" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textoSetorPodeReceber"
+            android:layout_width="390dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="24dp"
+            android:elevation="4dp"
+            android:text="O setor pode receber 5m³ de insumos no seu estoque"
+            android:textAlignment="center"
+            android:textColor="@color/preto"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="@+id/quadradoPerfil"
+            app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
+            app:layout_constraintTop_toBottomOf="@id/tituloDisponibilidade" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
