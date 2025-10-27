@@ -14,11 +14,25 @@
         android:layout_height="wrap_content"
         tools:context=".ui.activity.Login">
 
+        <TextView
+            android:id="@+id/redefinirSenha"
+            android:layout_width="290dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp"
+            android:fontFamily="@font/roboto"
+            android:text="@string/redefinir_senha"
+            android:textAlignment="center"
+            android:textColor="@color/roxo_principal"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btEntrarLogin" />
+
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="350sp"
+            android:layout_marginTop="250dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/app_name"
             android:src="@drawable/logo"
@@ -98,8 +112,8 @@
 
         <Button
             android:id="@+id/btEntrarLogin"
-            android:layout_width="556dp"
-            android:layout_height="93dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:backgroundTint="@color/roxo_principal"
             android:fontFamily="@font/roboto_bold"

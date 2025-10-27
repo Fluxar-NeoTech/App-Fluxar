@@ -1,8 +1,14 @@
 package com.aula.app_fluxar.ui.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +20,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,8 +32,10 @@ import com.aula.app_fluxar.API.viewModel.ProfileViewModel
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.sessionManager.SessionManager
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import com.aula.app_fluxar.API.model.UserLogRequest
 import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
+import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
 import com.aula.app_fluxar.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -41,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainLoadingProgress: ProgressBar
     private lateinit var mainLoadingText: TextView
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
+    private val notificationsViewModel: NotificationsViewModel by viewModels()
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +68,8 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             initializeApp()
         }, 800)
+
+        checkAndRequestNotificationPermission()
     }
 
     private fun initStateViews() {
@@ -168,10 +180,20 @@ class MainActivity : AppCompatActivity() {
 
             val navigationView = binding.navigationView
             binding.root.post {
-                val toolbarHeight = binding.materialToolbar.height
-                val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
-                layoutParams.topMargin = toolbarHeight
-                navigationView.layoutParams = layoutParams
+                try {
+                    val toolbar = binding.materialToolbar
+                    val statusBarHeight = getStatusBarHeight()
+                    val toolbarHeight = toolbar.height
+                    val totalTopMargin = statusBarHeight + toolbarHeight
+
+                    val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
+                    layoutParams.topMargin = totalTopMargin
+                    navigationView.layoutParams = layoutParams
+
+                    Log.d("MainActivity", "📐 NavigationView margin - StatusBar: ${statusBarHeight}px, Toolbar: ${toolbarHeight}px, Total: ${totalTopMargin}px")
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "❌ Erro ao configurar margem da NavigationView: ${e.message}")
+                }
             }
 
             val drawerLayout = binding.drawerLayout
@@ -318,5 +340,48 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    // Solicitação de permissão de notificações
+    val requestNotificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d("Notification", "✅ Permissão concedida!")
+            } else {
+                Log.w("Notification", "❌ Permissão negada!")
+            }
+        }
+
+
+    // Verifica e solicita permissão de notificações
+    private fun checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                Log.d("MainActivity", "Permissão já concedida")
+            }
+        }
+    }
+
+    private fun getStatusBarHeight(): Int {
+        return try {
+            val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+            if (resourceId > 0) {
+                resources.getDimensionPixelSize(resourceId)
+            } else {
+                // Fallback para uma altura aproximada
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) 24.dpToPx() else 25.dpToPx()
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Erro ao obter altura da status bar: ${e.message}")
+            24.dpToPx() // Fallback
+        }
+    }
+
+    private fun Int.dpToPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 }

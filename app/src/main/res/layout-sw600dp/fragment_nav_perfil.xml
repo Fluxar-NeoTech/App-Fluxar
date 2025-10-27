@@ -4,84 +4,96 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    tools:context=".ui.fragment.NavigationProfile">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:paddingHorizontal="20dp">
 
-        <!-- Card do perfil -->
-
-        <!-- Foto -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/quadradoPerfil"
-            android:layout_width="694dp"
-            android:layout_height="346dp"
-            android:layout_marginTop="12dp"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_margin="16dp"
+            android:layout_marginTop="36dp"
             android:backgroundTint="#FDEDDD"
-            app:cardCornerRadius="12dp"
+            android:clickable="false"
+            android:focusable="false"
+            app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.28"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.95" />
+            app:layout_constraintTop_toTopOf="parent"></com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/fotoPerfilPadrao"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="16dp"
-            android:layout_marginBottom="142dp"
+            android:layout_width="98dp"
+            android:layout_height="98dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="30dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:src="@drawable/foto_de_perfil_padrao"
-            app:layout_constraintBottom_toBottomOf="@+id/quadradoPerfil"
-            app:layout_constraintDimensionRatio="2:2"
-            app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
-            app:layout_constraintTop_toTopOf="@id/quadradoPerfil"
-            app:layout_constraintWidth_percent="0.25" />
+            app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
+            app:layout_constraintTop_toTopOf="@+id/quadradoPerfil" />
 
-        <!-- Nome -->
         <TextView
             android:id="@+id/nomeGestor"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginTop="50dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Nome aqui"
             android:textColor="#563516"
-            android:textSize="40sp"
+            android:textSize="26dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@id/quadradoPerfil"
-            app:layout_constraintStart_toEndOf="@id/fotoPerfilPadrao"
-            app:layout_constraintTop_toTopOf="@id/fotoPerfilPadrao" />
+            app:layout_constraintEnd_toEndOf="@+id/quadradoPerfil"
+            app:layout_constraintHorizontal_bias="0.445"
+            app:layout_constraintStart_toEndOf="@+id/fotoPerfilPadrao"
+            app:layout_constraintTop_toTopOf="@+id/quadradoPerfil" />
 
-        <!-- Setor -->
-        <TextView
-            android:id="@+id/setorGestor"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:text="Setor: *setor*"
-            android:textColor="#563516"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="@id/nomeGestor"
-            app:layout_constraintTop_toBottomOf="@id/nomeGestor" />
-
-        <!-- Plano -->
         <TextView
             android:id="@+id/planoTitulo"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginTop="32dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Plano"
             android:textColor="#563516"
-            android:textSize="35sp"
-            app:layout_constraintStart_toStartOf="@id/setorGestor"
-            app:layout_constraintTop_toBottomOf="@id/setorGestor" />
+            android:textSize="21dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/fotoPerfilPadrao"
+            app:layout_constraintStart_toStartOf="@+id/fotoPerfilPadrao"
+            app:layout_constraintTop_toBottomOf="@+id/fotoPerfilPadrao" />
+
+        <TextView
+            android:id="@+id/duracaoTitulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Duração"
+            android:textColor="#563516"
+            android:textSize="21dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/planoTitulo"
+            app:layout_constraintStart_toStartOf="@+id/setorGestor"
+            app:layout_constraintTop_toBottomOf="@+id/fotoPerfilPadrao" />
+
+        <TextView
+            android:id="@+id/setorGestor"
+            android:layout_width="148dp"
+            android:layout_height="43dp"
+            android:fontFamily="@font/roboto"
+            android:text="Setor: *setor*"
+            android:textColor="#563516"
+            android:textSize="16dp"
+            app:layout_constraintStart_toEndOf="@+id/fotoPerfilPadrao"
+            app:layout_constraintStart_toStartOf="@+id/nomeGestor"
+            app:layout_constraintTop_toBottomOf="@+id/nomeGestor" />
 
         <TextView
             android:id="@+id/planoGestor"
@@ -90,180 +102,161 @@
             android:fontFamily="@font/roboto"
             android:text="Plano do gestor"
             android:textColor="#563516"
-            android:textSize="25sp"
-            app:layout_constraintStart_toStartOf="@id/planoTitulo"
-            app:layout_constraintTop_toBottomOf="@id/planoTitulo" />
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="@+id/planoTitulo"
+            app:layout_constraintTop_toBottomOf="@+id/planoTitulo" />
 
-        <!-- Duração -->
         <TextView
-            android:id="@+id/duracaoTitulo"
-            android:layout_width="wrap_content"
+            android:id="@+id/nomeEmpresaGestor"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="130dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="Duração"
-            android:textColor="#563516"
-            android:textSize="35sp"
-            app:layout_constraintStart_toEndOf="@id/planoTitulo"
-            app:layout_constraintTop_toTopOf="@id/planoTitulo" />
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Nome da empresa"
+            android:textColor="#2F2F2F"
+            android:textSize="21dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+        <TextView
+            android:id="@+id/cnpjEmpresaGestor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="00.000.000/0000-00 "
+            android:textColor="#2F2F2F"
+            android:textSize="21dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView4"
+            app:layout_constraintTop_toTopOf="@+id/imageView4" />
+
+        <TextView
+            android:id="@+id/enderecoUnidadeGestor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Endereço da unidade"
+            android:textColor="#2F2F2F"
+            android:textSize="21dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView5"
+            app:layout_constraintTop_toTopOf="@+id/imageView5" />
+
+        <TextView
+            android:id="@+id/unidadeGestor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Unidade do gestor"
+            android:textColor="#2F2F2F"
+            android:textSize="21dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView6"
+            app:layout_constraintTop_toTopOf="@+id/imageView6" />
+
+        <TextView
+            android:id="@+id/estoqueGestor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/roboto"
+            android:text="Estoque"
+            android:textColor="#2F2F2F"
+            android:textSize="21dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView7"
+            app:layout_constraintTop_toTopOf="@+id/imageView7" />
 
         <TextView
             android:id="@+id/duracaoPlanoGestor"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
             android:text="Duração do plano"
             android:textColor="#563516"
-            android:textSize="25sp"
-            app:layout_constraintStart_toStartOf="@id/duracaoTitulo"
-            app:layout_constraintTop_toBottomOf="@id/duracaoTitulo" />
+            android:textSize="16dp"
+            app:layout_constraintStart_toEndOf="@+id/duracaoTitulo"
+            app:layout_constraintStart_toStartOf="@+id/duracaoTitulo"
+            app:layout_constraintTop_toBottomOf="@+id/duracaoTitulo" />
 
-        <!-- Título sobre empresa -->
-
-        <!-- Bloco infos empresa -->
         <TextView
             android:id="@+id/sobreAEmpresaTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Sobre a empresa"
-            android:textColor="@color/preto"
-            android:textSize="35sp"
-            app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
+            android:textColor="#2F2F2F"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
             app:layout_constraintTop_toBottomOf="@id/quadradoPerfil" />
 
-        <LinearLayout
-            android:id="@+id/containerEmpresa"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="64dp"
+            android:layout_height="62dp"
+            android:layout_marginTop="25dp"
+            android:src="@drawable/icone_mala_nome_empresa"
             app:layout_constraintStart_toStartOf="@+id/sobreAEmpresaTitulo"
-            app:layout_constraintTop_toBottomOf="@id/sobreAEmpresaTitulo">
+            app:layout_constraintTop_toBottomOf="@+id/sobreAEmpresaTitulo" />
 
-            <!-- Nome empresa -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="64dp"
+            android:layout_height="62dp"
+            android:layout_marginTop="25dp"
+            android:src="@drawable/icone_cnpj"
+            app:layout_constraintStart_toStartOf="@+id/imageView3"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
-                <ImageView
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:src="@drawable/icone_mala_nome_empresa" />
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="64dp"
+            android:layout_height="62dp"
+            android:layout_marginTop="25dp"
+            android:src="@drawable/icone_local_empresa"
+            app:layout_constraintStart_toStartOf="@+id/imageView4"
+            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
-                <TextView
-                    android:id="@+id/nomeEmpresaGestor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/roboto"
-                    android:text="Nome da empresa"
-                    android:textColor="#2F2F2F"
-                    android:textSize="30sp" />
-            </LinearLayout>
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="64dp"
+            android:layout_height="62dp"
+            android:layout_marginTop="25dp"
+            android:src="@drawable/icone_unidade"
+            app:layout_constraintStart_toStartOf="@+id/imageView5"
+            app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
-            <!-- CNPJ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="64dp"
+            android:layout_height="62dp"
+            android:layout_marginTop="25dp"
+            android:src="@drawable/icone_estoque"
+            app:layout_constraintStart_toStartOf="@+id/imageView6"
+            app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
-                <ImageView
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:src="@drawable/icone_cnpj" />
-
-                <TextView
-                    android:id="@+id/cnpjEmpresaGestor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/roboto"
-                    android:text="00.000.000/0000-00"
-                    android:textColor="#2F2F2F"
-                    android:textSize="30sp" />
-            </LinearLayout>
-
-            <!-- Endereço -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
-
-                <ImageView
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:src="@drawable/icone_local_empresa" />
-
-                <TextView
-                    android:id="@+id/enderecoUnidadeGestor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/roboto"
-                    android:text="Endereço da unidade"
-                    android:textColor="#2F2F2F"
-                    android:textSize="30sp" />
-            </LinearLayout>
-
-            <!-- Unidade -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
-
-                <ImageView
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:src="@drawable/icone_unidade" />
-
-                <TextView
-                    android:id="@+id/unidadeGestor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/roboto"
-                    android:text="Unidade do gestor"
-                    android:textColor="#2F2F2F"
-                    android:textSize="30sp" />
-            </LinearLayout>
-
-            <!-- Estoque -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="14dp">
-
-                <ImageView
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
-                    android:src="@drawable/icone_estoque" />
-
-                <TextView
-                    android:id="@+id/estoqueGestor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/roboto"
-                    android:text="Estoque"
-                    android:textColor="#2F2F2F"
-                    android:textSize="30sp" />
-            </LinearLayout>
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/btSairContaPerfil"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="44dp"
+            android:layout_marginBottom="15dp"
+            android:backgroundTint="@color/roxo_principal"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Sair da conta"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.507"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/estoqueGestor" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>

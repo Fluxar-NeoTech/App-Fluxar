@@ -8,9 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="-74dp"
-        tools:layout_editor_absoluteY="68dp">
+        android:layout_height="match_parent">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/quadradoPerfil"
@@ -113,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/roboto"
             android:text="Nome da empresa"
             android:textColor="#2F2F2F"
@@ -128,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/roboto"
             android:text="00.000.000/0000-00 "
             android:textColor="#2F2F2F"
@@ -143,7 +141,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/roboto"
             android:text="Endereço da unidade"
             android:textColor="#2F2F2F"
@@ -158,7 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/roboto"
             android:text="Unidade do gestor"
             android:textColor="#2F2F2F"
@@ -173,7 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="20dp"
             android:fontFamily="@font/roboto"
             android:text="Estoque"
             android:textColor="#2F2F2F"

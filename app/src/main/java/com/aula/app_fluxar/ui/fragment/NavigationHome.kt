@@ -1302,17 +1302,21 @@ class NavigationHome : Fragment() {
     }
 
     private fun setupDatePicker() {
-        val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput)
+        val dateInput = content.findViewById<TextInputEditText>(R.id.dateInput) ?: return
+
         val calendar = Calendar.getInstance()
+
+        val dateInputLayout = content.findViewById<TextInputLayout>(R.id.dateInputLayout)
 
         dateInput.setOnClickListener {
             showDatePickerDialog(dateInput, calendar)
         }
 
-        val dateInputLayout = content.findViewById<TextInputLayout>(R.id.dateInputLayout)
-        dateInputLayout.setEndIconOnClickListener {
+        dateInputLayout?.setEndIconOnClickListener {
             showDatePickerDialog(dateInput, calendar)
         }
+
+        Log.d("NavigationHome", "✅ DatePicker configurado com segurança.")
     }
 
     private fun showDatePickerDialog(dateInput: TextInputEditText, calendar: Calendar) {
