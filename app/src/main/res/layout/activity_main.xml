@@ -14,10 +14,10 @@
             android:id="@+id/mainLoadingLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
             android:background="@android:color/white"
-            android:visibility="visible"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,8 @@
                 android:id="@+id/mainLoadingProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminateTint="@color/roxo_principal" />
+                android:indeterminateTint="@color/roxo_principal"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/mainLoadingText"
@@ -81,7 +82,7 @@
             android:id="@+id/mainContentLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/materialToolbar"
@@ -114,9 +115,9 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="@color/laranja_principal"
-                app:layout_constraintTop_toBottomOf="@id/materialToolbar"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/materialToolbar" />
 
             <ImageView
                 android:id="@+id/iconNotificacoes"
@@ -148,21 +149,21 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:defaultNavHost="true"
-                app:navGraph="@navigation/mobile_navigation"
-                app:layout_constraintTop_toBottomOf="@id/toolbar_divider"
                 app:layout_constraintBottom_toTopOf="@id/nav_view"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/toolbar_divider"
+                app:navGraph="@navigation/mobile_navigation" />
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/nav_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/windowBackground"
-                app:menu="@menu/bottom_nav_menu"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:menu="@menu/bottom_nav_menu" />
 
             <ImageView
                 android:id="@+id/iconVoltar"
@@ -182,13 +183,13 @@
                 android:layout_width="152dp"
                 android:layout_height="46dp"
                 android:layout_marginBottom="2dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/toolbar_divider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.933"
                 app:layout_constraintStart_toEndOf="@id/iconVoltar"
                 app:layout_constraintTop_toTopOf="@id/materialToolbar"
                 app:layout_constraintVertical_bias="0.0"
-                android:visibility="gone"
                 app:srcCompat="@drawable/logo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

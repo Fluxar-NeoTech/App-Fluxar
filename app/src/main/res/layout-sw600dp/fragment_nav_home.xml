@@ -106,12 +106,12 @@
                 <TextView
                     android:id="@+id/cumprimentoGestor"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Olá, nome!"
                     android:textColor="@color/preto"
-                    android:textSize="25sp" />
+                    android:textSize="40sp" />
 
                 <ImageView
                     android:id="@+id/fotoPerfilGestor"

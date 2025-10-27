@@ -96,7 +96,7 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
         apiKey = BuildConfig.GEOCODING_API_KEY
 
         if (apiKey.isEmpty()) {
-            Log.e("NavigationUnidades", "API Key não configurada!")
+            Log.e("NavigationUnidades", "API Key GEOCODING não configurada!")
             return
         }
 
