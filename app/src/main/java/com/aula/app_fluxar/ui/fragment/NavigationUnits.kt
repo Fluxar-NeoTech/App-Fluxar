@@ -64,6 +64,7 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
     private var isDataLoaded = false
     private var dataLoadAttempts = 0
     private val maxLoadAttempts = 3
+    private var isMapReady = false // Nova flag para controlar se o mapa está pronto
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,6 +121,8 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
         debugProfileStructure()
 
         showUnitsLoadingState("Carregando mapa e unidades...")
+
+        loadUnitsData()
     }
 
     override fun onResume() {
@@ -189,6 +192,7 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        isMapReady = true
 
         apiKey = BuildConfig.GEOCODING_API_KEY
 
@@ -198,8 +202,39 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
             return
         }
 
-        // Já iniciamos o carregamento no onViewCreated
-        Log.d("NavigationUnits", "✅ Mapa pronto - iniciando carregamento de dados")
+        Log.d("NavigationUnits", "✅ Mapa pronto - aguardando dados das unidades")
+
+        if (isDataLoaded) {
+            updateMapWithCurrentData()
+        }
+    }
+
+    private fun updateMapWithCurrentData() {
+        employee?.let { emp ->
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val userLatLng = getLatLngFromAddress(emp.unit.enderecoCompleto())
+                    if (userLatLng != null) {
+                        withContext(Dispatchers.Main) {
+                            // Limpa marcadores anteriores
+                            mMap.clear()
+
+                            // Adiciona marcador da unidade do usuário
+                            mMap.addMarker(
+                                MarkerOptions()
+                                    .position(userLatLng)
+                                    .title("Minha Unidade")
+                                    .snippet(emp.unit.enderecoCompleto())
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                            )
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("NavigationUnits", "❌ Erro ao atualizar mapa: ${e.message}")
+                }
+            }
+        }
     }
 
     private fun observeUnits() {
@@ -223,15 +258,18 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
                         // VERIFICA SE HÁ UNIDADES DISPONÍVEIS
                         if (outrasUnidades.isEmpty()) {
                             withContext(Dispatchers.Main) {
-                                // Ainda mostra o marcador da unidade do usuário
-                                mMap.addMarker(
-                                    MarkerOptions()
-                                        .position(userLatLng)
-                                        .title("Minha Unidade")
-                                        .snippet(employee!!.unit.enderecoCompleto())
-                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-                                )
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
+                                // Apenas mostra a unidade do usuário se o mapa estiver pronto
+                                if (isMapReady) {
+                                    mMap.clear()
+                                    mMap.addMarker(
+                                        MarkerOptions()
+                                            .position(userLatLng)
+                                            .title("Minha Unidade")
+                                            .snippet(employee!!.unit.enderecoCompleto())
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                                    )
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
+                                }
 
                                 showEmptyState()
                                 isDataLoaded = true
@@ -263,31 +301,33 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
                         }
 
                         withContext(Dispatchers.Main) {
-                            // Limpa marcadores anteriores
-                            mMap.clear()
+                            if (isMapReady) {
+                                // Limpa marcadores anteriores
+                                mMap.clear()
 
-                            // Adiciona marcador da unidade do usuário
-                            mMap.addMarker(
-                                MarkerOptions()
-                                    .position(userLatLng)
-                                    .title("Minha Unidade")
-                                    .snippet(employee!!.unit.enderecoCompleto())
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-                            )
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
-
-                            for (triple in listaComDistancias) {
-                                val unidade = triple.first
-                                val latLng = triple.second
-                                val distancia = triple.third
-
+                                // Adiciona marcador da unidade do usuário
                                 mMap.addMarker(
                                     MarkerOptions()
-                                        .position(latLng)
-                                        .title(unidade.name)
-                                        .snippet("Distância: %.2f km | Disponibilidade: %.1f m³".format(distancia, unidade.availability))
-                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                                        .position(userLatLng)
+                                        .title("Minha Unidade")
+                                        .snippet(employee!!.unit.enderecoCompleto())
+                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
                                 )
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 5f))
+
+                                for (triple in listaComDistancias) {
+                                    val unidade = triple.first
+                                    val latLng = triple.second
+                                    val distancia = triple.third
+
+                                    mMap.addMarker(
+                                        MarkerOptions()
+                                            .position(latLng)
+                                            .title(unidade.name)
+                                            .snippet("Distância: %.2f km | Disponibilidade: %.1f m³".format(distancia, unidade.availability))
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                                    )
+                                }
                             }
 
                             showContentState(listaFinal)
@@ -301,6 +341,7 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
                                 showUnitsErrorState("Erro ao carregar unidades: ${e.message}")
                             } else {
                                 // Tenta recarregar automaticamente
+                                dataLoadAttempts++
                                 Handler(Looper.getMainLooper()).postDelayed({
                                     loadUnitsData()
                                 }, 2000)
@@ -312,6 +353,11 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
                 Log.e("NavigationUnits", "❌ Unidades ou employee são nulos")
                 if (dataLoadAttempts >= maxLoadAttempts) {
                     showUnitsErrorState("Não foi possível carregar as unidades")
+                } else {
+                    dataLoadAttempts++
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        loadUnitsData()
+                    }, 1000)
                 }
             }
         }
@@ -333,6 +379,10 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
         getUnitsViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             if (isLoading) {
                 Log.d("NavigationUnits", "🔄 ViewModel carregando unidades...")
+            } else {
+                if (!isDataLoaded && dataLoadAttempts >= maxLoadAttempts) {
+                    showUnitsErrorState("Não foi possível carregar as unidades")
+                }
             }
         }
     }
