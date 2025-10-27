@@ -42,7 +42,8 @@ class NotificationsViewModel : ViewModel() {
                     val notificationResponse = response.body()
                     _notification.value = notificationResponse
                     _errorMessage.value = ""
-                    Log.d("NotificationsViewModel", "✅ Notificação recebida")
+                    Log.d("NotificationsViewModel", "✅ Notificação carregada: ${response.body()}")
+
 
                 } else {
                     val errorBody = response.errorBody()?.string()

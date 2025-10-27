@@ -3,7 +3,9 @@ package com.aula.app_fluxar.ui.fragment
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -70,17 +72,19 @@ class Notifications : Fragment() {
                 notificationsList.add(it)
                 adapter.notifyItemInserted(notificationsList.size - 1)
 
-                Log.d("Notifications", "Notificação recebida. Dias para ruptura: ${it.days_to_stockout_pred}")
+                Log.d("Notifications", "📦 Dias para ruptura: ${it.days_to_stockout_pred}")
 
-                Log.d("Notifications", "Condição de <= 7 dias atendida.")
+                // 🔔 Só notifica se estiver próximo do fim
+                if (it.days_to_stockout_pred <= 7) {
+                    Log.d("Notifications", "⚠️ Estoque baixo detectado, notificando usuário")
 
-                context?.let { ctx ->
-                    showNotification(
-                        ctx,
-                        "ALERTA DE ESTOQUE BAIXO!",
-                        "Ruptura de estoque iminente! Restam apenas ${it.days_to_stockout_pred} dias de suprimento!"
-                    )
-                    Log.d("Notifications", "Tentando notificação de estoque baixo")
+                    context?.let { ctx ->
+                        (activity as? MainActivity)?.showNotification(
+                            requireContext(),
+                            "ALERTA DE ESTOQUE BAIXO!",
+                            "Ruptura iminente: restam apenas ${"%.1f".format(it.days_to_stockout_pred)} dias!"
+                        )
+                    }
                 }
 
             }
@@ -88,38 +92,6 @@ class Notifications : Fragment() {
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) Log.e("NotificationsFragment", error)
-        }
-    }
-
-    fun showNotification(context: Context, title: String, message: String) {
-        val channelId = "fluxar_channel"
-        val notificationId = System.currentTimeMillis().toInt()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Notificações do Fluxar",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = context.getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-
-        with(NotificationManagerCompat.from(context)) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                notify(notificationId, builder.build())
-            }
         }
     }
 }

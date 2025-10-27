@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -37,6 +38,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.aula.app_fluxar.API.model.NotificationRequest
+import com.aula.app_fluxar.API.model.Profile
 import com.aula.app_fluxar.API.model.UserLogRequest
 import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
 import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainRetryButton: Button
     private lateinit var mainLoadingProgress: ProgressBar
     private lateinit var mainLoadingText: TextView
+    private var currentProfile: Profile? = null
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
     private val notificationsViewModel: NotificationsViewModel by viewModels()
 
@@ -62,6 +65,8 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        loadProfile()
 
         initStateViews()
 
@@ -112,31 +117,51 @@ class MainActivity : AppCompatActivity() {
     private fun loadProfile() {
         profileViewModel.loadProfile()
 
+        // Observa o resultado do perfil
         profileViewModel.profileResult.observe(this) { profile ->
-            if (profile != null) {
-                Log.d("MainActivity", "✅ Profile carregado: ${profile.firstName}")
-                SessionManager.saveProfile(profile)
+            profile?.let {
+                currentProfile = it
+                Log.d("MainActivity", "✅ Perfil carregado: ${it.firstName}")
 
                 setupNavigation()
                 showMainContentState()
 
-            } else {
-                Log.e("MainActivity", "❌ Profile não carregado")
-                showMainErrorState("Erro ao carregar perfil do usuário")
+                fetchAndShowStockPrediction(it)
             }
         }
 
+        // Observa erros
         profileViewModel.errorMessage.observe(this) { error ->
-            if (error.isNotEmpty()) {
-                Log.e("MainActivity", "❌ Erro no profile: $error")
-                setupNavigation()
-                showMainContentState()
+            if (!error.isNullOrEmpty()) {
+                Log.e("MainActivity", "Erro ao carregar perfil: $error")
+            }
+        }
+    }
+
+    private fun fetchAndShowStockPrediction(profile: Profile) {
+        val request = NotificationRequest(
+            profile.unit.industry.id,
+            profile.sector.id
+        )
+
+        notificationsViewModel.fetchNotification(request)
+
+        notificationsViewModel.notification.observe(this) { notification ->
+            notification?.let {
+                Log.d("MainActivity", "📦 Previsão: ${it.days_to_stockout_pred} dias restantes")
+                if (it.days_to_stockout_pred <= 7) {
+                    showNotification(
+                        this,
+                        "ALERTA DE ESTOQUE BAIXO!",
+                        "Ruptura iminente: restam apenas ${"%.1f".format(it.days_to_stockout_pred)} dias!"
+                    )
+                }
             }
         }
 
-        profileViewModel.isLoading.observe(this) { isLoading ->
-            if (isLoading) {
-                showMainLoadingState("Carregando perfil...")
+        notificationsViewModel.errorMessage.observe(this) { error ->
+            if (!error.isNullOrEmpty()) {
+                Log.e("MainActivity", "Erro na previsão: $error")
             }
         }
     }
@@ -356,6 +381,40 @@ class MainActivity : AppCompatActivity() {
                 requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
                 Log.d("MainActivity", "Permissão já concedida")
+            }
+        }
+    }
+
+    fun showNotification(context: Context, title: String, message: String) {
+        val channelId = "fluxar_channel"
+        val notificationId = System.currentTimeMillis().toInt()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Notificações do Fluxar",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            val manager = context.getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                notify(notificationId, builder.build())
+            } else {
+                Log.w("MainActivity", "⚠️ Permissão de notificação não concedida.")
             }
         }
     }

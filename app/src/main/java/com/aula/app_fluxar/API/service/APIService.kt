@@ -102,5 +102,4 @@ interface APIService {
         @Query("address") address: String,
         @Query("key") apiKey: String
     ): GeocodingResponse
-
 }
