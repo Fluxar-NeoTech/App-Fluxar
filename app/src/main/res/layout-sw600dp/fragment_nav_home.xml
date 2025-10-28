@@ -5,10 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".ui.fragment.NavigationReport">
+    tools:context=".ui.fragment.NavigationHome">
 
-    <!-- Layout de carregamento -->
     <LinearLayout
         android:id="@+id/homeLoadingLayout"
         android:layout_width="match_parent"
@@ -18,9 +16,9 @@
         android:background="@android:color/white"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
             android:id="@+id/homeLoadingProgress"
@@ -33,12 +31,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Carregando relatório..."
+            android:text="Carregando informações..."
             android:textColor="@color/roxo_principal"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- Layout de erro -->
+    <!-- Error State (FORA do ScrollView) -->
     <LinearLayout
         android:id="@+id/homeErrorLayout"
         android:layout_width="match_parent"
@@ -48,9 +46,9 @@
         android:background="@android:color/white"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -77,7 +75,7 @@
             android:backgroundTint="@color/roxo_principal" />
     </LinearLayout>
 
-    <!-- CONTEÚDO PRINCIPAL (ScrollView) -->
+    <!-- Content State (SEU LAYOUT ATUAL) -->
     <ScrollView
         android:id="@+id/homeContentLayout"
         android:layout_width="match_parent"
@@ -85,203 +83,128 @@
         android:fillViewport="true"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp">
+            android:layout_height="wrap_content">
 
-            <!-- Título -->
-            <TextView
-                android:id="@+id/tvTitulo"
-                android:layout_width="wrap_content"
+            <!-- Cumprimento do Gestor + Foto -->
+            <LinearLayout
+                android:id="@+id/layoutSuperior"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
-                android:text="Relatório de hoje"
-                android:textColor="#3B302A"
-                android:textSize="40sp"
-                android:textStyle="bold"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="16dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Porcentagem -->
-            <TextView
-                android:id="@+id/tvPorcentagem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="32dp"
-                android:text="50%"
-                android:textColor="@color/preto"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/tvTitulo"
-                app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/cumprimentoGestor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:text="Olá, nome!"
+                    android:textColor="@color/preto"
+                    android:textSize="40sp" />
 
-            <TextView
-                android:id="@+id/textoOcupacaoEstoqueSetor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="do estoque está ocupado"
-                android:textColor="#A36429"
-                android:textSize="32sp"
-                app:layout_constraintStart_toEndOf="@id/tvPorcentagem"
-                app:layout_constraintTop_toTopOf="@id/tvPorcentagem" />
+                <ImageView
+                    android:id="@+id/fotoPerfilGestor"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/foto_de_perfil_padrao"
+                    android:contentDescription="Foto do perfil" />
+            </LinearLayout>
 
-            <!-- Barra de progresso -->
-            <ProgressBar
-                android:id="@+id/progressBarRelatorio"
-                style="?android:attr/progressBarStyleHorizontal"
+            <!-- Scroll horizontal para os botões -->
+            <HorizontalScrollView
+                android:id="@+id/scroll_bt"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="40dp"
-                android:max="100"
-                android:progress="50"
-                android:progressBackgroundTint="#FFE3C8"
-                android:progressDrawable="@drawable/progress_bar_laranja"
-                app:layout_constraintTop_toBottomOf="@id/tvPorcentagem"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@+id/layoutSuperior"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Ícones e textos -->
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="32dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintTop_toBottomOf="@id/progressBarRelatorio"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/caixa_estoque_ocupado_icon" />
+                <LinearLayout
+                    android:id="@+id/layout_bt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
 
-            <TextView
-                android:id="@+id/textoOcupado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Ocupado"
-                android:textColor="@color/laranja_principal"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/imageView10"
-                app:layout_constraintStart_toEndOf="@id/imageView10" />
+                    <Button
+                        android:id="@+id/bt_info_gerais"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Informações Gerais"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
 
-            <ImageView
-                android:id="@+id/imageView11"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintTop_toBottomOf="@id/imageView10"
-                app:layout_constraintStart_toStartOf="@id/imageView10"
-                app:srcCompat="@drawable/caixa_estoque_total_icon" />
+                    <Button
+                        android:id="@+id/bt_adicionar_estoque"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Adicionar Lotes"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/textoTotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Total"
-                android:textColor="@color/preto"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/imageView11"
-                app:layout_constraintStart_toEndOf="@id/imageView11" />
+                    <Button
+                        android:id="@+id/bt_remover_estoque"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Remover Lotes"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/metrosCubicosOcupados"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="000m³"
-                android:textColor="@color/laranja_principal"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/progressBarRelatorio"
-                app:layout_constraintEnd_toEndOf="parent" />
+                    <Button
+                        android:id="@+id/bt_listar_produtos"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bt_inativo"
+                        android:fontFamily="@font/roboto"
+                        android:text="Lotes Cadastrados"
+                        android:textAllCaps="false"
+                        android:textColor="#4A0072"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
 
-            <TextView
-                android:id="@+id/metrosCubicosTotais"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="0000m³"
-                android:textColor="@color/preto"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/metrosCubicosOcupados"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- Situação -->
-            <TextView
-                android:id="@+id/tituloSituacaoExtoque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="68dp"
-                android:text="Estoque Médio"
-                android:textColor="#A36429"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/textoTotal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/textoOcupacaoEstoqueSetor3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Ainda há espaço disponível no estoque!"
-                android:textAlignment="center"
-                android:textColor="@color/preto"
-                android:textSize="25sp"
-                app:layout_constraintTop_toBottomOf="@id/tituloSituacaoExtoque"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <!-- Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/quadradoPerfil"
-                android:layout_width="0dp"
-                android:layout_height="240dp"
-                android:layout_marginTop="56dp"
-                android:backgroundTint="#FDEDDD"
-                app:cardCornerRadius="20dp"
-                app:layout_constraintTop_toBottomOf="@id/textoOcupacaoEstoqueSetor3"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/tituloDisponibilidade"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:text="Disponibilidade"
-                android:textColor="#A36429"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/quadradoPerfil"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/textoSetorPodeReceber"
+            <!-- Container para conteúdo dinâmico -->
+            <FrameLayout
+                android:id="@+id/container_conteudo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="O setor pode receber 5m³ de insumos no seu estoque"
-                android:textAlignment="center"
-                android:textColor="@color/preto"
-                android:textSize="25sp"
-                app:layout_constraintTop_toBottomOf="@id/tituloDisponibilidade"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/scroll_bt"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
