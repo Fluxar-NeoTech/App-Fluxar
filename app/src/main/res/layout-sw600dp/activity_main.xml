@@ -200,6 +200,7 @@
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
         app:itemTextColor="#FFF5F5"
+        app:itemIconTint="#FFF5F5"
         app:menu="@menu/menu_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

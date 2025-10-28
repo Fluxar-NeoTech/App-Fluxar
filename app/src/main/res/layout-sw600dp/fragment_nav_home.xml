@@ -36,7 +36,6 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- Error State (FORA do ScrollView) -->
     <LinearLayout
         android:id="@+id/homeErrorLayout"
         android:layout_width="match_parent"
@@ -75,7 +74,6 @@
             android:backgroundTint="@color/roxo_principal" />
     </LinearLayout>
 
-    <!-- Content State (SEU LAYOUT ATUAL) -->
     <ScrollView
         android:id="@+id/homeContentLayout"
         android:layout_width="match_parent"
@@ -91,7 +89,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Cumprimento do Gestor + Foto -->
             <LinearLayout
                 android:id="@+id/layoutSuperior"
                 android:layout_width="0dp"
@@ -195,7 +192,6 @@
                 </LinearLayout>
             </HorizontalScrollView>
 
-            <!-- Container para conteúdo dinâmico -->
             <FrameLayout
                 android:id="@+id/container_conteudo"
                 android:layout_width="match_parent"
