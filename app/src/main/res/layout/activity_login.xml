@@ -1,131 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true">
+    tools:context=".ui.activity.Login">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".ui.activity.Login">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/redefinirSenha"
-            android:layout_width="290dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:fontFamily="@font/roboto"
-            android:text="@string/redefinir_senha"
-            android:textAlignment="center"
-            android:textColor="@color/roxo_principal"
-            android:textSize="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btEntrarLogin" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btEntrarLogin"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="295dp"
-            android:layout_height="89dp"
-            android:src="@drawable/logo"
+        <LinearLayout
+            android:id="@+id/loginLoadingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.32" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/emailGestor"
-            android:layout_width="322dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@color/laranja_principal_selector"
-            app:hintEnabled="true"
+            <ProgressBar
+                android:id="@+id/loginLoadingProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/roxo_principal" />
+
+            <TextView
+                android:id="@+id/loginLoadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Fazendo login..."
+                android:textColor="@color/roxo_principal"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/loginErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputEmailGestor"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❌"
+                android:textSize="48sp" />
+
+            <TextView
+                android:id="@+id/loginErrorText"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Erro ao fazer login"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/loginRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tentar Novamente"
+                android:backgroundTint="@color/roxo_principal" />
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/loginContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:fitsSystemWindows="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:hint="E-mail"
-                android:inputType="textEmailAddress"
-                android:paddingStart="12dp"
-                android:paddingTop="20dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="16dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray" />
-        </com.google.android.material.textfield.TextInputLayout>
+                tools:context=".ui.activity.Login">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/senhaGestor"
-            android:layout_width="322dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp"
-            app:boxStrokeColor="@color/laranja_principal_selector"
-            app:endIconMode="password_toggle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailGestor">
+                <!-- Seu conteúdo atual do login aqui -->
+                <TextView
+                    android:id="@+id/redefinirSenha"
+                    android:layout_width="290dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/redefinir_senha"
+                    android:textAlignment="center"
+                    android:textColor="@color/roxo_principal"
+                    android:textSize="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btEntrarLogin" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputSenhaGestor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@android:color/transparent"
-                android:hint="Senha"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="20dp"
-                android:paddingBottom="16dp"
-                android:inputType="textPassword"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="295dp"
+                    android:layout_height="89dp"
+                    android:src="@drawable/logo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.32" />
 
-        <Button
-            android:id="@+id/btEntrarLogin"
-            android:layout_width="324dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="36dp"
-            android:backgroundTint="@color/roxo_principal"
-            android:fontFamily="@font/roboto_bold"
-            android:text="Entrar"
-            android:textColor="#FFFFFF"
-            app:cornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.507"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/senhaGestor" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/emailGestor"
+                    android:layout_width="322dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="36dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxStrokeColor="@color/laranja_principal_selector"
+                    app:hintEnabled="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView2">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputEmailGestor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:hint="E-mail"
+                        android:inputType="textEmailAddress"
+                        android:paddingStart="12dp"
+                        android:paddingTop="20dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="16dp"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/darker_gray" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/senhaGestor"
+                    android:layout_width="322dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="10dp"
+                    app:boxCornerRadiusBottomStart="10dp"
+                    app:boxCornerRadiusTopEnd="10dp"
+                    app:boxCornerRadiusTopStart="10dp"
+                    app:boxStrokeColor="@color/laranja_principal_selector"
+                    app:endIconMode="password_toggle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/emailGestor">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputSenhaGestor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:hint="Senha"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="16dp"
+                        android:inputType="textPassword"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/darker_gray" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/btEntrarLogin"
+                    android:layout_width="324dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="36dp"
+                    android:backgroundTint="@color/roxo_principal"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="Entrar"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.507"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/senhaGestor" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

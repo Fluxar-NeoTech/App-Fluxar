@@ -57,7 +57,7 @@
         android:id="@+id/layout_listar_produto"
         android:name="com.aula.app_fluxar.ui.fragment.ListBatches"
         android:label="fragment_listar_produtos"
-        tools:layout="@layout/fragment_layout_listar_produtos" />
+        tools:layout="@layout/fragment_layout_listar_lotes" />
     <fragment
         android:id="@+id/nav_limite_estoque"
         android:name="com.aula.app_fluxar.ui.fragment.NavigationStockLimit"
