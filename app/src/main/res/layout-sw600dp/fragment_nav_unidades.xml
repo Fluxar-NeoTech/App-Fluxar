@@ -10,89 +10,164 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="0dp"
-            android:layout_height="387dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
-            android:text="Unidades Disponíveis"
-            android:textColor="@color/roxo_principal"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/spinnerFiltro"
-            app:layout_constraintTop_toBottomOf="@+id/map"
-            app:layout_constraintHorizontal_chainStyle="spread_inside" />
-
-        <Spinner
-            android:id="@+id/spinnerFiltro"
-            android:layout_width="153dp"
-            android:layout_height="41dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="7dp"
-            android:background="@drawable/bt_inativo"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:spinnerMode="dropdown"
-            android:textAlignment="center"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map" />
-
         <LinearLayout
-            android:id="@+id/emptyLayout"
+            android:id="@+id/unitsLoadingLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
+            android:background="@android:color/white"
             android:visibility="gone"
-            android:padding="32dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:id="@+id/unitsLoadingProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="@color/roxo_principal" />
 
             <TextView
-                android:id="@+id/emptyText"
-                android:layout_width="match_parent"
+                android:id="@+id/unitsLoadingText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nenhuma unidade disponível"
-                android:textAlignment="center"
-                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:text="Carregando unidades..."
                 android:textColor="@color/roxo_principal"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/emptySubtext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Não há outras unidades disponíveis no momento."
-                android:textAlignment="center"
-                android:textSize="14sp"
-                android:textColor="@color/roxo_principal" />
-
+                android:textSize="16sp" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUnidade"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+        <LinearLayout
+            android:id="@+id/unitsErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro"
-            tools:listitem="@layout/unidade_item" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="❌"
+                android:textSize="48sp" />
+
+            <TextView
+                android:id="@+id/unitsErrorText"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Erro ao carregar unidades"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/unitsRetryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tentar Novamente"
+                android:backgroundTint="@color/roxo_principal" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/unitsContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="0dp"
+                android:layout_height="387dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
+                android:text="Unidades Disponíveis"
+                android:textColor="@color/roxo_principal"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/spinnerFiltro"
+                app:layout_constraintTop_toBottomOf="@+id/map"
+                app:layout_constraintHorizontal_chainStyle="spread_inside" />
+
+            <Spinner
+                android:id="@+id/spinnerFiltro"
+                android:layout_width="153dp"
+                android:layout_height="41dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/bt_inativo"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:spinnerMode="dropdown"
+                android:textAlignment="center"
+                app:layout_constraintStart_toEndOf="@+id/textView4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/map" />
+
+            <LinearLayout
+                android:id="@+id/emptyLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="32dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro">
+
+                <TextView
+                    android:id="@+id/emptyText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nenhuma unidade disponível"
+                    android:textAlignment="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/roxo_principal"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/emptySubtext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Não há outras unidades disponíveis no momento."
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    android:textColor="@color/roxo_principal" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvUnidade"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinnerFiltro"
+                tools:listitem="@layout/unidade_item" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

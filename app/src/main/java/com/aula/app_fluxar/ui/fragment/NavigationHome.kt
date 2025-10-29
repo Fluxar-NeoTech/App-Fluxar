@@ -221,7 +221,7 @@ class NavigationHome : Fragment() {
         }
 
         listProductsButton.setOnClickListener {
-            showContent(R.layout.fragment_layout_listar_produtos)
+            showContent(R.layout.fragment_layout_listar_lotes)
             updateSelectedButtons(listProductsButton)
 
             content.post {
@@ -260,7 +260,7 @@ class NavigationHome : Fragment() {
         }
     }
 
-    private fun showBatchesLoadingState(message: String = "Carregando produtos...") {
+    private fun showBatchesLoadingState(message: String = "Carregando lotes...") {
         if (::batchesLoadingLayout.isInitialized) {
             batchesLoadingLayout.visibility = View.VISIBLE
             batchesErrorLayout.visibility = View.GONE
@@ -833,7 +833,7 @@ class NavigationHome : Fragment() {
 
         getBatchesViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             if (isLoading && !batchesLoaded) {
-                showBatchesLoadingState("Carregando produtos...")
+                showBatchesLoadingState("Carregando lotes...")
             }
         }
     }

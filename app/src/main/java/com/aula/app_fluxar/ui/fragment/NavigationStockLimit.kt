@@ -24,18 +24,19 @@ import com.google.android.material.textfield.TextInputEditText
 class NavigationStockLimit : Fragment() {
     private val viewModel: CapacityStockViewModel by viewModels()
     private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
-    private lateinit var alturaEstoque: TextInputEditText
-    private lateinit var larguraEstoque: TextInputEditText
-    private lateinit var comprimentoEstoque: TextInputEditText
-    private lateinit var concluirBt: Button
 
-    private lateinit var stockLimitLoadingLayout: LinearLayout
-    private lateinit var stockLimitErrorLayout: LinearLayout
-    private lateinit var stockLimitContentLayout: androidx.constraintlayout.widget.ConstraintLayout
-    private lateinit var stockLimitLoadingProgress: ProgressBar
-    private lateinit var stockLimitLoadingText: TextView
-    private lateinit var stockLimitErrorText: TextView
-    private lateinit var stockLimitRetryButton: Button
+    private var alturaEstoque: TextInputEditText? = null
+    private var larguraEstoque: TextInputEditText? = null
+    private var comprimentoEstoque: TextInputEditText? = null
+    private var concluirBt: Button? = null
+
+    private var stockLimitLoadingLayout: LinearLayout? = null
+    private var stockLimitErrorLayout: LinearLayout? = null
+    private var stockLimitContentLayout: androidx.constraintlayout.widget.ConstraintLayout? = null
+    private var stockLimitLoadingProgress: ProgressBar? = null
+    private var stockLimitLoadingText: TextView? = null
+    private var stockLimitErrorText: TextView? = null
+    private var stockLimitRetryButton: Button? = null
 
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
 
@@ -65,7 +66,7 @@ class NavigationStockLimit : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        stockLimitRetryButton.setOnClickListener {
+        stockLimitRetryButton?.setOnClickListener {
             showStockLimitContentState()
         }
 
@@ -77,9 +78,9 @@ class NavigationStockLimit : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                alturaEstoque.text?.clear()
-                larguraEstoque.text?.clear()
-                comprimentoEstoque.text?.clear()
+                alturaEstoque?.text?.clear()
+                larguraEstoque?.text?.clear()
+                comprimentoEstoque?.text?.clear()
 
                 viewModel.clearResult()
             }
@@ -96,7 +97,7 @@ class NavigationStockLimit : Fragment() {
     }
 
     private fun setupListeners() {
-        concluirBt.setOnClickListener {
+        concluirBt?.setOnClickListener {
             val profile = SessionManager.getCurrentProfile()
 
             if (profile == null) {
@@ -107,9 +108,9 @@ class NavigationStockLimit : Fragment() {
             val setorId = profile.sector.id
             val unidadeId = profile.unit.id
 
-            val alturaStr = alturaEstoque.text.toString().trim()
-            val larguraStr = larguraEstoque.text.toString().trim()
-            val comprimentoStr = comprimentoEstoque.text.toString().trim()
+            val alturaStr = alturaEstoque?.text.toString().trim()
+            val larguraStr = larguraEstoque?.text.toString().trim()
+            val comprimentoStr = comprimentoEstoque?.text.toString().trim()
 
             if (alturaStr.isEmpty() || larguraStr.isEmpty() || comprimentoStr.isEmpty()) {
                 Toast.makeText(context, "Por favor, preencha todos os campos!", Toast.LENGTH_SHORT).show()
@@ -171,7 +172,7 @@ class NavigationStockLimit : Fragment() {
         }
 
         view?.postDelayed({
-            if (stockLimitLoadingLayout.visibility == View.VISIBLE) {
+            if (stockLimitLoadingLayout?.visibility == View.VISIBLE) {
                 showStockLimitErrorState("Tempo limite excedido ao verificar capacidade")
             }
         }, 10000)
@@ -207,9 +208,9 @@ class NavigationStockLimit : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
 
-                    alturaEstoque.text?.clear()
-                    larguraEstoque.text?.clear()
-                    comprimentoEstoque.text?.clear()
+                    alturaEstoque?.text?.clear()
+                    larguraEstoque?.text?.clear()
+                    comprimentoEstoque?.text?.clear()
 
                     showStockLimitContentState()
                 }
@@ -229,7 +230,7 @@ class NavigationStockLimit : Fragment() {
             }
 
             view?.postDelayed({
-                if (stockLimitLoadingLayout.visibility == View.VISIBLE) {
+                if (stockLimitLoadingLayout?.visibility == View.VISIBLE) {
                     viewModel.updateSuccess.removeObservers(viewLifecycleOwner)
                     viewModel.errorMessage.removeObservers(viewLifecycleOwner)
                     showStockLimitErrorState("Tempo limite excedido ao atualizar capacidade")
@@ -252,27 +253,27 @@ class NavigationStockLimit : Fragment() {
     }
 
     private fun showStockLimitLoadingState(message: String = "Carregando...") {
-        stockLimitLoadingLayout.visibility = View.VISIBLE
-        stockLimitErrorLayout.visibility = View.GONE
-        stockLimitContentLayout.visibility = View.GONE
-        stockLimitLoadingText.text = message
+        stockLimitLoadingLayout?.visibility = View.VISIBLE
+        stockLimitErrorLayout?.visibility = View.GONE
+        stockLimitContentLayout?.visibility = View.GONE
+        stockLimitLoadingText?.text = message
 
         Log.d("NavigationStockLimit", "📱 Mostrando estado de loading: $message")
     }
 
     private fun showStockLimitContentState() {
-        stockLimitLoadingLayout.visibility = View.GONE
-        stockLimitErrorLayout.visibility = View.GONE
-        stockLimitContentLayout.visibility = View.VISIBLE
+        stockLimitLoadingLayout?.visibility = View.GONE
+        stockLimitErrorLayout?.visibility = View.GONE
+        stockLimitContentLayout?.visibility = View.VISIBLE
 
         Log.d("NavigationStockLimit", "✅ Mostrando conteúdo")
     }
 
     private fun showStockLimitErrorState(errorMessage: String) {
-        stockLimitLoadingLayout.visibility = View.GONE
-        stockLimitErrorLayout.visibility = View.VISIBLE
-        stockLimitContentLayout.visibility = View.GONE
-        stockLimitErrorText.text = errorMessage
+        stockLimitLoadingLayout?.visibility = View.GONE
+        stockLimitErrorLayout?.visibility = View.VISIBLE
+        stockLimitContentLayout?.visibility = View.GONE
+        stockLimitErrorText?.text = errorMessage
 
         Log.e("NavigationStockLimit", "❌ Mostrando estado de erro: $errorMessage")
     }

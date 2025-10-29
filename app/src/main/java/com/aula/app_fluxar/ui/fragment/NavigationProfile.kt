@@ -372,11 +372,11 @@ class NavigationProfile : Fragment() {
                 .create()
 
             positiveButton.setOnClickListener {
-                SessionManager.clear()
-                Toast.makeText(requireContext(), "Você saiu da conta", Toast.LENGTH_SHORT).show()
-
                 val action = "Usuário realizou logout"
                 addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
+
+                SessionManager.clear()
+                Toast.makeText(requireContext(), "Você saiu da conta", Toast.LENGTH_SHORT).show()
 
                 val intent = Intent(requireContext(), com.aula.app_fluxar.ui.activity.Login::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

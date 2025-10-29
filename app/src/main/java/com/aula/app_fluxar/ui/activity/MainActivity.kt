@@ -247,7 +247,7 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({ initializeApp() }, 1000)
     }
 
-    fun showDialogLogOut() {
+    private fun showDialogLogOut() {
         val dialogLogOut = layoutInflater.inflate(R.layout.sair_da_conta, null)
         val positiveButton = dialogLogOut.findViewById<Button>(R.id.sairContaS)
         val negativeButton = dialogLogOut.findViewById<Button>(R.id.sairContaN)
@@ -255,10 +255,14 @@ class MainActivity : AppCompatActivity() {
         val dialog = AlertDialog.Builder(this).setView(dialogLogOut).create()
 
         positiveButton.setOnClickListener {
+            val action = "Usuário realizou logout"
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
+
             SessionManager.clear()
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
-            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), "Usuário realizou logout"))
-            val intent = Intent(this, Login::class.java)
+
+            val intent = Intent(this@MainActivity, Login::class.java)
+
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()

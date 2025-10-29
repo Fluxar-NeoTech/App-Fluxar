@@ -1,276 +1,290 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="48dp"
-    android:background="@android:color/white"
     tools:context=".ui.fragment.NavigationReport">
 
-    <!-- Layout de carregamento -->
-    <LinearLayout
-        android:id="@+id/homeLoadingLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@android:color/white"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/homeLoadingProgress"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:indeterminateTint="@color/roxo_principal" />
-
-        <TextView
-            android:id="@+id/homeLoadingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Carregando relatório..."
-            android:textColor="@color/roxo_principal"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/homeErrorLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@android:color/white"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="❌"
-            android:textSize="72sp" />
-
-        <TextView
-            android:id="@+id/homeErrorText"
-            android:layout_width="400dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Erro ao carregar informações"
-            android:textAlignment="center"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/homeRetryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Tentar Novamente"
-            android:textSize="18sp"
-            android:backgroundTint="@color/roxo_principal"
-            android:paddingHorizontal="32dp"
-            android:paddingVertical="12dp" />
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/homeContentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:visibility="visible">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:id="@+id/homeLoadingLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp">
-
-            <TextView
-                android:id="@+id/tvTitulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Relatório de hoje"
-                android:textColor="#3B302A"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvPorcentagem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="50%"
-                android:textColor="@color/preto"
-                android:textSize="50sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/textoOcupacaoEstoqueSetor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvTitulo" />
-
-            <TextView
-                android:id="@+id/textoOcupacaoEstoqueSetor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:text="do estoque está ocupado"
-                android:textColor="#A36429"
-                android:textSize="32sp"
-                app:layout_constraintStart_toEndOf="@id/tvPorcentagem"
-                app:layout_constraintTop_toTopOf="@id/tvPorcentagem" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ProgressBar
-                android:id="@+id/progressBarRelatorio"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="40dp"
-                android:max="100"
-                android:progress="50"
-                android:progressBackgroundTint="#FFE3C8"
-                android:progressDrawable="@drawable/progress_bar_laranja"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvPorcentagem" />
-
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="32dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="@+id/progressBarRelatorio"
-                app:layout_constraintTop_toBottomOf="@+id/progressBarRelatorio"
-                app:srcCompat="@drawable/caixa_estoque_ocupado_icon" />
-
-            <ImageView
-                android:id="@+id/imageView11"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="23dp"
-                app:layout_constraintStart_toStartOf="@+id/imageView10"
-                app:layout_constraintTop_toBottomOf="@+id/imageView10"
-                app:srcCompat="@drawable/caixa_estoque_total_icon" />
-
-            <TextView
-                android:id="@+id/textoOcupado"
+                android:id="@+id/homeLoadingProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Ocupado"
-                android:textColor="@color/laranja_principal"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView10"
-                app:layout_constraintTop_toTopOf="@+id/imageView10" />
+                android:indeterminateTint="@color/roxo_principal" />
 
             <TextView
-                android:id="@+id/textoTotal"
+                android:id="@+id/homeLoadingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Total"
-                android:textColor="@color/preto"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/imageView11"
-                app:layout_constraintTop_toTopOf="@+id/imageView11" />
+                android:layout_marginTop="16dp"
+                android:text="Carregando relatório..."
+                android:textColor="@color/roxo_principal"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/homeErrorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@android:color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/metrosCubicosOcupados"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="12dp"
-                android:text="000m³"
-                android:textColor="@color/laranja_principal"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/progressBarRelatorio"
-                app:layout_constraintTop_toBottomOf="@+id/progressBarRelatorio" />
+                android:text="❌"
+                android:textSize="48sp" />
 
             <TextView
-                android:id="@+id/metrosCubicosTotais"
-                android:layout_width="wrap_content"
+                android:id="@+id/homeErrorText"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="0000m³"
-                android:textColor="@color/preto"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/metrosCubicosOcupados"
-                app:layout_constraintTop_toBottomOf="@+id/metrosCubicosOcupados" />
-
-            <TextView
-                android:id="@+id/tituloSituacaoExtoque"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="68dp"
-                android:text="Estoque Médio"
-                android:textColor="#A36429"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.501"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textoTotal" />
-
-            <TextView
-                android:id="@+id/textoOcupacaoEstoqueSetor3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Ainda há espaço disponível no estoque!"
+                android:layout_marginTop="16dp"
+                android:text="Erro ao carregar informações"
                 android:textAlignment="center"
-                android:textColor="@color/preto"
-                android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tituloSituacaoExtoque" />
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="16sp" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/quadradoPerfil"
-                android:layout_width="0dp"
-                android:layout_height="240dp"
-                android:layout_marginTop="56dp"
-                android:backgroundTint="#FDEDDD"
-                app:cardCornerRadius="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textoOcupacaoEstoqueSetor3" />
-
-            <TextView
-                android:id="@+id/tituloDisponibilidade"
+            <Button
+                android:id="@+id/homeRetryButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:elevation="4dp"
-                android:text="Disponibilidade"
-                android:textColor="#A36429"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@id/quadradoPerfil"
-                app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
-                app:layout_constraintTop_toTopOf="@id/quadradoPerfil" />
+                android:layout_marginTop="16dp"
+                android:text="Tentar Novamente"
+                android:backgroundTint="@color/roxo_principal" />
+        </LinearLayout>
 
-            <TextView
-                android:id="@+id/textoSetorPodeReceber"
-                android:layout_width="wrap_content"
+        <ScrollView
+            android:id="@+id/homeContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:background="@android:color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:elevation="4dp"
-                android:text="O setor pode receber 5m³ de insumos no seu estoque"
-                android:textAlignment="center"
-                android:textColor="@color/preto"
-                android:textSize="25sp"
-                app:layout_constraintEnd_toEndOf="@id/quadradoPerfil"
-                app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
-                app:layout_constraintTop_toBottomOf="@id/tituloDisponibilidade" />
+                android:paddingHorizontal="20dp">
 
+                <TextView
+                    android:id="@+id/tvTitulo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
+                    android:text="Relatório de hoje"
+                    android:textColor="#3B302A"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+                <TextView
+                    android:id="@+id/tvPorcentagem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="32dp"
+                    android:text="50%"
+                    android:textColor="@color/preto"
+                    android:textSize="50sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/textoOcupacaoEstoqueSetor"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvTitulo" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/textoOcupacaoEstoqueSetor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="do estoque está ocupado"
+                    android:textColor="#A36429"
+                    android:textSize="32sp"
+                    app:layout_constraintStart_toEndOf="@id/tvPorcentagem"
+                    app:layout_constraintTop_toTopOf="@id/tvPorcentagem" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarRelatorio"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="40dp"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressBackgroundTint="#FFE3C8"
+                    android:progressDrawable="@drawable/progress_bar_laranja"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tvPorcentagem"
+                    app:layout_constraintStart_toStartOf="@+id/tvPorcentagem"
+                    app:layout_constraintTop_toBottomOf="@id/tvPorcentagem" />
+
+                <ImageView
+                    android:id="@+id/imageView10"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="32dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="@+id/progressBarRelatorio"
+                    app:layout_constraintTop_toBottomOf="@+id/progressBarRelatorio"
+                    app:srcCompat="@drawable/caixa_estoque_ocupado_icon" />
+
+                <ImageView
+                    android:id="@+id/imageView11"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="23dp"
+                    app:layout_constraintStart_toStartOf="@+id/imageView10"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView10"
+                    app:srcCompat="@drawable/caixa_estoque_total_icon" />
+
+                <TextView
+                    android:id="@+id/textoOcupado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Ocupado"
+                    android:textColor="@color/laranja_principal"
+                    android:textSize="35sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imageView10"
+                    app:layout_constraintTop_toTopOf="@+id/imageView10" />
+
+                <TextView
+                    android:id="@+id/textoTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Total"
+                    android:textColor="@color/preto"
+                    android:textSize="35sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/imageView11"
+                    app:layout_constraintTop_toTopOf="@+id/imageView11" />
+
+                <TextView
+                    android:id="@+id/metrosCubicosOcupados"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="12dp"
+                    android:text="000m³"
+                    android:textColor="@color/laranja_principal"
+                    android:textSize="35sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/progressBarRelatorio"
+                    app:layout_constraintTop_toBottomOf="@+id/progressBarRelatorio" />
+
+                <TextView
+                    android:id="@+id/metrosCubicosTotais"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="0000m³"
+                    android:textColor="@color/preto"
+                    android:textSize="35sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/metrosCubicosOcupados"
+                    app:layout_constraintTop_toBottomOf="@+id/metrosCubicosOcupados" />
+
+                <TextView
+                    android:id="@+id/tituloSituacaoExtoque"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="68dp"
+                    android:text="Estoque Médio"
+                    android:textColor="#A36429"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.501"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textoTotal" />
+
+                <TextView
+                    android:id="@+id/textoOcupacaoEstoqueSetor3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Ainda há espaço disponível no estoque!"
+                    android:textAlignment="center"
+                    android:textColor="@color/preto"
+                    android:textSize="25sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tituloSituacaoExtoque" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/quadradoPerfil"
+                    android:layout_width="0dp"
+                    android:layout_height="240dp"
+                    android:layout_marginTop="56dp"
+                    android:backgroundTint="#FDEDDD"
+                    app:cardCornerRadius="20dp"
+                    app:layout_constraintEnd_toEndOf="@+id/metrosCubicosTotais"
+                    app:layout_constraintStart_toStartOf="@+id/imageView11"
+                    app:layout_constraintTop_toBottomOf="@id/textoOcupacaoEstoqueSetor3" />
+
+                <TextView
+                    android:id="@+id/tituloDisponibilidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:elevation="4dp"
+                    android:text="Disponibilidade"
+                    android:textColor="#A36429"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@id/quadradoPerfil"
+                    app:layout_constraintStart_toStartOf="@id/quadradoPerfil"
+                    app:layout_constraintTop_toTopOf="@id/quadradoPerfil" />
+
+                <TextView
+                    android:id="@+id/textoSetorPodeReceber"
+                    android:layout_width="390dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="24dp"
+                    android:elevation="4dp"
+                    android:text="O setor pode receber 5m³ de insumos no seu estoque"
+                    android:textAlignment="center"
+                    android:textColor="@color/preto"
+                    android:textSize="25sp"
+                    app:layout_constraintEnd_toEndOf="@+id/quadradoPerfil"
+                    app:layout_constraintStart_toStartOf="@+id/quadradoPerfil"
+                    app:layout_constraintTop_toBottomOf="@id/tituloDisponibilidade" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

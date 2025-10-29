@@ -123,19 +123,19 @@ class NavigationReport : Fragment() {
 
     private fun showLoadingState() {
         binding.homeLoadingLayout.visibility = View.VISIBLE
-        binding.homeContentLayout.visibility = View.GONE
+        binding.homeContentLayout?.visibility = View.GONE
         binding.homeErrorLayout.visibility = View.GONE
     }
 
     private fun hideLoadingState() {
         binding.homeLoadingLayout.visibility = View.GONE
-        binding.homeContentLayout.visibility = View.VISIBLE
+        binding.homeContentLayout?.visibility = View.VISIBLE
         binding.homeErrorLayout.visibility = View.GONE
     }
 
     private fun showErrorState(errorMessage: String) {
         binding.homeLoadingLayout.visibility = View.GONE
-        binding.homeContentLayout.visibility = View.GONE
+        binding.homeContentLayout?.visibility = View.GONE
         binding.homeErrorLayout.visibility = View.VISIBLE
         binding.homeErrorText.text = errorMessage
     }

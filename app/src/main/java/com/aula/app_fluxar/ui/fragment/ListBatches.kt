@@ -23,7 +23,7 @@ class ListBatches : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_layout_listar_produtos, container, false)
+        return inflater.inflate(R.layout.fragment_layout_listar_lotes, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
