@@ -3,8 +3,6 @@ package com.aula.app_fluxar.ui.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,32 +13,34 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.aula.app_fluxar.API.viewModel.ProfileViewModel
-import com.aula.app_fluxar.R
-import com.aula.app_fluxar.sessionManager.SessionManager
-import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
+import com.aula.app_fluxar.API.model.NotificationItem
 import com.aula.app_fluxar.API.model.UserLogRequest
-import com.aula.app_fluxar.API.viewModel.AddUserLogsViewModel
-import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
+import com.aula.app_fluxar.API.viewModel.*
+import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.ActivityMainBinding
+import com.aula.app_fluxar.sessionManager.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
     private val profileViewModel: ProfileViewModel by viewModels()
+    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
+    private val notificationsViewModel: NotificationsViewModel by viewModels()
+    private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainLoadingLayout: LinearLayout
     private lateinit var mainErrorLayout: LinearLayout
@@ -49,8 +49,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainRetryButton: Button
     private lateinit var mainLoadingProgress: ProgressBar
     private lateinit var mainLoadingText: TextView
-    private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
-    private val notificationsViewModel: NotificationsViewModel by viewModels()
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,13 +58,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initStateViews()
-
         showMainLoadingState("Carregando aplicação...")
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         Handler(Looper.getMainLooper()).postDelayed({
             initializeApp()
+            observeCapacitySectorNotifications()
         }, 800)
 
         checkAndRequestNotificationPermission()
@@ -80,10 +78,10 @@ class MainActivity : AppCompatActivity() {
         mainRetryButton = findViewById(R.id.mainRetryButton)
 
         try {
-            mainLoadingProgress = mainLoadingLayout.findViewById<ProgressBar>(R.id.mainLoadingProgress)
-            mainLoadingText = mainLoadingLayout.findViewById<TextView>(R.id.mainLoadingText)
+            mainLoadingProgress = mainLoadingLayout.findViewById(R.id.mainLoadingProgress)
+            mainLoadingText = mainLoadingLayout.findViewById(R.id.mainLoadingText)
         } catch (e: Exception) {
-            Log.d("MainActivity", "Elementos de loading específicos não encontrados, usando layout padrão")
+            Log.d("MainActivity", "Elementos de loading específicos não encontrados")
         }
 
         mainRetryButton.setOnClickListener {
@@ -112,10 +110,9 @@ class MainActivity : AppCompatActivity() {
             if (profile != null) {
                 Log.d("MainActivity", "✅ Profile carregado: ${profile.firstName}")
                 SessionManager.saveProfile(profile)
-
                 setupNavigation()
                 showMainContentState()
-
+                loadSectorInfos()
             } else {
                 Log.e("MainActivity", "❌ Profile não carregado")
                 showMainErrorState("Erro ao carregar perfil do usuário")
@@ -138,127 +135,84 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavigation() {
-        try {
-            val navView: BottomNavigationView = binding.navView
-            val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val navView: BottomNavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-            val appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.nav_home,
-                    R.id.nav_relatorio,
-                    R.id.nav_unidades,
-                    R.id.nav_perfil
-                ),
-                binding.drawerLayout
-            )
-            navView.setupWithNavController(navController)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.nav_home,
+                R.id.nav_relatorio,
+                R.id.nav_unidades,
+                R.id.nav_perfil
+            ),
+            binding.drawerLayout
+        )
+        navView.setupWithNavController(navController)
 
-            navView.setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.nav_home -> {
-                        navController.navigate(R.id.nav_home)
-                        true
-                    }
-                    R.id.nav_relatorio -> {
-                        navController.navigate(R.id.nav_relatorio)
-                        true
-                    }
-                    R.id.nav_unidades -> {
-                        navController.navigate(R.id.nav_unidades)
-                        true
-                    }
-                    R.id.nav_perfil -> {
-                        navController.navigate(R.id.nav_perfil)
-                        true
-                    }
-                    else -> false
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> { navController.navigate(R.id.nav_home); true }
+                R.id.nav_relatorio -> { navController.navigate(R.id.nav_relatorio); true }
+                R.id.nav_unidades -> { navController.navigate(R.id.nav_unidades); true }
+                R.id.nav_perfil -> { navController.navigate(R.id.nav_perfil); true }
+                else -> false
+            }
+        }
+
+        val backButton = binding.iconVoltar
+        val secondaryNavLogo = binding.logoNavSecundaria
+        val navigationView = binding.navigationView
+
+        binding.root.post {
+            try {
+                val toolbar = binding.materialToolbar
+                val statusBarHeight = getStatusBarHeight()
+                val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
+                layoutParams.topMargin = statusBarHeight + toolbar.height
+                navigationView.layoutParams = layoutParams
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Erro ao configurar margem da NavigationView: ${e.message}")
+            }
+        }
+
+        val drawerLayout = binding.drawerLayout
+        val menuIcon = binding.iconMenu
+        menuIcon.setOnClickListener { drawerLayout.openDrawer(GravityCompat.END) }
+
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_info -> navController.navigate(R.id.nav_infos)
+                R.id.nav_sair -> showDialogLogOut()
+                R.id.nav_tema -> Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
+                R.id.nav_limite_estoque -> navController.navigate(R.id.nav_limite_estoque)
+                R.id.nav_fabricas -> navController.navigate(R.id.nav_unidades)
+            }
+            drawerLayout.closeDrawer(GravityCompat.END)
+            true
+        }
+
+        binding.iconNotificacoes.setOnClickListener { navController.navigate(R.id.nav_notificacoes) }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
+                    backButton.visibility = View.VISIBLE
+                    secondaryNavLogo.visibility = View.VISIBLE
+                    backButton.setOnClickListener { navController.popBackStack() }
+                    binding.navView.visibility = View.GONE
+                    binding.logo.visibility = View.GONE
+                    binding.iconNotificacoes.visibility = View.GONE
+                    binding.iconMenu.visibility = View.GONE
+                }
+                else -> {
+                    backButton.visibility = View.GONE
+                    secondaryNavLogo.visibility = View.GONE
+                    binding.navView.visibility = View.VISIBLE
+                    binding.logo.visibility = View.VISIBLE
+                    binding.iconNotificacoes.visibility = View.VISIBLE
+                    binding.iconMenu.visibility = View.VISIBLE
                 }
             }
-
-            val backButton = binding.iconVoltar
-            val secondaryNavLogo = binding.logoNavSecundaria
-
-            val navigationView = binding.navigationView
-            binding.root.post {
-                try {
-                    val toolbar = binding.materialToolbar
-                    val statusBarHeight = getStatusBarHeight()
-                    val toolbarHeight = toolbar.height
-                    val totalTopMargin = statusBarHeight + toolbarHeight
-
-                    val layoutParams = navigationView.layoutParams as ViewGroup.MarginLayoutParams
-                    layoutParams.topMargin = totalTopMargin
-                    navigationView.layoutParams = layoutParams
-
-                    Log.d("MainActivity", "📐 NavigationView margin - StatusBar: ${statusBarHeight}px, Toolbar: ${toolbarHeight}px, Total: ${totalTopMargin}px")
-                } catch (e: Exception) {
-                    Log.e("MainActivity", "❌ Erro ao configurar margem da NavigationView: ${e.message}")
-                }
-            }
-
-            val drawerLayout = binding.drawerLayout
-            val menuIcon = binding.iconMenu
-
-            menuIcon.setOnClickListener {
-                drawerLayout.openDrawer(GravityCompat.END)
-            }
-
-            navigationView.setNavigationItemSelectedListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.nav_info -> {
-                        navController.navigate(R.id.nav_infos)
-                    }
-                    R.id.nav_sair -> {
-                        showDialogLogOut()
-                    }
-                    R.id.nav_tema -> {
-                        Toast.makeText(this, "Disponível nas próximas versões!", Toast.LENGTH_SHORT).show()
-                    }
-                    R.id.nav_limite_estoque -> {
-                        navController.navigate(R.id.nav_limite_estoque)
-                    }
-                    R.id.nav_fabricas -> {
-                        navController.navigate(R.id.nav_unidades)
-                    }
-                }
-                drawerLayout.closeDrawer(GravityCompat.END)
-                true
-            }
-
-            val notificationIcon = binding.iconNotificacoes
-            notificationIcon.setOnClickListener {
-                navController.navigate(R.id.nav_notificacoes)
-            }
-
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                when (destination.id) {
-                    R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
-                        backButton.visibility = View.VISIBLE
-                        secondaryNavLogo.visibility = View.VISIBLE
-                        backButton.setOnClickListener {
-                            navController.popBackStack()
-                        }
-                        binding.navView.visibility = View.GONE
-                        binding.logo.visibility = View.GONE
-                        binding.iconNotificacoes.visibility = View.GONE
-                        binding.iconMenu.visibility = View.GONE
-                    }
-                    else -> {
-                        backButton.visibility = View.GONE
-                        secondaryNavLogo.visibility = View.GONE
-                        binding.navView.visibility = View.VISIBLE
-                        binding.logo.visibility = View.VISIBLE
-                        binding.iconNotificacoes.visibility = View.VISIBLE
-                        binding.iconMenu.visibility = View.VISIBLE
-                    }
-                }
-            }
-
-            Log.d("MainActivity", "✅ Navegação configurada com sucesso")
-
-        } catch (e: Exception) {
-            Log.e("MainActivity", "❌ Erro ao configurar navegação: ${e.message}", e)
-            throw e
         }
     }
 
@@ -267,11 +221,7 @@ class MainActivity : AppCompatActivity() {
             mainLoadingLayout.visibility = View.VISIBLE
             mainErrorLayout.visibility = View.GONE
             mainContentLayout.visibility = View.GONE
-
-            try {
-                mainLoadingText.text = message
-            } catch (e: Exception) {
-            }
+            try { mainLoadingText.text = message } catch (e: Exception) {}
         }
     }
 
@@ -280,8 +230,6 @@ class MainActivity : AppCompatActivity() {
             mainLoadingLayout.visibility = View.GONE
             mainErrorLayout.visibility = View.GONE
             mainContentLayout.visibility = View.VISIBLE
-
-            Log.d("MainActivity", "✅ Conteúdo principal exibido")
         }
     }
 
@@ -290,18 +238,13 @@ class MainActivity : AppCompatActivity() {
             mainLoadingLayout.visibility = View.GONE
             mainErrorLayout.visibility = View.VISIBLE
             mainContentLayout.visibility = View.GONE
-
             mainErrorText.text = errorMessage
-            Log.e("MainActivity", "❌ Estado de erro: $errorMessage")
         }
     }
 
     private fun restartApp() {
         showMainLoadingState("Reiniciando aplicação...")
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            initializeApp()
-        }, 1000)
+        Handler(Looper.getMainLooper()).postDelayed({ initializeApp() }, 1000)
     }
 
     fun showDialogLogOut() {
@@ -309,59 +252,40 @@ class MainActivity : AppCompatActivity() {
         val positiveButton = dialogLogOut.findViewById<Button>(R.id.sairContaS)
         val negativeButton = dialogLogOut.findViewById<Button>(R.id.sairContaN)
 
-        val dialog = AlertDialog.Builder(this)
-            .setView(dialogLogOut)
-            .create()
+        val dialog = AlertDialog.Builder(this).setView(dialogLogOut).create()
 
         positiveButton.setOnClickListener {
             SessionManager.clear()
             Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show()
-
-            val action = "Usuário realizou logout"
-            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
-
-            val intent = Intent(this@MainActivity, Login::class.java)
+            addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), "Usuário realizou logout"))
+            val intent = Intent(this, Login::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             finish()
         }
 
-        negativeButton.setOnClickListener {
-            dialog.dismiss()
-        }
+        negativeButton.setOnClickListener { dialog.dismiss() }
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
     override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.END)
-        } else {
-            super.onBackPressed()
-        }
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) binding.drawerLayout.closeDrawer(GravityCompat.END)
+        else super.onBackPressed()
     }
 
-    // Solicitação de permissão de notificações
-    val requestNotificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                Log.d("Notification", "✅ Permissão concedida!")
-            } else {
-                Log.w("Notification", "❌ Permissão negada!")
-            }
-        }
+    // Permissão de notificações
+    val requestNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (!isGranted) Toast.makeText(this, "As notificações estão desativadas", Toast.LENGTH_SHORT).show()
+    }
 
-
-    // Verifica e solicita permissão de notificações
-    private fun checkAndRequestNotificationPermission() {
+    fun checkAndRequestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                Log.d("MainActivity", "Permissão já concedida")
             }
         }
     }
@@ -369,19 +293,55 @@ class MainActivity : AppCompatActivity() {
     private fun getStatusBarHeight(): Int {
         return try {
             val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                resources.getDimensionPixelSize(resourceId)
-            } else {
-                // Fallback para uma altura aproximada
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) 24.dpToPx() else 25.dpToPx()
-            }
+            if (resourceId > 0) resources.getDimensionPixelSize(resourceId) else 24.dpToPx()
         } catch (e: Exception) {
-            Log.e("MainActivity", "Erro ao obter altura da status bar: ${e.message}")
-            24.dpToPx() // Fallback
+            24.dpToPx()
         }
     }
 
-    private fun Int.dpToPx(): Int {
-        return (this * resources.displayMetrics.density).toInt()
+    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
+
+    // 🔔 Observa alterações no estoque e dispara notificações
+    private fun observeCapacitySectorNotifications() {
+        val profile = SessionManager.getCurrentProfile()
+        profile?.let {
+            capacitySectorInfosViewModel.getSectorCapacityInfos(it.sector.id, SessionManager.getEmployeeId())
+
+            capacitySectorInfosViewModel.notificationEvent.observe(this) { (title, message) ->
+                showNotification(title, message)
+                lifecycleScope.launch {
+                    notificationsViewModel.addNotification(NotificationItem(title, message))
+                }
+            }
+        }
+    }
+
+    private fun showNotification(title: String, message: String) {
+        val channelId = "fluxar_channel"
+        val notificationId = System.currentTimeMillis().toInt()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = android.app.NotificationChannel(channelId, "Notificações do Fluxar", android.app.NotificationManager.IMPORTANCE_DEFAULT)
+            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+            manager.createNotificationChannel(channel)
+        }
+
+        val builder = androidx.core.app.NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.estoque_cheio_icon)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setAutoCancel(true)
+            .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            androidx.core.app.NotificationManagerCompat.from(this).notify(notificationId, builder.build())
+        }
+    }
+
+    private fun loadSectorInfos() {
+        val profile = SessionManager.getCurrentProfile()
+        profile?.let {
+            capacitySectorInfosViewModel.getSectorCapacityInfos(it.sector.id, SessionManager.getEmployeeId())
+        }
     }
 }

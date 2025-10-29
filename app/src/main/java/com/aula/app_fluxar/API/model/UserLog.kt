@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class UserLog(
     val user_id: Long,
     val action: String,
-    val done_at: LocalDate
+    val done_at: String
 ) : Parcelable
 
 data class UserLogRequest (

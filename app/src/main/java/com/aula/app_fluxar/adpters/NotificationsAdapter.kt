@@ -5,11 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.aula.app_fluxar.API.model.NotificationItem
 import com.aula.app_fluxar.R
-import com.aula.app_fluxar.API.model.NotificationResponse
 
 class NotificationsAdapter(
-    private val notifications: MutableList<NotificationResponse>
+    val notifications: MutableList<NotificationItem>,
+    val onRemove: (Int) -> Unit
 ) : RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder>() {
 
     inner class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -18,19 +19,14 @@ class NotificationsAdapter(
         private val markRead: TextView = itemView.findViewById(R.id.marcar_visualizada)
         private val timeText: TextView = itemView.findViewById(R.id.tempo_notificacao)
 
-        fun bind(notification: NotificationResponse) {
-            titleText.text = "ALERTA DE ESTOQUE BAIXO!"
-            messageText.text = "Ruptura de estoque iminente! Restam apenas ${notification.days_to_stockout_pred} dias de suprimento!"
+        fun bind(notification: NotificationItem, position: Int) {
+            titleText.text = notification.titulo
+            messageText.text = notification.mensagem
+            timeText.text = notification.data
 
             markRead.setOnClickListener {
-                itemView.visibility = View.GONE
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    removeItem(position)
-                }
+                onRemove(position)
             }
-
-            timeText.text = notification.data
         }
     }
 
@@ -41,16 +37,8 @@ class NotificationsAdapter(
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        holder.bind(notifications[position])
+        holder.bind(notifications[position], position)
     }
 
     override fun getItemCount(): Int = notifications.size
-
-    fun removeItem(position: Int) {
-        if (position in 0 until notifications.size) {
-            notifications.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, notifications.size)
-        }
-    }
 }
