@@ -26,6 +26,7 @@ class NotificationsAdapter(
 
             markRead.setOnClickListener {
                 onRemove(position)
+                notifyItemRemoved(position)
             }
         }
     }

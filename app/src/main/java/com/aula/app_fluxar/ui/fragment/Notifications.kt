@@ -50,6 +50,7 @@ class Notifications : Fragment() {
 
         viewModel.notifications.observe(viewLifecycleOwner) { newNotifications ->
             adapter.apply {
+                notifications.clear()
                 notifications.addAll(newNotifications)
                 notifyDataSetChanged()
             }
