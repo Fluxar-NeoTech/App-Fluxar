@@ -1,32 +1,19 @@
 package com.aula.app_fluxar.ui.fragment
 
-import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.aula.app_fluxar.API.model.CapacitySectorInfos
-import com.aula.app_fluxar.API.model.NotificationItem
 import com.aula.app_fluxar.API.viewModel.CapacitySectorInfosViewModel
+import com.aula.app_fluxar.API.viewModel.StockOutViewModel
 import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
-import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.FragmentNavRelatorioBinding
 import com.aula.app_fluxar.sessionManager.SessionManager
-import kotlinx.coroutines.launch
-import kotlin.math.max
 
 class NavigationReport : Fragment() {
 
@@ -34,7 +21,10 @@ class NavigationReport : Fragment() {
     private val binding get() = _binding!!
 
     private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
-    private val notificationsViewModel: NotificationsViewModel by viewModels()
+    private val notificationViewModel: NotificationsViewModel by viewModels()
+    private val notificationStockOutViewModel: StockOutViewModel by viewModels()
+    private var lastStockOutDays: Int? = null
+
 
     private var lastOccupancyPercentage: Double? = null
 
@@ -56,16 +46,12 @@ class NavigationReport : Fragment() {
         capacitySectorInfosViewModel.capacitySectorInfosResult.observe(viewLifecycleOwner) { infos ->
             infos?.let {
                 updateReportUI(it)
-                notifyIfUpdated(it)
+                notifyIfUpdatedReport(it)
             }
         }
 
         capacitySectorInfosViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (error.isNotEmpty()) showErrorState(error)
-        }
-
-        capacitySectorInfosViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) showLoadingState() else hideLoadingState()
         }
     }
 
@@ -77,6 +63,7 @@ class NavigationReport : Fragment() {
             showErrorState("Usuário não logado")
         }
     }
+
 
     private fun updateReportUI(infos: CapacitySectorInfos): Pair<String, String> {
         try {
@@ -129,14 +116,10 @@ class NavigationReport : Fragment() {
         }
     }
 
-    private fun notifyIfUpdated(infos: CapacitySectorInfos) {
+    fun notifyIfUpdatedReport(infos: CapacitySectorInfos) {
         val (title, message) = updateReportUI(infos)
 
-        showNotification(requireContext(), title, message)
-
-        lifecycleScope.launch {
-            notificationsViewModel.addNotification(NotificationItem(title, message))
-        }
+        notificationViewModel.showNotification(requireContext(), title, message)
 
         lastOccupancyPercentage = infos.occupancyPercentage
     }
@@ -158,31 +141,6 @@ class NavigationReport : Fragment() {
         binding.homeContentLayout?.visibility = View.GONE
         binding.homeErrorLayout.visibility = View.VISIBLE
         binding.homeErrorText.text = errorMessage
-    }
-
-    private fun showNotification(context: Context, title: String, message: String) {
-        val channelId = "fluxar_channel"
-        val notificationId = System.currentTimeMillis().toInt()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Notificações do Fluxar",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        }
-
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.estoque_cheio_icon)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
-        }
     }
 
     override fun onDestroyView() {
