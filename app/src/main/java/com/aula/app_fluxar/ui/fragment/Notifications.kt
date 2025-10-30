@@ -49,12 +49,10 @@ class Notifications : Fragment() {
         recyclerView.adapter = adapter
 
         viewModel.notifications.observe(viewLifecycleOwner) { newNotifications ->
-            adapter.apply {
-                notifications.clear()
-                notifications.addAll(newNotifications)
-                notifyDataSetChanged()
-            }
+            adapter.notifications = newNotifications.toMutableList()
+            adapter.notifyDataSetChanged()
         }
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             (activity as? MainActivity)?.requestNotificationPermissionLauncher?.launch(

@@ -9,7 +9,7 @@ import com.aula.app_fluxar.API.model.NotificationItem
 import com.aula.app_fluxar.R
 
 class NotificationsAdapter(
-    val notifications: MutableList<NotificationItem>,
+    var notifications: MutableList<NotificationItem>,
     val onRemove: (Int) -> Unit
 ) : RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder>() {
 

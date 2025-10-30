@@ -26,6 +26,7 @@ import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.FragmentNavRelatorioBinding
 import com.aula.app_fluxar.sessionManager.SessionManager
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class NavigationReport : Fragment() {
 
@@ -77,48 +78,67 @@ class NavigationReport : Fragment() {
         }
     }
 
-    private fun updateReportUI(infos: CapacitySectorInfos) {
-        binding.tvPorcentagem.text = "${infos.occupancyPercentage.toInt()}%"
-        binding.progressBarRelatorio.progress = infos.occupancyPercentage.toInt()
+    private fun updateReportUI(infos: CapacitySectorInfos): Pair<String, String> {
+        try {
+            binding.tvPorcentagem.text = "${infos.occupancyPercentage.toInt()}%"
+            binding.progressBarRelatorio.progress = infos.occupancyPercentage.toInt()
 
-        val profile = SessionManager.getCurrentProfile()
-        val maxCapacity = profile?.maxCapacity ?: 0.0
+            val profile = SessionManager.getCurrentProfile()
+            val maxCapacityValue = profile?.maxCapacity
 
-        if (maxCapacity <= 0) {
-            binding.metrosCubicosOcupados.text = "Indisponível"
-            binding.metrosCubicosTotais.text = "Indisponível"
-        } else {
-            val used = maxCapacity - infos.remainingVolume
-            binding.metrosCubicosOcupados.text = "%.1f".format(used)
-            binding.metrosCubicosTotais.text = "%.1f".format(maxCapacity)
+            val usedVolumeNum = if (maxCapacityValue == null || maxCapacityValue <= 0) {
+                binding.metrosCubicosOcupados.text = "Indisponível"
+                binding.metrosCubicosTotais.text = "Indisponível"
+                0.0
+            } else {
+                var used = maxCapacityValue - infos.remainingVolume
+                if (infos.occupancyPercentage < 0.1 || used < 0.01) used = 0.0
+                binding.metrosCubicosOcupados.text = "%.1f".format(used) + "m³"
+                binding.metrosCubicosTotais.text = "%.1f".format(maxCapacityValue) + "m³"
+                used
+            }
+
+            if (usedVolumeNum == 0.0) {
+                binding.textoSetorPodeReceber.text = Html.fromHtml(
+                    "O setor pode receber <b>${String.format("%.1f", maxCapacityValue)}m³</b> de insumos no seu estoque",
+                    Html.FROM_HTML_MODE_LEGACY
+                )
+            } else {
+                binding.textoSetorPodeReceber.text = Html.fromHtml(
+                    "O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque",
+                    Html.FROM_HTML_MODE_LEGACY
+                )
+            }
+
+            val (title, message) = when {
+                infos.occupancyPercentage >= 100 -> "Estoque Cheio" to "Seu estoque está lotado!"
+                infos.occupancyPercentage >= 90 -> "Estoque Quase Cheio" to "É recomendado tomar medidas contra a situação."
+                infos.occupancyPercentage >= 50 -> "Estoque Moderado" to "Espaço suficiente disponível no estoque."
+                infos.occupancyPercentage >= 25 -> "Estoque Baixo" to "Atenção com o nível de estoque."
+                else -> "Estoque Muito Baixo" to "Tome medidas urgentes para não ficar sem produtos!"
+            }
+
+            binding.textoOcupacaoEstoqueSetor3.text = message
+            binding.tituloSituacaoExtoque.text = title
+
+            return title to message
+
+        } catch (e: Exception) {
+            Log.e("NavigationRelatorio", "❌ Erro ao atualizar UI do relatório: ${e.message}")
+            return "Erro" to "Não foi possível atualizar o relatório"
         }
-
-        binding.textoSetorPodeReceber.text = Html.fromHtml(
-            "O setor pode receber <b>${infos.remainingVolume}m³</b> de insumos",
-            Html.FROM_HTML_MODE_LEGACY
-        )
     }
 
     private fun notifyIfUpdated(infos: CapacitySectorInfos) {
-        val currentPercentage = infos.occupancyPercentage
+        val (title, message) = updateReportUI(infos)
 
-        val (title, message) = when {
-            currentPercentage >= 100 -> "Estoque Cheio" to "Seu estoque está lotado!"
-            currentPercentage >= 90 -> "Estoque Quase Cheio" to "É recomendado tomar medidas contra a situação."
-            currentPercentage >= 50 -> "Estoque Moderado" to "Espaço suficiente disponível no estoque."
-            currentPercentage >= 25 -> "Estoque Baixo" to "Atenção com o nível de estoque."
-            else -> "Estoque Muito Baixo" to "Tome medidas urgentes para não ficar sem produtos!"
-        }
         showNotification(requireContext(), title, message)
 
         lifecycleScope.launch {
             notificationsViewModel.addNotification(NotificationItem(title, message))
         }
 
-        binding.textoOcupacaoEstoqueSetor3.text = message
-        binding.tituloSituacaoExtoque.text = title
-
-        lastOccupancyPercentage = currentPercentage
+        lastOccupancyPercentage = infos.occupancyPercentage
     }
 
     private fun showLoadingState() {
