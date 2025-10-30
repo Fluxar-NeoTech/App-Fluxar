@@ -1,23 +1,42 @@
 package com.aula.app_fluxar.ui.fragment
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.aula.app_fluxar.API.model.CapacitySectorInfos
+import com.aula.app_fluxar.API.model.NotificationItem
 import com.aula.app_fluxar.API.viewModel.CapacitySectorInfosViewModel
+import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
+import com.aula.app_fluxar.R
 import com.aula.app_fluxar.databinding.FragmentNavRelatorioBinding
 import com.aula.app_fluxar.sessionManager.SessionManager
+import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class NavigationReport : Fragment() {
 
     private var _binding: FragmentNavRelatorioBinding? = null
     private val binding get() = _binding!!
+
     private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
+    private val notificationsViewModel: NotificationsViewModel by viewModels()
+
+    private var lastOccupancyPercentage: Double? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +48,6 @@ class NavigationReport : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupObservers()
         loadCapacitySectorInfos()
     }
@@ -38,40 +56,29 @@ class NavigationReport : Fragment() {
         capacitySectorInfosViewModel.capacitySectorInfosResult.observe(viewLifecycleOwner) { infos ->
             infos?.let {
                 updateReportUI(it)
-                Log.d("NavigationRelatorio", "✅ Informações de capacidade carregadas: ${it.occupancyPercentage}% ocupado, ${it.remainingVolume}m³ restante")
+                notifyIfUpdated(it)
             }
         }
 
         capacitySectorInfosViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            if (error.isNotEmpty()) {
-                Log.e("NavigationRelatorio", "❌ Erro ao carregar informações de capacidade: $error")
-                showErrorState(error)
-            }
+            if (error.isNotEmpty()) showErrorState(error)
         }
 
         capacitySectorInfosViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            if (isLoading) {
-                Log.d("NavigationRelatorio", "🔄 Carregando informações de capacidade...")
-                showLoadingState()
-            } else {
-                hideLoadingState()
-            }
+            if (isLoading) showLoadingState() else hideLoadingState()
         }
     }
 
     private fun loadCapacitySectorInfos() {
-        val employee = SessionManager.getCurrentProfile()
-        employee?.let {
-            val sectorId = it.sector.id
-            val employeeId = SessionManager.getEmployeeId()
-            capacitySectorInfosViewModel.getSectorCapacityInfos(sectorId, employeeId)
+        val profile = SessionManager.getCurrentProfile()
+        profile?.let {
+            capacitySectorInfosViewModel.getSectorCapacityInfos(it.sector.id, SessionManager.getEmployeeId())
         } ?: run {
-            Log.e("NavigationRelatorio", "❌ Não foi possível carregar informações: employee não encontrado")
             showErrorState("Usuário não logado")
         }
     }
 
-    private fun updateReportUI(infos: CapacitySectorInfos) {
+    private fun updateReportUI(infos: CapacitySectorInfos): Pair<String, String> {
         try {
             binding.tvPorcentagem.text = "${infos.occupancyPercentage.toInt()}%"
             binding.progressBarRelatorio.progress = infos.occupancyPercentage.toInt()
@@ -79,65 +86,59 @@ class NavigationReport : Fragment() {
             val profile = SessionManager.getCurrentProfile()
             val maxCapacityValue = profile?.maxCapacity
 
-            Log.d("RelatorioDiagnostico", "Ocupação (%): ${infos.occupancyPercentage.toInt()}%")
-            Log.d("RelatorioDiagnostico", "MaxCapacity (Profile): $maxCapacityValue")
-            Log.d("RelatorioDiagnostico", "RemainingVolume (API): ${infos.remainingVolume}")
-
-
-            if (maxCapacityValue == null || maxCapacityValue <= 0) {
-                val unavailableText = "Indisponível"
-                binding.metrosCubicosOcupados.text = "${unavailableText}m³"
-                binding.metrosCubicosTotais.text = "${unavailableText}m³"
-
-                Log.w("RelatorioDiagnostico", "Capacidade Máxima (maxCapacity) é nula ou zero. Exibindo 'Indisponível'.")
+            val usedVolumeNum = if (maxCapacityValue == null || maxCapacityValue <= 0) {
+                binding.metrosCubicosOcupados.text = "Indisponível"
+                binding.metrosCubicosTotais.text = "Indisponível"
+                0.0
             } else {
-                val totalCapacityNum = maxCapacityValue.toDouble()
-                var usedVolumeNum = totalCapacityNum - infos.remainingVolume
-
-                if (infos.occupancyPercentage < 0.1) {
-                    usedVolumeNum = 0.0
-                    Log.d("RelatorioDiagnostico", "Ajuste de 0%: UsedVolume forçado para 0.0m³")
-                }
-
-                val totalCapacity = String.format("%.1f", totalCapacityNum)
-                val usedVolume = String.format("%.1f", usedVolumeNum)
-
-                binding.metrosCubicosOcupados.text = "${usedVolume}m³"
-                binding.metrosCubicosTotais.text = "${totalCapacity}m³"
-
-                Log.d("RelatorioDiagnostico", "Cálculo: Total=$totalCapacity, Ocupado=$usedVolume")
-
-                // Restante do código
-                binding.textoSetorPodeReceber.text =
-                    Html.fromHtml("O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque", Html.FROM_HTML_MODE_LEGACY)
+                var used = maxCapacityValue - infos.remainingVolume
+                if (infos.occupancyPercentage < 0.1 || used < 0.01) used = 0.0
+                binding.metrosCubicosOcupados.text = "%.1f".format(used) + "m³"
+                binding.metrosCubicosTotais.text = "%.1f".format(maxCapacityValue) + "m³"
+                used
             }
 
-            updateStatusMessage(infos.occupancyPercentage)
+            if (usedVolumeNum == 0.0) {
+                binding.textoSetorPodeReceber.text = Html.fromHtml(
+                    "O setor pode receber <b>${String.format("%.1f", maxCapacityValue)}m³</b> de insumos no seu estoque",
+                    Html.FROM_HTML_MODE_LEGACY
+                )
+            } else {
+                binding.textoSetorPodeReceber.text = Html.fromHtml(
+                    "O setor pode receber <b>${String.format("%.1f", infos.remainingVolume)}m³</b> de insumos no seu estoque",
+                    Html.FROM_HTML_MODE_LEGACY
+                )
+            }
+
+            val (title, message) = when {
+                infos.occupancyPercentage >= 100 -> "Estoque Cheio" to "Seu estoque está lotado!"
+                infos.occupancyPercentage >= 90 -> "Estoque Quase Cheio" to "É recomendado tomar medidas contra a situação."
+                infos.occupancyPercentage >= 50 -> "Estoque Moderado" to "Espaço suficiente disponível no estoque."
+                infos.occupancyPercentage >= 25 -> "Estoque Baixo" to "Atenção com o nível de estoque."
+                else -> "Estoque Muito Baixo" to "Tome medidas urgentes para não ficar sem produtos!"
+            }
+
+            binding.textoOcupacaoEstoqueSetor3.text = message
+            binding.tituloSituacaoExtoque.text = title
+
+            return title to message
 
         } catch (e: Exception) {
             Log.e("NavigationRelatorio", "❌ Erro ao atualizar UI do relatório: ${e.message}")
+            return "Erro" to "Não foi possível atualizar o relatório"
         }
     }
 
-    private fun updateStatusMessage(occupancyPercentage: Double) {
-        val titleMessage = when {
-            occupancyPercentage >= 100 -> "Estoque Cheio"
-            occupancyPercentage >= 90 -> "Estoque Quase Cheio"
-            occupancyPercentage >= 50 -> "Estoque Moderado"
-            occupancyPercentage >= 25 -> "Estoque Baixo"
-            else -> "Estoque Muito Baixo"
+    private fun notifyIfUpdated(infos: CapacitySectorInfos) {
+        val (title, message) = updateReportUI(infos)
+
+        showNotification(requireContext(), title, message)
+
+        lifecycleScope.launch {
+            notificationsViewModel.addNotification(NotificationItem(title, message))
         }
 
-        val statusMessage = when {
-            occupancyPercentage >= 100 -> "Seu estoque está lotado!"
-            occupancyPercentage >= 90 -> "É recomendado tomar medidas contra a situação."
-            occupancyPercentage >= 50 -> "Espaço suficiente disponível no estoque."
-            occupancyPercentage >= 25 -> "É recomendado ter atenção com o nível de estoque."
-            else -> "Tome medidas urgentemente para não ficar sem produtos!"
-        }
-
-        binding.textoOcupacaoEstoqueSetor3.text = statusMessage
-        binding.tituloSituacaoExtoque.text = titleMessage
+        lastOccupancyPercentage = infos.occupancyPercentage
     }
 
     private fun showLoadingState() {
@@ -157,19 +158,35 @@ class NavigationReport : Fragment() {
         binding.homeContentLayout?.visibility = View.GONE
         binding.homeErrorLayout.visibility = View.VISIBLE
         binding.homeErrorText.text = errorMessage
+    }
 
-        android.widget.Toast.makeText(requireContext(), "Erro: $errorMessage", android.widget.Toast.LENGTH_LONG).show()
+    private fun showNotification(context: Context, title: String, message: String) {
+        val channelId = "fluxar_channel"
+        val notificationId = System.currentTimeMillis().toInt()
 
-        Log.e("NavigationRelatorio", "Erro na UI: $errorMessage")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Notificações do Fluxar",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
+        }
+
+        val builder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.estoque_cheio_icon)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadCapacitySectorInfos()
     }
 }

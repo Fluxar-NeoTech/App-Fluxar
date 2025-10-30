@@ -19,6 +19,12 @@ class CapacitySectorInfosViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    // 🔔 Evento de notificação
+    private val _notificationEvent = MutableLiveData<Pair<String, String>>()
+    val notificationEvent: LiveData<Pair<String, String>> get() = _notificationEvent
+
+    private var lastStatusMessage: String? = null
+
     fun getSectorCapacityInfos(sectorId: Long, employeeId: Long) {
         _errorMessage.value = ""
         _isLoading.value = true
@@ -28,8 +34,26 @@ class CapacitySectorInfosViewModel : ViewModel() {
                 val response = RetrofitClient.instance.getSectorCapacityInfos(sectorId, employeeId)
 
                 if (response.isSuccessful) {
-                    _capacitySectorInfosResult.value = response.body()
-                    Log.d("CapacitySectorInfosViewModel", "Informações de capacidade do setor obtidas com sucesso")
+                    val infos = response.body()
+                    _capacitySectorInfosResult.value = infos
+                    Log.d("CapacitySectorInfosVM", "✅ Informações de capacidade do setor obtidas com sucesso")
+
+                    infos?.let {
+                        val percent = it.occupancyPercentage
+                        val (title, message) = when {
+                            percent >= 100 -> "Estoque Cheio" to "Seu estoque está lotado!"
+                            percent >= 90 -> "Estoque Quase Cheio" to "É recomendado tomar medidas contra a situação."
+                            percent >= 50 -> "Estoque Moderado" to "Espaço suficiente disponível no estoque."
+                            percent >= 25 -> "Estoque Baixo" to "Atenção com o nível de estoque."
+                            else -> "Estoque Muito Baixo" to "Tome medidas urgentes para não ficar sem produtos!"
+                        }
+
+                        // 🔔 Dispara notificação somente se mudou a mensagem
+                        if (message != lastStatusMessage) {
+                            _notificationEvent.postValue(title to message)
+                            lastStatusMessage = message
+                        }
+                    }
                 } else {
                     when (response.code()) {
                         400 -> _errorMessage.value = "Dados inválidos fornecidos"
@@ -39,20 +63,20 @@ class CapacitySectorInfosViewModel : ViewModel() {
                         504 -> _errorMessage.value = "Timeout do servidor"
                         else -> _errorMessage.value = "Erro: ${response.code()} - ${response.message()}"
                     }
-                    Log.e("CapacitySectorInfosViewModel", "Erro na resposta: ${response.code()} - ${response.message()}")
+                    Log.e("CapacitySectorInfosVM", "❌ Erro na resposta: ${response.code()} - ${response.message()}")
                 }
             } catch (e: java.net.SocketTimeoutException) {
                 _errorMessage.value = "Timeout: O servidor demorou muito para responder"
-                Log.e("CapacitySectorInfosViewModel", "Timeout exception", e)
+                Log.e("CapacitySectorInfosVM", "Timeout exception", e)
             } catch (e: java.net.ConnectException) {
                 _errorMessage.value = "Não foi possível conectar ao servidor"
-                Log.e("CapacitySectorInfosViewModel", "Connect exception", e)
+                Log.e("CapacitySectorInfosVM", "Connect exception", e)
             } catch (e: java.net.UnknownHostException) {
                 _errorMessage.value = "Servidor não encontrado. Verifique sua conexão"
-                Log.e("CapacitySectorInfosViewModel", "Unknown host exception", e)
+                Log.e("CapacitySectorInfosVM", "Unknown host exception", e)
             } catch (e: Exception) {
                 _errorMessage.value = "Erro: ${e.message ?: "Erro desconhecido"}"
-                Log.e("CapacitySectorInfosViewModel", "Exception", e)
+                Log.e("CapacitySectorInfosVM", "Exception", e)
             } finally {
                 _isLoading.value = false
             }
@@ -63,5 +87,6 @@ class CapacitySectorInfosViewModel : ViewModel() {
         _capacitySectorInfosResult.value = null
         _errorMessage.value = ""
         _isLoading.value = false
+        lastStatusMessage = null
     }
 }
