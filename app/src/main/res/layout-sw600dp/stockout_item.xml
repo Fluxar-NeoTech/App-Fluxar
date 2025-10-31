@@ -45,7 +45,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/msg_stocckout"
+                android:id="@+id/msg_stockout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -69,8 +69,8 @@
                 android:text="Marcar como lida"
                 android:textColor="@color/roxo_principal"
                 android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="@id/msg_stocckout"
-                app:layout_constraintTop_toBottomOf="@id/msg_stocckout" />
+                app:layout_constraintStart_toStartOf="@id/msg_stockout"
+                app:layout_constraintTop_toBottomOf="@id/msg_stockout" />
 
             <TextView
                 android:id="@+id/tempo_notificacao"
@@ -82,7 +82,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/marcar_visualizada"
-                app:layout_constraintTop_toBottomOf="@+id/msg_stocckout" />
+                app:layout_constraintTop_toBottomOf="@+id/msg_stockout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

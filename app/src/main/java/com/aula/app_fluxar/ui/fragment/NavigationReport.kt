@@ -1,5 +1,6 @@
 package com.aula.app_fluxar.ui.fragment
 
+import StockOutViewModel
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -10,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.aula.app_fluxar.API.model.CapacitySectorInfos
 import com.aula.app_fluxar.API.viewModel.CapacitySectorInfosViewModel
-import com.aula.app_fluxar.API.viewModel.StockOutViewModel
 import com.aula.app_fluxar.API.viewModel.NotificationsViewModel
 import com.aula.app_fluxar.databinding.FragmentNavRelatorioBinding
 import com.aula.app_fluxar.sessionManager.SessionManager

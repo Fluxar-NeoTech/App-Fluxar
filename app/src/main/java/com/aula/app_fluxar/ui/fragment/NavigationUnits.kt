@@ -64,7 +64,7 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
     private var isDataLoaded = false
     private var dataLoadAttempts = 0
     private val maxLoadAttempts = 3
-    private var isMapReady = false // Nova flag para controlar se o mapa está pronto
+    private var isMapReady = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -216,10 +216,8 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
                     val userLatLng = getLatLngFromAddress(emp.unit.enderecoCompleto())
                     if (userLatLng != null) {
                         withContext(Dispatchers.Main) {
-                            // Limpa marcadores anteriores
                             mMap.clear()
 
-                            // Adiciona marcador da unidade do usuário
                             mMap.addMarker(
                                 MarkerOptions()
                                     .position(userLatLng)
@@ -255,10 +253,8 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
                             unidade.id != employee!!.unit.id
                         }
 
-                        // VERIFICA SE HÁ UNIDADES DISPONÍVEIS
                         if (outrasUnidades.isEmpty()) {
                             withContext(Dispatchers.Main) {
-                                // Apenas mostra a unidade do usuário se o mapa estiver pronto
                                 if (isMapReady) {
                                     mMap.clear()
                                     mMap.addMarker(
@@ -390,7 +386,6 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
     private fun showContentState(listaFinal: List<Triple<UnitInfos, Float, Double>>) {
         showUnitsContentState()
 
-        // Mostra o RecyclerView e esconde o empty state
         recyclerView.visibility = View.VISIBLE
         emptyLayout.visibility = View.GONE
 
@@ -398,7 +393,6 @@ class NavigationUnits : Fragment(), OnMapReadyCallback {
         unitAdapter = UnitAdapter(listaFinal)
         recyclerView.adapter = unitAdapter
 
-        // Configura o filtro
         filter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 when (position) {

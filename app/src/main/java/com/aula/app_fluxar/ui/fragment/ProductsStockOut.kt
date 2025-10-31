@@ -2,6 +2,7 @@ package com.aula.app_fluxar.ui.fragment
 
 import StockOutViewModel
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.aula.app_fluxar.API.model.StockOutRequest
 import com.aula.app_fluxar.R
 import com.aula.app_fluxar.adpters.StockOutAdapter
+import com.aula.app_fluxar.sessionManager.SessionManager
 
 class ProductsStockOut : Fragment() {
     private lateinit var recyclerView: RecyclerView
@@ -39,8 +41,10 @@ class ProductsStockOut : Fragment() {
         val errorText = view.findViewById<TextView>(R.id.homeErrorText)
         val retryButton = view.findViewById<Button>(R.id.homeRetryButton)
 
-        retryButton.setOnClickListener {
-            val req = StockOutRequest(industria_id = 1, setor_id = 1)
+        val employee = SessionManager.getCurrentProfile()
+
+        retryButton?.setOnClickListener {
+            val req = StockOutRequest(employee!!.unit.industry.id,employee.sector.id, employee.unit.id)
             viewModel.fetchStockOut(req)
         }
 
@@ -59,13 +63,14 @@ class ProductsStockOut : Fragment() {
 
         viewModel.productStockOut.observe(viewLifecycleOwner) { list ->
             if (list != null) {
-                val filteredList = list.filter { it.days_to_stockout_pred < 7 }
+                val filteredList = list.filter { it.days_to_stockout_pred < 8 }
+                Log.d("ProductsStockOut", "Filtered List: $filteredList")
                 adapter.updateList(filteredList)
                 recyclerView.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE
             }
         }
 
-        val req = StockOutRequest(industria_id = 1, setor_id = 1)
+        val req = StockOutRequest(employee!!.unit.industry.id,employee.sector.id, employee.unit.id)
         viewModel.fetchStockOut(req)
     }
 }

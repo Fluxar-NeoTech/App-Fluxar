@@ -13,7 +13,7 @@ class StockOutAdapter(
 ) : RecyclerView.Adapter<StockOutAdapter.StockOutViewHolder>() {
 
     inner class StockOutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val msgTextView: TextView = itemView.findViewById(R.id.msg_stocckout)
+        val msgTextView: TextView = itemView.findViewById(R.id.msg_stockout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockOutViewHolder {

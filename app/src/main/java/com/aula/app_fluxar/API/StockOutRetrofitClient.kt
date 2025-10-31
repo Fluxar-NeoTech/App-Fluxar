@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object StockOutRetrofitClient {
-    private const val BASE_URL = "http://34.229.184.54:8000"
+    private const val BASE_URL = "http://34.229.184.54:8001"
 
     val instance: StockOutAPIService by lazy {
         val retrofitStockOutAPI = Retrofit.Builder()

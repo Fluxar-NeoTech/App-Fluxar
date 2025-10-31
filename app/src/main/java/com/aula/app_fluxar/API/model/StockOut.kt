@@ -13,5 +13,6 @@ data class StockOutResponse(
 
 data class StockOutRequest(
     val industria_id: Long,
-    val setor_id: Long
+    val setor_id: Long,
+    val unidade_id: Long
 )

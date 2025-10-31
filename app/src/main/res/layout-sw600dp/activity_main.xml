@@ -128,7 +128,7 @@
                 app:layout_constraintEnd_toStartOf="@id/iconMenu"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:srcCompat="@drawable/notificacoes" />
+                app:srcCompat="@drawable/stock_out_icon" />
 
             <ImageView
                 android:id="@+id/iconMenu"
