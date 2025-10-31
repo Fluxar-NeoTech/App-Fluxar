@@ -20,7 +20,7 @@
             android:padding="16dp">
 
             <ImageView
-                android:id="@+id/icone_notificacao"
+                android:id="@+id/icone_stockout"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginEnd="16dp"
@@ -41,11 +41,11 @@
                 android:textColor="@color/preto"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/icone_notificacao"
+                app:layout_constraintStart_toEndOf="@id/icone_stockout"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/msg_notificacao"
+                android:id="@+id/msg_stocckout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

@@ -189,17 +189,17 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        binding.iconNotificacoes.setOnClickListener { navController.navigate(R.id.nav_notificacoes) }
+        binding.iconStockOut.setOnClickListener { navController.navigate(R.id.nav_products_stockout) }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
+                R.id.nav_products_stockout, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
                     backButton.visibility = View.VISIBLE
                     secondaryNavLogo.visibility = View.VISIBLE
                     backButton.setOnClickListener { navController.popBackStack() }
                     binding.navView.visibility = View.GONE
                     binding.logo.visibility = View.GONE
-                    binding.iconNotificacoes.visibility = View.GONE
+                    binding.iconStockOut.visibility = View.GONE
                     binding.iconMenu.visibility = View.GONE
                 }
                 else -> {
@@ -207,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                     secondaryNavLogo.visibility = View.GONE
                     binding.navView.visibility = View.VISIBLE
                     binding.logo.visibility = View.VISIBLE
-                    binding.iconNotificacoes.visibility = View.VISIBLE
+                    binding.iconStockOut.visibility = View.VISIBLE
                     binding.iconMenu.visibility = View.VISIBLE
                 }
             }
