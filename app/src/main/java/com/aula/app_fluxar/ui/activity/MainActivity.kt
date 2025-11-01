@@ -25,7 +25,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.aula.app_fluxar.API.model.NotificationItem
 import com.aula.app_fluxar.API.model.UserLogRequest
 import com.aula.app_fluxar.API.viewModel.*
 import com.aula.app_fluxar.R
@@ -38,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
     private val profileViewModel: ProfileViewModel by viewModels()
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
-    private val notificationsViewModel: NotificationsViewModel by viewModels()
     private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
@@ -64,7 +62,6 @@ class MainActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             initializeApp()
-            observeCapacitySectorNotifications()
         }, 800)
 
         checkAndRequestNotificationPermission()
@@ -191,17 +188,17 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        binding.iconNotificacoes.setOnClickListener { navController.navigate(R.id.nav_notificacoes) }
+        binding.iconStockOut.setOnClickListener { navController.navigate(R.id.nav_products_stockout) }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.nav_notificacoes, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
+                R.id.nav_products_stockout, R.id.nav_infos, R.id.nav_limite_estoque, R.id.navigationUnitDetails -> {
                     backButton.visibility = View.VISIBLE
                     secondaryNavLogo.visibility = View.VISIBLE
                     backButton.setOnClickListener { navController.popBackStack() }
                     binding.navView.visibility = View.GONE
                     binding.logo.visibility = View.GONE
-                    binding.iconNotificacoes.visibility = View.GONE
+                    binding.iconStockOut.visibility = View.GONE
                     binding.iconMenu.visibility = View.GONE
                 }
                 else -> {
@@ -209,7 +206,7 @@ class MainActivity : AppCompatActivity() {
                     secondaryNavLogo.visibility = View.GONE
                     binding.navView.visibility = View.VISIBLE
                     binding.logo.visibility = View.VISIBLE
-                    binding.iconNotificacoes.visibility = View.VISIBLE
+                    binding.iconStockOut.visibility = View.VISIBLE
                     binding.iconMenu.visibility = View.VISIBLE
                 }
             }
@@ -304,43 +301,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
-
-    // 🔔 Observa alterações no estoque e dispara notificações
-    private fun observeCapacitySectorNotifications() {
-        val profile = SessionManager.getCurrentProfile()
-        profile?.let {
-            capacitySectorInfosViewModel.getSectorCapacityInfos(it.sector.id, SessionManager.getEmployeeId())
-
-            capacitySectorInfosViewModel.notificationEvent.observe(this) { (title, message) ->
-                showNotification(title, message)
-                lifecycleScope.launch {
-                    notificationsViewModel.addNotification(NotificationItem(title, message))
-                }
-            }
-        }
-    }
-
-    private fun showNotification(title: String, message: String) {
-        val channelId = "fluxar_channel"
-        val notificationId = System.currentTimeMillis().toInt()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = android.app.NotificationChannel(channelId, "Notificações do Fluxar", android.app.NotificationManager.IMPORTANCE_DEFAULT)
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
-            manager.createNotificationChannel(channel)
-        }
-
-        val builder = androidx.core.app.NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.estoque_cheio_icon)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setAutoCancel(true)
-            .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            androidx.core.app.NotificationManagerCompat.from(this).notify(notificationId, builder.build())
-        }
-    }
 
     private fun loadSectorInfos() {
         val profile = SessionManager.getCurrentProfile()

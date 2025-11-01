@@ -29,11 +29,6 @@
         android:id="@+id/nav_perfil"
         android:name="com.aula.app_fluxar.ui.fragment.NavigationProfile"
         tools:layout="@layout/fragment_nav_perfil" />
-    <fragment
-        android:id="@+id/nav_notificacoes"
-        android:name="com.aula.app_fluxar.ui.fragment.Notifications"
-        android:label="Notificações"
-        tools:layout="@layout/fragment_nav_notificacoes" />
 
     <fragment
         android:id="@+id/nav_infos"
@@ -63,4 +58,9 @@
         android:name="com.aula.app_fluxar.ui.fragment.NavigationStockLimit"
         android:label="fragment_layout_nav_limite_estoque"
         tools:layout="@layout/fragment_layout_nav_limite_estoque"/>
+    <fragment
+        android:id="@+id/nav_products_stockout"
+        android:name="com.aula.app_fluxar.ui.fragment.ProductsStockOut"
+        android:label="fragment_nav_stockout"
+        tools:layout="@layout/fragment_nav_stockout" />
 </navigation>
