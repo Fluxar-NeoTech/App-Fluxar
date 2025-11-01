@@ -3,6 +3,8 @@ package com.aula.app_fluxar.ui.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -174,6 +176,7 @@ class Login : AppCompatActivity() {
 
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
+            .setCancelable(false)
             .create()
 
         positiveButton.setOnClickListener {
@@ -189,16 +192,45 @@ class Login : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            positiveButton.isEnabled = false
+            positiveButton.text = "Enviando..."
+            positiveButton.alpha = 0.5f
+            negativeButton.isEnabled = false
+            emailInput.isEnabled = false
+
             redefinePasswordViewModel.redefinePassword(email)
-            dialog.dismiss()
         }
 
+        val loadingObserver = androidx.lifecycle.Observer<Boolean> { isLoading ->
+            if (!isLoading) {
+                positiveButton.isEnabled = true
+                positiveButton.text = "Sim"
+                positiveButton.alpha = 1f
+                negativeButton.isEnabled = true
+                emailInput.isEnabled = true
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    if (dialog.isShowing) {
+                        dialog.dismiss()
+                    }
+                }, 1500)
+            }
+        }
+
+        redefinePasswordViewModel.isLoading.observe(this, loadingObserver)
+
         negativeButton.setOnClickListener {
-            dialog.dismiss()
+            if (!redefinePasswordViewModel.isLoading.value!!) {
+                dialog.dismiss()
+            }
         }
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
+
+        dialog.setOnDismissListener {
+            redefinePasswordViewModel.isLoading.removeObserver(loadingObserver)
+        }
     }
 
     private fun isValidEmail(email: String): Boolean {

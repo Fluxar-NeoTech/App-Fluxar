@@ -84,12 +84,12 @@
             android:visibility="visible">
 
             <TextView
-                android:id="@+id/listarProdutosTitulo"
+                android:id="@+id/listarLotesTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/montserrat_bold"
-                android:text="Produtos Cadastrados"
+                android:text="Lotes Cadastrados"
                 android:textAlignment="center"
                 android:textColor="@color/laranja_principal"
                 android:textSize="40sp"
@@ -105,7 +105,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/listarProdutosTitulo"
+                app:layout_constraintTop_toBottomOf="@id/listarLotesTitulo"
                 tools:listitem="@layout/produto_item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
