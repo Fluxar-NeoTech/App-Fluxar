@@ -148,7 +148,6 @@
                         android:paddingTop="20dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="16dp"
-                        android:text="joao.silva@empresa.com"
                         android:textColor="@android:color/black"
                         android:textColorHint="@android:color/darker_gray" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -180,7 +179,6 @@
                         android:paddingTop="20dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="16dp"
-                        android:text="senha123"
                         android:textColor="@android:color/black"
                         android:textColorHint="@android:color/darker_gray" />
                 </com.google.android.material.textfield.TextInputLayout>

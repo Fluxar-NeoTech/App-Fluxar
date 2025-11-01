@@ -24,14 +24,17 @@ class StockOutAdapter(
 
     override fun onBindViewHolder(holder: StockOutViewHolder, position: Int) {
         val item = stockOutList[position]
-        val dias = item.days_to_stockout_pred
+        val days = item.days_to_stockout_pred
+        val textRemaingDays = if (days > 1) listOf("Restam", "dias") else listOf("Resta", "dia")
         holder.msgTextView.text =
-            "Ruptura do produto ${item.produto_id} iminente! Restam apenas ${"%.1f".format(dias)} dias de suprimento."
+            "Ruptura do produto ${item.produto_nome} iminente! ${textRemaingDays[0]} apenas ${"%.0f".format(days)} ${textRemaingDays[1]} de suprimento."
     }
 
     override fun getItemCount() = stockOutList.size
 
-    fun updateList(newList: List<StockOutResponse>) {
+    fun updateList(newItems: List<StockOutResponse>) {
+        val newList = stockOutList.toMutableList()
+        newList.addAll(newItems)
         stockOutList = newList
         notifyDataSetChanged()
     }

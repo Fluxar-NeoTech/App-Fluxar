@@ -63,7 +63,7 @@ class ProductsStockOut : Fragment() {
 
         viewModel.productStockOut.observe(viewLifecycleOwner) { list ->
             if (list != null) {
-                val filteredList = list.filter { it.days_to_stockout_pred < 8 }
+                val filteredList = list.filter { it.days_to_stockout_pred < 30 }
                 Log.d("ProductsStockOut", "Filtered List: $filteredList")
                 adapter.updateList(filteredList)
                 recyclerView.visibility = if (filteredList.isNotEmpty()) View.VISIBLE else View.GONE

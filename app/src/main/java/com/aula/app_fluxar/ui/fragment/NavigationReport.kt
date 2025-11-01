@@ -22,9 +22,6 @@ class NavigationReport : Fragment() {
 
     private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
     private val notificationViewModel: NotificationsViewModel by viewModels()
-    private val notificationStockOutViewModel: StockOutViewModel by viewModels()
-    private var lastStockOutDays: Int? = null
-
 
     private var lastOccupancyPercentage: Double? = null
 
@@ -43,6 +40,14 @@ class NavigationReport : Fragment() {
     }
 
     private fun setupObservers() {
+        capacitySectorInfosViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading) {
+                showLoadingState()
+            } else {
+                hideLoadingState()
+            }
+        }
+
         capacitySectorInfosViewModel.capacitySectorInfosResult.observe(viewLifecycleOwner) { infos ->
             infos?.let {
                 updateReportUI(it)
@@ -56,6 +61,8 @@ class NavigationReport : Fragment() {
     }
 
     private fun loadCapacitySectorInfos() {
+        showLoadingState()
+
         val profile = SessionManager.getCurrentProfile()
         profile?.let {
             capacitySectorInfosViewModel.getSectorCapacityInfos(it.sector.id, SessionManager.getEmployeeId())
@@ -63,7 +70,6 @@ class NavigationReport : Fragment() {
             showErrorState("Usuário não logado")
         }
     }
-
 
     private fun updateReportUI(infos: CapacitySectorInfos): Pair<String, String> {
         try {
@@ -118,9 +124,7 @@ class NavigationReport : Fragment() {
 
     fun notifyIfUpdatedReport(infos: CapacitySectorInfos) {
         val (title, message) = updateReportUI(infos)
-
         notificationViewModel.showNotification(requireContext(), title, message)
-
         lastOccupancyPercentage = infos.occupancyPercentage
     }
 

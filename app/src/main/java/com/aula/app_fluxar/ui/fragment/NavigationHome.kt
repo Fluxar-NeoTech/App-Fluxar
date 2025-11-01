@@ -2,6 +2,7 @@ package com.aula.app_fluxar.ui.fragment
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -823,11 +824,20 @@ class NavigationHome : Fragment() {
             }
         }
 
+        getBatchesViewModel.noBatchesFound.observe(viewLifecycleOwner) { noBatches ->
+            if (noBatches) {
+                Log.d("NavigationHome", "Nenhum lote encontrado - mostrando estado vazio")
+                batchesLoaded = true
+                showEmptyState()
+                showBatchesContentState()
+            }
+        }
+
         getBatchesViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             if (!error.isNullOrEmpty()) {
                 Log.e("NavigationHome", "Erro ao carregar lotes: $error")
                 batchesLoaded = true
-                showBatchesErrorState("Erro ao carregar produtos: $error")
+                showBatchesErrorState("Erro ao carregar lotes: $error")
             }
         }
 
@@ -856,8 +866,13 @@ class NavigationHome : Fragment() {
     }
 
     private fun showEmptyState() {
-        showContent(R.layout.fragment_sem_produtos_cadastrados)
-        Log.d("NavigationHome", "Mostrando estado vazio - sem lotes")
+        val isOnListScreen = content.findViewById<RecyclerView>(R.id.product_list_RV) != null ||
+                content.findViewById<ConstraintLayout>(R.id.batchesContentLayout) != null
+
+        if (isOnListScreen) {
+            showContent(R.layout.fragment_sem_produtos_cadastrados)
+            Log.d("NavigationHome", "✅ Mostrando estado vazio - sem lotes na LISTAGEM")
+        }
     }
 
     private fun loadProducts() {
@@ -1047,12 +1062,19 @@ class NavigationHome : Fragment() {
                 numLoteRemove.isEnabled = true
                 numLoteLayoutRemove.isEnabled = true
                 numLoteRemove.hint = "Número do lote"
+                numLoteRemove.text.clear()
+                numLoteRemove.setTextColor(ContextCompat.getColor(requireContext(), R.color.preto))
+
                 Log.d("NavigationHome", "Dropdown de números de lote atualizado com ${batchesNames.size} opções")
             } else {
-                val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf("Nenhum lote encontrado"))
-                numLoteRemove.setAdapter(emptyAdapter)
+                numLoteRemove.setText("Nenhum lote encontrado")
                 numLoteRemove.isEnabled = false
                 numLoteLayoutRemove.isEnabled = false
+
+                val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, emptyList<String>())
+                numLoteRemove.setAdapter(emptyAdapter)
+
+                Log.d("NavigationHome", "Nenhum lote encontrado para o produto selecionado")
             }
         } catch (e: Exception) {
             Log.e("NavigationHome", "Erro ao atualizar dropdown de números de lote: ${e.message}")
@@ -1064,12 +1086,13 @@ class NavigationHome : Fragment() {
             val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
             val numLoteLayoutRemove = content.findViewById<TextInputLayout>(R.id.numLoteLayoutRemove)
 
-            numLoteRemove.text?.clear()
+            numLoteRemove.setText("Selecione um produto primeiro")
             numLoteRemove.isEnabled = false
             numLoteLayoutRemove.isEnabled = false
             currentBatchNumbers = emptyList()
+            numLoteRemove.setTextColor(ContextCompat.getColor(requireContext(), R.color.cinza_claro))
 
-            val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, listOf("Selecione um produto primeiro"))
+            val emptyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, emptyList<String>())
             numLoteRemove.setAdapter(emptyAdapter)
             numLoteRemove.hint = "Selecione um produto primeiro"
         } catch (e: Exception) {
@@ -1348,13 +1371,23 @@ class NavigationHome : Fragment() {
 
         numLoteRemove.setOnClickListener {
             if (!numLoteRemove.isEnabled) {
-                showSnackbarMessage("Selecione um produto primeiro")
+                val currentText = numLoteRemove.text.toString()
+                if (currentText == "Nenhum lote encontrado") {
+                    showSnackbarMessage("Não há lotes disponíveis para este produto")
+                } else {
+                    showSnackbarMessage("Selecione um produto primeiro")
+                }
             }
         }
 
         numLoteLayoutRemove.setOnClickListener {
             if (!numLoteLayoutRemove.isEnabled) {
-                showSnackbarMessage("Selecione um produto primeiro")
+                val currentText = numLoteRemove.text.toString()
+                if (currentText == "Nenhum lote encontrado") {
+                    showSnackbarMessage("Não há lotes disponíveis para este produto")
+                } else {
+                    showSnackbarMessage("Selecione um produto primeiro")
+                }
             }
         }
 
@@ -1631,6 +1664,11 @@ class NavigationHome : Fragment() {
         val numLoteRemove = content.findViewById<AutoCompleteTextView>(R.id.numLoteRemove)
         val selectedBatchNumber = numLoteRemove.text.toString().trim()
 
+        if (selectedBatchNumber == "Nenhum lote encontrado") {
+            Toast.makeText(requireContext(), "Não há lotes disponíveis para remoção", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         if (!isBatchNumberValid(selectedBatchNumber)) {
             Toast.makeText(requireContext(), "Número do lote não existe", Toast.LENGTH_SHORT).show()
             return
@@ -1677,9 +1715,12 @@ class NavigationHome : Fragment() {
             return false
         }
 
-        if (selectedBatchNumber.isEmpty() ||
-            selectedBatchNumber == "Nenhum lote encontrado" ||
-            selectedBatchNumber == "Selecione um produto primeiro") {
+        if (selectedBatchNumber == "Nenhum lote encontrado" || selectedBatchNumber == "Selecione um produto primeiro") {
+            Toast.makeText(requireContext(), "Não há lotes disponíveis para remoção", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (selectedBatchNumber.isEmpty()) {
             Toast.makeText(requireContext(), "Selecione um número de lote válido", Toast.LENGTH_SHORT).show()
             return false
         }

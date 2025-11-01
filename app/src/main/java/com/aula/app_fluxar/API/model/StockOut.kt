@@ -6,6 +6,7 @@ data class StockOutListResponse(
 
 data class StockOutResponse(
     val data: String,
+    val produto_nome: String,
     val produto_id: Long,
     val unidade_id: Long,
     val days_to_stockout_pred: Double

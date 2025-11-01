@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
     private val profileViewModel: ProfileViewModel by viewModels()
     private val addUserLogsViewModel: AddUserLogsViewModel by viewModels()
-    private val notificationsViewModel: NotificationsViewModel by viewModels()
     private val capacitySectorInfosViewModel: CapacitySectorInfosViewModel by viewModels()
 
     private lateinit var binding: ActivityMainBinding
