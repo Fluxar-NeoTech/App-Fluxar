@@ -13,12 +13,12 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/listarProdutosTitulo"
+            android:id="@+id/listarLotesTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:fontFamily="@font/montserrat_bold"
-            android:text="Produtos Cadastrados"
+            android:text="Lotes Cadastrados"
             android:textAlignment="center"
             android:textColor="@color/laranja_principal"
             android:textSize="40sp"
@@ -34,7 +34,7 @@
             android:src="@drawable/nao_encontrado_lupa"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/listarProdutosTitulo" />
+            app:layout_constraintTop_toBottomOf="@+id/listarLotesTitulo" />
 
         <TextView
             android:id="@+id/textView2"
@@ -43,7 +43,7 @@
             android:layout_marginTop="21dp"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
-            android:text="Nenhum produto foi encontrado"
+            android:text="Nenhum lote foi encontrado"
             android:textColor="@color/cinza_claro"
             android:textSize="35sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,7 @@
             android:layout_marginTop="16dp"
             android:fontFamily="@font/roboto"
             android:gravity="center"
-            android:text="Cadastre algum produto para visualizá-lo aqui"
+            android:text="Cadastre algum lote para visualizá-lo aqui"
             android:textColor="@color/preto"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
