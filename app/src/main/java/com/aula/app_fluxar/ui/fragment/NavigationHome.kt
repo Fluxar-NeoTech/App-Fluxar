@@ -58,6 +58,7 @@ import com.aula.app_fluxar.API.viewModel.GetStockHistoryViewModel
 import com.aula.app_fluxar.API.viewModel.VolumeSectorViewModel
 import com.aula.app_fluxar.API.viewModel.VolumeUsedSectorViewModel
 import java.util.Calendar
+import java.util.Date
 
 class NavigationHome : Fragment() {
     private lateinit var homeScreenButton: Button
@@ -1350,12 +1351,36 @@ class NavigationHome : Fragment() {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
-                val formattedDate = String.format("%02d / %02d / %04d", selectedDay, selectedMonth + 1, selectedYear)
-                dateInput.setText(formattedDate)
-                calendar.set(selectedYear, selectedMonth, selectedDay)
+                val selectedDate = Calendar.getInstance().apply {
+                    set(selectedYear, selectedMonth, selectedDay)
+                }
+
+                val today = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+
+                if (selectedDate.before(today) || selectedDate == today) {
+                    Toast.makeText(requireContext(), "Selecione uma data futura (maior que hoje)", Toast.LENGTH_LONG).show()
+                } else {
+                    val formattedDate = String.format("%02d / %02d / %04d", selectedDay, selectedMonth + 1, selectedYear)
+                    dateInput.setText(formattedDate)
+                    calendar.set(selectedYear, selectedMonth, selectedDay)
+                }
             },
             year, month, day
         )
+
+        val minDate = Calendar.getInstance().apply {
+            add(Calendar.DAY_OF_MONTH, 1) // Amanhã
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        datePickerDialog.datePicker.minDate = minDate.timeInMillis
 
         datePickerDialog.show()
     }
@@ -1437,6 +1462,24 @@ class NavigationHome : Fragment() {
                 return false
             }
 
+            val selectedDate = parseDate(dateInput.text.toString())
+            val today = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            if (selectedDate != null) {
+                if (selectedDate <= today) {
+                    Toast.makeText(requireContext(), "A data de vencimento deve ser futura (maior que hoje)", Toast.LENGTH_LONG).show()
+                    return false
+                }
+            } else {
+                Toast.makeText(requireContext(), "Data de vencimento inválida", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
             if (numLoteInput.text.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "Informe o número do lote", Toast.LENGTH_SHORT).show()
                 return false
@@ -1471,6 +1514,32 @@ class NavigationHome : Fragment() {
             Log.e("NavigationHome", "Erro na validação: ${e.message}")
             Toast.makeText(requireContext(), "Erro ao validar campos", Toast.LENGTH_SHORT).show()
             false
+        }
+    }
+
+    private fun parseDate(dateString: String): Date? {
+        return try {
+            val dateParts = dateString.split(" / ").map { it.trim() }
+            if (dateParts.size == 3) {
+                val day = dateParts[0].toInt()
+                val month = dateParts[1].toInt() - 1
+                val year = dateParts[2].toInt()
+
+                Calendar.getInstance().apply {
+                    set(Calendar.DAY_OF_MONTH, day)
+                    set(Calendar.MONTH, month)
+                    set(Calendar.YEAR, year)
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.time
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("NavigationHome", "Erro ao fazer parse da data: ${e.message}")
+            null
         }
     }
 
@@ -1580,6 +1649,19 @@ class NavigationHome : Fragment() {
         largura: Double,
         comprimento: Double
     ) {
+        val selectedDate = parseDate(dateInput.text.toString())
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
+        if (selectedDate != null && selectedDate <= today) {
+            Toast.makeText(requireContext(), "Erro: Data de vencimento deve ser futura", Toast.LENGTH_LONG).show()
+            return
+        }
+
         val batchRequest = BatchRequest(
             batchCode = numLoteInput.text.toString().trim().ifEmpty { "LOTE-${System.currentTimeMillis()}" },
             expirationDate = formatDateForAPI(dateInput.text.toString()),
@@ -1594,7 +1676,7 @@ class NavigationHome : Fragment() {
         Log.d("NavigationHome", "Enviando BatchRequest: $batchRequest")
         addBatchViewModel.addBatch(batchRequest)
 
-        val action = "Usuário adicionou um nove lote de produtos - SKU: ${batchRequest.batchCode}"
+        val action = "Usuário adicionou um novo lote de produtos - SKU: ${batchRequest.batchCode}"
         addUserLogsViewModel.addUserLogs(UserLogRequest(SessionManager.getEmployeeId(), action))
     }
 
